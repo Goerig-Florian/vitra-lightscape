@@ -222,21 +222,9 @@
       nowMeta.textContent = data[i].meta;
     };
 
-    // Fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière
-    var select = function (i) {
+    // Texte de la fiche (numéro, nom, auteur, modes, lien)
+    var fillBody = function (i) {
       var d = data[i];
-      stops[selected].classList.remove('is-selected');
-      items[selected].classList.remove('is-selected');
-      selected = i;
-      stops[i].classList.add('is-selected');
-      items[i].classList.add('is-selected');
-      fiche.classList.add('is-loading');
-      fImg.onload = function () { fiche.classList.remove('is-loading'); };
-      fImg.src = d.photo;
-      fImg.width = d.w;
-      fImg.height = d.h;
-      fImg.alt = 'Photographie de jour : ' + d.name;
-      if (fImg.complete) fiche.classList.remove('is-loading');
       fiche.querySelector('[data-fiche-n]').textContent = two(i);
       fiche.querySelector('[data-fiche-name]').textContent = d.name;
       fiche.querySelector('[data-fiche-meta]').textContent = d.meta;
@@ -259,6 +247,45 @@
         row.appendChild(txt);
         box.appendChild(row);
       });
+    };
+
+    // Hauteur de la fiche figée sur la plus grande de toutes : la page ne saute plus d'une étape à l'autre
+    var fBody = fiche.querySelector('.fiche__body');
+    var lockHeight = function () {
+      fBody.removeAttribute('aria-live'); // pas d'annonce pendant la mesure
+      fBody.style.minHeight = '';
+      var max = 0;
+      for (var j = 0; j < data.length; j++) {
+        fillBody(j);
+        max = Math.max(max, fBody.offsetHeight);
+      }
+      fillBody(selected);
+      fBody.style.minHeight = max + 'px';
+      fBody.setAttribute('aria-live', 'polite');
+    };
+    var lockTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(lockTimer);
+      lockTimer = setTimeout(lockHeight, 150);
+    });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockHeight);
+
+    // Fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière
+    var select = function (i) {
+      var d = data[i];
+      stops[selected].classList.remove('is-selected');
+      items[selected].classList.remove('is-selected');
+      selected = i;
+      stops[i].classList.add('is-selected');
+      items[i].classList.add('is-selected');
+      fiche.classList.add('is-loading');
+      fImg.onload = function () { fiche.classList.remove('is-loading'); };
+      fImg.src = d.photo;
+      fImg.width = d.w;
+      fImg.height = d.h;
+      fImg.alt = 'Photographie de jour : ' + d.name;
+      if (fImg.complete) fiche.classList.remove('is-loading');
+      fillBody(i);
     };
 
     // Choix de la personne : la fiche ne suit plus l'animation
@@ -328,6 +355,7 @@
       });
     });
     select(0);
+    lockHeight();
 
     filters.forEach(function (btn) {
       btn.addEventListener('click', function () {

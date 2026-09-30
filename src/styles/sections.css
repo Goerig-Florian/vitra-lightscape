@@ -857,9 +857,14 @@
     top: calc(var(--header) + 24px);
   }
 
-  /* le plan et l'étape en cours tiennent dans l'écran */
+  /* la carte et la fiche tiennent dans l'écran : la colonne collante ne dépasse pas la fenêtre */
   .plan {
-    max-height: calc(100vh - var(--header) - 140px);
+    max-height: calc(100vh - var(--header) - 300px);
+  }
+
+  .fiche__photo {
+    aspect-ratio: auto;
+    height: clamp(170px, 30vh, 340px);
   }
 }
 
@@ -1137,6 +1142,13 @@
 
 .plan__now-text strong {
   font-weight: 500;
+}
+
+.plan__now-text strong,
+.plan__now-text span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .plan__now-text span {
