@@ -3,64 +3,82 @@
     "width": 4000,
     "height": 2252,
     "widths": [
-      480,
-      800,
-      1200,
-      1800,
+      640,
+      1024,
+      1600,
       2400
     ]
   },
-  "vitrahaus": {
-    "width": 3450,
-    "height": 2252,
+  "vitrahaus-jour": {
+    "width": 1672,
+    "height": 941,
     "widths": [
-      480,
-      800,
-      1200,
-      1800,
-      2400
+      640,
+      1024,
+      1672
     ]
   },
-  "slide-tower": {
-    "width": 2252,
-    "height": 4000,
+  "vitrahaus-nuit": {
+    "width": 1672,
+    "height": 941,
     "widths": [
-      480,
-      800,
-      1200,
-      1800,
-      2252
+      640,
+      1024,
+      1672
     ]
   },
-  "dome": {
-    "width": 4000,
-    "height": 2252,
+  "dome-jour": {
+    "width": 1672,
+    "height": 941,
     "widths": [
-      480,
-      800,
-      1200,
-      1800,
-      2400
+      640,
+      1024,
+      1672
     ]
   },
-  "vitrahaus-detail": {
-    "width": 2000,
-    "height": 1300,
+  "dome-nuit": {
+    "width": 1672,
+    "height": 941,
     "widths": [
-      480,
-      800,
-      1200,
-      1800,
-      2000
+      640,
+      1024,
+      1672
     ]
   },
-  "dome-detail": {
-    "width": 1100,
-    "height": 1010,
+  "design-museum-jour": {
+    "width": 1672,
+    "height": 941,
+    "widths": [
+      640,
+      1024,
+      1672
+    ]
+  },
+  "design-museum-nuit": {
+    "width": 1672,
+    "height": 941,
+    "widths": [
+      640,
+      1024,
+      1672
+    ]
+  },
+  "slide-tower-jour": {
+    "width": 941,
+    "height": 1672,
     "widths": [
       480,
-      800,
-      1100
+      720,
+      941
+    ]
+  },
+  "slide-tower-nuit": {
+    "width": 941,
+    "height": 1672,
+    "widths": [
+      480,
+      720,
+      941
     ]
   }
 }

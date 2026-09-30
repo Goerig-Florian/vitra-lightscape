@@ -1,0 +1,21 @@
+---
+import { experience } from '../data/content';
+---
+
+<section class="section experience" id="experience" data-theme="day" aria-labelledby="experience-title">
+  <div class="container">
+    <p class="eyebrow">{experience.label}</p>
+    <h2 class="experience__statement reveal" id="experience-title">{experience.statement}</h2>
+    <ol class="experience__list">
+      {
+        experience.items.map((item) => (
+          <li class="experience__item reveal">
+            <span class="experience__n">{item.n}</span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

@@ -1,52 +1,44 @@
 /* ==========================================================================
    Vitra Lightscape — variables de design
-   Couleurs, typographie, espacements et grille centralisés ici.
+   Jour : blanc et noir, comme vitra.com. Nuit : bleu nuit et lumière ambrée.
    ========================================================================== */
 
 :root {
-  /* Couleurs — du soir au jour */
-  --c-night: #0b0b0c;        /* noir profond */
-  --c-charcoal: #151516;     /* gris charbon */
-  --c-graphite: #2c2b2c;     /* filets sur fond sombre */
-  --c-paper: #f2eee6;        /* blanc chaud (cimaise) */
-  --c-paper-deep: #e7e0d4;   /* blanc chaud plus dense */
-  --c-ink: #151413;          /* texte sur fond clair */
-  --c-ink-soft: #4b463f;     /* texte secondaire sur fond clair (≈ 8:1) */
-  --c-line-light: #cfc6b8;   /* filets sur fond clair */
-  --c-mist: #b9b2a7;         /* texte secondaire sur fond sombre (≈ 9:1) */
-  --c-light: #fff4e2;        /* lumière blanche chaude */
-  --c-amber: #f0b25c;        /* lumière ambrée — usage retenu */
-  --c-amber-deep: #8a4f0f;   /* ambre lisible sur fond clair (≈ 5.6:1) */
+  /* Jour */
+  --white: #ffffff;
+  --ink: #111111;
+  --ink-soft: #55554f;      /* 7:1 sur blanc */
+  --grey-50: #f5f5f3;
+  --grey-100: #ebebe7;
+  --grey-300: #cfcfc9;
+
+  /* Nuit */
+  --night: #070a12;
+  --night-2: #0d1220;
+  --night-line: rgba(255, 255, 255, 0.14);
+  --night-text: #f1eee8;
+  --night-muted: #a9acb5;   /* 8:1 sur --night */
+
+  /* Lumière */
+  --light: #ffe6bd;
+  --amber: #ffb44c;
+  --amber-ink: #8a4f0f;     /* ambre lisible sur blanc (5.6:1) */
 
   /* Typographie */
-  --font-sans: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --step-1: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --step-2: clamp(1.4rem, 1.2rem + 0.9vw, 2rem);
+  --step-3: clamp(1.9rem, 1.4rem + 2.2vw, 3.4rem);
+  --step-4: clamp(2.8rem, 1.6rem + 6vw, 8rem);
 
-  --step--1: clamp(0.8rem, 0.77rem + 0.15vw, 0.875rem);
-  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
-  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.5rem);
-  --step-2: clamp(1.5rem, 1.25rem + 1.2vw, 2.25rem);
-  --step-3: clamp(2rem, 1.45rem + 2.6vw, 3.6rem);
-  --step-4: clamp(2.6rem, 1.7rem + 4.4vw, 5.8rem);
-
-  /* Espacements */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: clamp(2rem, 1.5rem + 2vw, 3rem);
-  --space-7: clamp(3rem, 2rem + 4vw, 6rem);
-  --space-8: clamp(5rem, 3rem + 8vw, 11rem);
-
-  /* Grille : 12 colonnes + deux marges qui permettent les images à fond perdu */
-  --margin: clamp(16px, 4.5vw, 72px);
-  --gutter: clamp(12px, 1.8vw, 28px);
-  --measure: 34ch;
-
-  /* La barre horizontale du logo (6 unités sur 346) */
-  --bar: 6px;
+  /* Mise en page */
+  --margin: clamp(20px, 4vw, 56px);
+  --gutter: clamp(16px, 2vw, 32px);
+  --max: 1440px;
+  --header: 64px;
+  --section: clamp(4.5rem, 3rem + 7vw, 10rem);
 
   /* Mouvement */
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);

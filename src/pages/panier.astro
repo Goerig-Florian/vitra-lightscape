@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { notice } from '../data/billetterie';
+import { url } from '../lib/url';
+---
+
+<Base title="Panier · Vitra Lightscape" description="Votre panier Vitra Lightscape." home={false}>
+  <section class="section checkout" data-theme="day" aria-labelledby="checkout-title">
+    <div class="container">
+      <a class="link-arrow link-arrow--back" href={url('#billetterie')}><span aria-hidden="true">← </span>Retour à la billetterie</a>
+      <h1 class="checkout__title" id="checkout-title">Votre panier</h1>
+      <p class="notice"><span class="notice__dot" aria-hidden="true"></span>{notice}</p>
+
+      <div class="checkout__grid">
+        <div class="checkout__list" data-cart-list data-cart-page></div>
+        <aside class="summary checkout__summary" aria-labelledby="checkout-sum">
+          <h2 class="summary__title" id="checkout-sum">Récapitulatif</h2>
+          <p class="summary__total"><span>Total</span><strong data-cart-total>0 €</strong></p>
+          <button class="btn btn--solid btn--block" type="button" data-pay>Procéder au paiement</button>
+          <button class="btn btn--line btn--block" type="button" data-cart-clear>Vider le panier</button>
+          <div class="pay-note" data-pay-note hidden tabindex="-1">
+            <strong>Démonstration</strong>
+            <p>
+              Le paiement sera relié au prestataire de billetterie retenu avec le Vitra Campus. Aucune commande n’est enregistrée et aucune
+              donnée n’est transmise.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Base>

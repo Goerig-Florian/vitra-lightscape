@@ -1,27 +1,30 @@
 ---
 /**
  * Logo Vitra Lightscape — SVG original inséré tel quel (tracés, lettres,
- * proportions et barre horizontale inchangés).
+ * proportions et barre horizontale inchangés ; seule la couleur suit le texte).
  *
  * animated : le logo sort de l'obscurité, un flare blanc chaud suit la barre
- * horizontale et révèle le symbole et les textes. Joue une seule fois, en CSS.
- * Avec « réduire les animations », le logo s'affiche directement éclairé.
+ * horizontale et révèle le symbole et les textes. L'animation démarre quand
+ * le script ajoute la classe .is-playing (une seule fois). Avec « réduire les
+ * animations » ou sans JavaScript, le logo s'affiche directement.
  */
 import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
 
 interface Props {
   animated?: boolean;
   class?: string;
+  label?: boolean;
 }
 
-const { animated = false, class: className = '' } = Astro.props;
+const { animated = false, class: className = '', label = true } = Astro.props;
 const svg = logoSvg.replace('<svg', '<svg aria-hidden="true" focusable="false"');
 const classes = ['logo', animated ? 'logo--animated' : '', className].filter(Boolean).join(' ');
+const a11y = label ? { role: 'img', 'aria-label': 'Vitra Lightscape' } : { 'aria-hidden': 'true' };
 ---
 
 {
   animated ? (
-    <div class={classes} role="img" aria-label="Vitra Lightscape">
+    <div class={classes} {...a11y} data-logo-flare>
       <div class="logo__layer logo__dim" set:html={svg} />
       <div class="logo__layer logo__lit" set:html={svg} />
       <span class="logo__beam" aria-hidden="true" />
@@ -29,6 +32,6 @@ const classes = ['logo', animated ? 'logo--animated' : '', className].filter(Boo
       <span class="logo__flare" aria-hidden="true" />
     </div>
   ) : (
-    <div class={classes} role="img" aria-label="Vitra Lightscape" set:html={svg} />
+    <div class={classes} {...a11y} set:html={svg} />
   )
 }

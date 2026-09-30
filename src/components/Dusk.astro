@@ -1,0 +1,28 @@
+---
+import Logo from './Logo.astro';
+import { dusk } from '../data/content';
+
+const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+---
+
+<section class="dusk" data-dusk data-from={String(dusk.from)} data-to={String(dusk.to)} aria-label="La nuit tombe">
+  <div class="dusk__sticky" data-dusk-sticky>
+    <div class="dusk__sky" aria-hidden="true">
+      <span class="dusk__star" style="--x: 12%; --y: 18%" />
+      <span class="dusk__star" style="--x: 28%; --y: 9%" />
+      <span class="dusk__star" style="--x: 71%; --y: 14%" />
+      <span class="dusk__star" style="--x: 86%; --y: 26%" />
+      <span class="dusk__star" style="--x: 55%; --y: 6%" />
+    </div>
+    <div class="container dusk__content">
+      <p class="dusk__clock" aria-hidden="true">
+        <span data-dusk-clock>{fmt(dusk.from)}</span>
+      </p>
+      <p class="dusk__line">{dusk.line}</p>
+      <div class="dusk__logo">
+        <Logo animated />
+      </div>
+      <p class="dusk__sub">{dusk.sub}</p>
+    </div>
+  </div>
+</section>

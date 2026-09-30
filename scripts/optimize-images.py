@@ -1,19 +1,13 @@
 """
-Génère les images responsive du site à partir des photos originales.
+Génère les images responsive du site à partir des fichiers de photos-sources/.
 
-Usage :  python3 scripts/optimize-images.py
-Prérequis : Python 3 + Pillow (pip install pillow) avec prise en charge AVIF
-            (Pillow >= 11.2, sinon installez pillow-avif-plugin).
+Usage :  python3 scripts/optimize-images.py   (ou npm run images)
+Prérequis : Python 3 + Pillow avec prise en charge AVIF (Pillow >= 11.2).
 
-- Lit les originaux dans  photos-sources/
-- Applique l'orientation EXIF, recadre si besoin, supprime toutes les métadonnées
-  (EXIF, modèle d'appareil, éventuelles données GPS)
-- Écrit AVIF + WebP + JPEG en plusieurs largeurs dans  public/images/
-- Écrit  src/data/images.json  (dimensions + largeurs disponibles) utilisé par
-  le composant <Photo />.
-
-Pour ajouter une photo : ajoutez une entrée dans PHOTOS, relancez le script,
-puis décrivez-la dans src/data/photos.ts.
+- Applique l'orientation EXIF, supprime toutes les métadonnées.
+- Paires jour / nuit : la photo de jour est ramenée exactement au cadrage et à la
+  taille de la visualisation de nuit, pour que le fondu au défilement soit calé.
+- Écrit AVIF + WebP + JPEG dans public/images/ et src/data/images.json.
 """
 import json
 from pathlib import Path
@@ -24,37 +18,51 @@ SRC = ROOT / "photos-sources"
 OUT = ROOT / "public" / "images"
 MANIFEST = ROOT / "src" / "data" / "images.json"
 
-WIDTHS = [480, 800, 1200, 1800, 2400]
-
-# crop = (gauche, haut, droite, bas) en pixels, après rotation EXIF
-PHOTOS = {
-    "design-museum": {"file": "20260916_120451.jpg"},
-    "vitrahaus": {"file": "20260916_093521.jpg", "crop": (0, 0, 3450, 2252)},  # retire les passants à droite
-    "slide-tower": {"file": "20260916_100053.jpg"},
-    "dome": {"file": "20260916_113210.jpg"},
-    "vitrahaus-detail": {"file": "20260916_093521.jpg", "crop": (1000, 0, 3000, 1300)},
-    "dome-detail": {"file": "20260916_113210.jpg", "crop": (900, 543, 2000, 1553)},
+# Photos simples
+SINGLES = {
+    "design-museum": {"file": "20260916_120451.jpg", "widths": [640, 1024, 1600, 2400]},
 }
+
+# Paires jour / nuit (clé -> photo de jour, visualisation de nuit)
+PAIRS = {
+    "vitrahaus": ("20260916_093521.jpg", "vitrahaus-nuit.png"),
+    "dome": ("20260916_113210.jpg", "dome-nuit.png"),
+    "design-museum": ("20260916_120451.jpg", "design-museum-nuit.png"),
+    "slide-tower": ("20260916_100053.jpg", "slide-tower-nuit.png"),
+}
+
+
+def load(name):
+    return ImageOps.exif_transpose(Image.open(SRC / name)).convert("RGB")
+
+
+def export(im, name, widths):
+    w, h = im.size
+    widths = sorted({min(x, w) for x in widths})
+    for tw in widths:
+        th = round(h * tw / w)
+        r = im if tw == w else im.resize((tw, th), Image.LANCZOS)
+        r.save(OUT / f"{name}-{tw}.avif", quality=55, speed=6)
+        r.save(OUT / f"{name}-{tw}.webp", quality=78, method=6)
+        r.save(OUT / f"{name}-{tw}.jpg", quality=82, optimize=True, progressive=True)
+    print(f"{name}: {w}x{h} -> {widths}")
+    return {"width": w, "height": h, "widths": widths}
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
+    for f in OUT.glob("*"):
+        f.unlink()
     manifest = {}
-    for name, cfg in PHOTOS.items():
-        im = ImageOps.exif_transpose(Image.open(SRC / cfg["file"])).convert("RGB")
-        if "crop" in cfg:
-            im = im.crop(cfg["crop"])
-        w, h = im.size
-        widths = [x for x in WIDTHS if x < w] + [min(w, WIDTHS[-1])]
-        widths = sorted(set(widths))
-        for tw in widths:
-            th = round(h * tw / w)
-            r = im.resize((tw, th), Image.LANCZOS)
-            r.save(OUT / f"{name}-{tw}.avif", quality=52, speed=6)
-            r.save(OUT / f"{name}-{tw}.webp", quality=74, method=6)
-            r.save(OUT / f"{name}-{tw}.jpg", quality=80, optimize=True, progressive=True)
-        manifest[name] = {"width": w, "height": h, "widths": widths}
-        print(f"{name}: {w}x{h} -> {widths}")
+    for name, cfg in SINGLES.items():
+        manifest[name] = export(load(cfg["file"]), name, cfg["widths"])
+    for key, (day_file, night_file) in PAIRS.items():
+        night = load(night_file)
+        day = load(day_file).resize(night.size, Image.LANCZOS)
+        portrait = night.height > night.width
+        widths = [480, 720, 941] if portrait else [640, 1024, 1672]
+        manifest[f"{key}-jour"] = export(day, f"{key}-jour", widths)
+        manifest[f"{key}-nuit"] = export(night, f"{key}-nuit", widths)
     MANIFEST.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
 

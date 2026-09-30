@@ -1,0 +1,22 @@
+---
+import { url } from '../lib/url';
+---
+
+<div class="drawer" data-drawer hidden>
+  <div class="drawer__backdrop" data-cart-close></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1" data-drawer-panel>
+    <header class="drawer__head">
+      <h2 id="drawer-title">Panier</h2>
+      <button type="button" class="icon-btn" data-cart-close>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6" /></svg>
+        <span class="sr-only">Fermer le panier</span>
+      </button>
+    </header>
+    <div class="drawer__body" data-cart-list></div>
+    <footer class="drawer__foot">
+      <p class="drawer__total"><span>Total</span><strong data-cart-total>0 €</strong></p>
+      <a class="btn btn--solid btn--block" href={url('panier/')} data-cart-checkout>Voir le panier et commander</a>
+      <button type="button" class="btn btn--line btn--block" data-cart-close>Continuer la visite</button>
+    </footer>
+  </aside>
+</div>

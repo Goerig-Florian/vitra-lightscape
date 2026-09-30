@@ -1,25 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
-import Concept from '../components/Concept.astro';
-import Catalogue from '../components/Catalogue.astro';
-import Apercu from '../components/Apercu.astro';
+import Experience from '../components/Experience.astro';
+import Dusk from '../components/Dusk.astro';
+import Stations from '../components/Stations.astro';
+import Parcours from '../components/Parcours.astro';
+import Billetterie from '../components/Billetterie.astro';
 import Infos from '../components/Infos.astro';
-import Coda from '../components/Coda.astro';
 ---
 
 <Base
-  title="Vitra Lightscape — Vitra, sous une autre lumière"
-  description="Vitra Lightscape, projet étudiant : une expérience lumineuse imaginée pour révéler les lignes, les matières et l’architecture du Vitra Campus à Weil am Rhein."
+  title="Vitra Lightscape · Vitra, sous une autre lumière"
+  description="Vitra Lightscape : un parcours nocturne au Vitra Campus, avec des mappings lumineux qui révèlent l’intention des architectes. Réservez votre soirée."
 >
-  <Header />
-  <main id="contenu">
-    <Hero />
-    <Concept />
-    <Catalogue />
-    <Apercu />
-    <Infos />
-  </main>
-  <Coda />
+  <Hero />
+  <Experience />
+  <Dusk />
+  <Stations />
+  <Parcours />
+  <Billetterie />
+  <Infos />
 </Base>

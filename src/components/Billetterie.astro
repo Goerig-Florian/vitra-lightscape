@@ -1,0 +1,91 @@
+---
+import { dates, slots, tickets, notice } from '../data/billetterie';
+
+const parse = (iso: string) => new Date(`${iso}T12:00:00`);
+const dayName = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '');
+const dayNum = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { day: 'numeric' });
+const month = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
+const full = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const price = (n: number) => (n === 0 ? 'Gratuit' : `${n} €`);
+---
+
+<section class="section billetterie" id="billetterie" data-theme="day" aria-labelledby="billetterie-title">
+  <div class="container">
+    <div class="billetterie__head">
+      <p class="eyebrow">Billetterie</p>
+      <h2 class="billetterie__title" id="billetterie-title">Réserver votre soirée</h2>
+      <p class="notice"><span class="notice__dot" aria-hidden="true"></span>{notice}</p>
+    </div>
+
+    <form class="booking" data-booking-form novalidate>
+      <div class="booking__steps">
+        <fieldset class="booking__step">
+          <legend><span class="booking__n">1</span> Choisir une soirée</legend>
+          <div class="chips chips--dates">
+            {
+              dates.map((d) => (
+                <label class="chip chip--date">
+                  <input type="radio" name="date" value={d} />
+                  <span class="chip__inner">
+                    <span class="chip__day">{dayName(d)}</span>
+                    <span class="chip__num">{dayNum(d)}</span>
+                    <span class="chip__month">{month(d)}</span>
+                  </span>
+                  <span class="sr-only">{full(d)}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="booking__step">
+          <legend><span class="booking__n">2</span> Choisir un horaire d’entrée</legend>
+          <div class="chips chips--slots">
+            {
+              slots.map((s) => (
+                <label class="chip chip--slot">
+                  <input type="radio" name="slot" value={s} />
+                  <span class="chip__inner">{s}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="booking__step">
+          <legend><span class="booking__n">3</span> Billets</legend>
+          <ul class="tickets">
+            {
+              tickets.map((t) => (
+                <li class="ticket">
+                  <div class="ticket__info">
+                    <span class="ticket__label" id={`t-${t.id}`}>{t.label}</span>
+                    <span class="ticket__detail">{t.detail}</span>
+                  </div>
+                  <span class="ticket__price">{price(t.price)}</span>
+                  <div class="stepper" role="group" aria-labelledby={`t-${t.id}`}>
+                    <button type="button" class="stepper__btn" data-step="-1" data-ticket={t.id} aria-label={`Retirer un billet ${t.label}`}>−</button>
+                    <output class="stepper__value" data-qty={t.id} aria-live="polite">0</output>
+                    <button type="button" class="stepper__btn" data-step="1" data-ticket={t.id} aria-label={`Ajouter un billet ${t.label}`}>+</button>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        </fieldset>
+      </div>
+
+      <aside class="summary" aria-labelledby="summary-title">
+        <h3 class="summary__title" id="summary-title">Votre sélection</h3>
+        <dl class="summary__when">
+          <div><dt>Soirée</dt><dd data-sum-date>À choisir</dd></div>
+          <div><dt>Entrée</dt><dd data-sum-slot>À choisir</dd></div>
+        </dl>
+        <ul class="summary__lines" data-sum-lines></ul>
+        <p class="summary__total"><span>Total</span><strong data-sum-total>0 €</strong></p>
+        <button class="btn btn--solid btn--block" type="submit" data-add disabled>Ajouter au panier</button>
+        <p class="summary__hint" data-sum-hint aria-live="polite">Choisissez une soirée, un horaire et au moins un billet.</p>
+      </aside>
+    </form>
+  </div>
+</section>

@@ -1,85 +1,73 @@
-# Vitra Lightscape — site Astro
+# Vitra Lightscape
 
-Projet étudiant BUT MMI : proposition de concept pour le Vitra Campus (Weil am Rhein).
-Site statique en **Astro + CSS**. Le JavaScript sert uniquement aux interactions (menu mobile, apparitions, aperçu).
+Proposition pour l'appel d'offres du Vitra Campus (projet étudiant BUT MMI) : un parcours nocturne, avec des mappings lumineux qui révèlent l'intention des architectes, et un chemin de lumière qui guide la visite.
+
+Site statique en **Astro + CSS**. Le JavaScript sert aux interactions : passage jour → nuit, mappings, chemin lumineux, billetterie et panier.
 
 ## En ligne
 
-Le site est publié automatiquement sur **https://goerig-florian.github.io/vitra-lightscape/** à chaque mise à jour de la branche `main` (onglet *Actions* du dépôt pour suivre la publication).
+**https://goerig-florian.github.io/vitra-lightscape/**
+
+Le site est republié automatiquement à chaque mise à jour de la branche `main`. On peut suivre la publication dans l'onglet *Actions* du dépôt.
 
 ## Récupérer les mises à jour
-
-Une seule fois :
-
-```bash
-git clone https://github.com/Goerig-Florian/vitra-lightscape.git
-```
-
-Ensuite, à chaque mise à jour :
 
 ```bash
 git pull
 ```
 
-## Lancer le projet en local
-
-Prérequis : Node.js 18.20+ (ou 20+).
+## Lancer en local (facultatif)
 
 ```bash
-npm install      # installe Astro (seule dépendance)
+npm install      # une seule fois
 npm run dev      # http://localhost:4321
-npm run build    # génère le site dans dist/
-npm run preview  # prévisualise dist/
 ```
 
-Pour publier ailleurs, déposez le contenu de `dist/` sur n'importe quel hébergement statique. Pour un sous-dossier, définissez la variable `BASE_PATH` (voir `astro.config.mjs`).
+## Déroulé de la page
+
+1. **Le jour** : premier écran blanc, dans l'esprit de vitra.com.
+2. **L'expérience** : mappings, chemin lumineux, visite du soir.
+3. **La nuit tombe** : le ciel passe du blanc au bleu nuit au défilement, l'horloge avance de 18:00 à 21:30, puis le logo s'allume.
+4. **Les bâtiments** : quatre stations (VitraHaus, Dome, Vitra Design Museum, Vitra Slide Tower).
+   - Chaque photo passe du jour à la nuit, puis le mapping se dessine.
+   - Le chemin lumineux s'allume le long de la page.
+   - Les boutons Jour / Nuit / Lumière permettent aussi de choisir la vue.
+5. **Le parcours** : plan schématique du chemin lumineux (5 stations).
+6. **Billetterie** : choix d'une soirée et d'un horaire, billets avec règles (les enfants doivent être accompagnés, l'option visite commentée est limitée au nombre de personnes), ajout au panier.
+7. **Panier** : tiroir latéral et page `/panier/`. Le panier est conservé dans le navigateur. **Le paiement n'est pas branché** : un message de démonstration s'affiche.
+
+## Modifier le contenu
+
+| Quoi | Fichier |
+|---|---|
+| Textes | `src/data/content.ts` |
+| Bâtiments, intentions, tracés du mapping, plan du parcours | `src/data/stations.ts` |
+| Dates, horaires, tarifs (**provisoires**) | `src/data/billetterie.ts` |
+| Couleurs, typographie, espacements | `src/styles/tokens.css` |
+
+**Photos.** Déposez les originaux dans `photos-sources/` (non versionnés), puis lancez `npm run images` (Python 3 + Pillow). Chaque vue de jour est recadrée exactement sur sa vue de nuit pour que le fondu soit calé.
 
 ## Arborescence
 
 ```
-astro.config.mjs
-package.json
-photos-sources/            photos originales (non versionnées, déposez-y les 4 fichiers de visite)
-.github/workflows/         publication automatique sur GitHub Pages
-public/images/             photos optimisées AVIF / WebP / JPEG, 3 à 5 largeurs chacune
-scripts/optimize-images.py régénère public/images et src/data/images.json
+.github/workflows/deploy.yml   publication GitHub Pages
+public/images/                 photos jour / nuit optimisées (AVIF, WebP, JPEG)
+scripts/optimize-images.py     génération des images
 src/
-  assets/logo/vitra-lightscape.svg   logo original, inchangé
-  assets/fonts/                      Instrument Sans, Instrument Serif, IBM Plex Mono (OFL, auto-hébergées)
-  components/
-    Header.astro        navigation (menu repliable sur mobile)
-    Logo.astro          logo SVG original, version animée ou statique
-    Hero.astro          premier écran
-    Concept.astro       I — concept
-    Catalogue.astro     II — bâtiments, mise en page de catalogue
-    Apercu.astro        III — aperçu jour / ombre / ligne
-    Infos.astro         IV — informations pratiques (« Programme à venir »)
-    Coda.astro          conclusion, crédits, pied de page
-    Photo.astro         <picture> responsive avec dimensions réservées
-    SectionLabel.astro  étiquette de section
-  data/
-    content.ts          tous les textes et informations pratiques
-    buildings.ts        bâtiments, architectes, sources vérifiées
-    photos.ts           registre des photos, crédits et droits
-    images.json         dimensions générées par le script
-  layouts/Base.astro    <head>, styles, script
-  pages/index.astro     assemblage de la page
-  scripts/main.js       interactions
-  styles/
-    tokens.css          couleurs, typographie, espacements, grille
-    base.css            polices, remise à zéro, éléments communs
-    sections.css        styles de chaque section
+  assets/logo/                 logo SVG original (tracés inchangés)
+  assets/fonts/                Inter (SIL Open Font License), auto-hébergée
+  components/                  Header, Hero, Experience, Dusk, Stations, Station,
+                               Parcours, Billetterie, Infos, Footer, CartDrawer, Logo, Photo
+  data/                        contenus, stations, billetterie, images.json
+  layouts/Base.astro
+  pages/index.astro, pages/panier.astro
+  scripts/main.js              jour → nuit, mappings, chemin lumineux, navigation
+  scripts/cart.js              billetterie et panier
+  styles/                      tokens.css, base.css, sections.css
 ```
 
-## Modifier le contenu
+## Accessibilité
 
-- **Textes et informations pratiques** : `src/data/content.ts`. Quand les dates sont validées, changez `value` et passez `pending` à `false`.
-- **Crédits photo** : `src/data/photos.ts`. Remplacez « Équipe Vitra Lightscape » par le nom de la personne qui a pris chaque photo.
-- **Ajouter une photo** : copiez l'original dans `photos-sources/`, ajoutez une ligne dans `PHOTOS` de `scripts/optimize-images.py`, lancez `npm run images` (Python 3 + Pillow), puis décrivez-la dans `src/data/photos.ts`.
-
-## Choix techniques
-
-- **Logo** : le SVG original est inséré tel quel, deux fois (une silhouette dans l'ombre, une copie éclairée révélée par un masque). Le flare suit la barre horizontale (y = 83–89 sur 138, soit 62,3 %). L'animation est entièrement en CSS et ne joue qu'une fois. Avec « réduire les animations », le logo s'affiche directement éclairé.
-- **Images** : les métadonnées EXIF sont supprimées, les formats sont AVIF, WebP et JPEG avec `srcset`. `width` et `height` sont renseignés et les images secondaires sont en `loading="lazy"`.
-- **Sans JavaScript**, tout le contenu reste visible. L'aperçu affiche alors directement l'étape « La ligne ».
-- **Accessibilité** : lien d'évitement, navigation clavier, focus visibles, `aria-pressed` sur les étapes, textes alternatifs descriptifs, contrastes AA et plus. Aucune information n'est réservée au survol.
+- Tout le contenu est lisible sans JavaScript : les stations s'affichent alors de nuit, avec le mapping.
+- Avec « réduire les animations » : pas de boucles lumineuses. Les stations s'affichent dans l'état final, et les boutons Jour / Nuit / Lumière restent disponibles.
+- Navigation au clavier, focus visibles, panier en dialogue modal (Échap pour fermer), textes alternatifs pour les vues de jour et de nuit.

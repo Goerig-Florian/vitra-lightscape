@@ -1,43 +1,30 @@
 ---
-import Logo from './Logo.astro';
 import Photo from './Photo.astro';
 import { hero } from '../data/content';
-import { photos } from '../data/photos';
-
-const photo = photos['design-museum'];
 ---
 
-<section class="hero" aria-labelledby="hero-title">
-  <div class="grid hero__grid">
-    <div class="hero__brand">
-      <Logo animated />
-    </div>
-
-    <div class="hero__copy">
-      <h1 class="hero__title" id="hero-title">{hero.titleStart} <em>{hero.titleAccent}</em></h1>
+<section class="hero" id="top" data-theme="day" aria-labelledby="hero-title">
+  <div class="container hero__head">
+    <p class="hero__meta">
+      {hero.meta.map((m) => <span>{m}</span>)}
+    </p>
+    <h1 class="hero__title" id="hero-title">{hero.title}</h1>
+    <div class="hero__side">
       <p class="hero__lead">{hero.lead}</p>
-      <a class="cta" href="#experience">
-        <span class="cta__bar" aria-hidden="true" />
-        <span>{hero.cta}</span>
-        <span class="cta__arrow" aria-hidden="true">↓</span>
-      </a>
-    </div>
-
-    <figure class="hero__media">
-      <div class="hero__frame">
-        <Photo
-          id="design-museum"
-          alt={photo.alt}
-          sizes="(min-width: 1024px) 58vw, 100vw"
-          loading="eager"
-          fetchpriority="high"
-        />
-        <span class="hero__slit" aria-hidden="true" />
+      <div class="hero__actions">
+        <a class="btn btn--solid" href="#billetterie">{hero.primary}</a>
+        <a class="btn btn--line" href="#stations">
+          <span class="spark" aria-hidden="true"></span>
+          {hero.secondary}
+        </a>
       </div>
-      <figcaption class="caption">
-        Vitra Design Museum — Frank Gehry, 1989
-        <span class="caption__credit">Photo : {photo.credit}, {photo.date}</span>
-      </figcaption>
-    </figure>
+    </div>
   </div>
+
+  <figure class="hero__media">
+    <div class="hero__frame">
+      <Photo id="design-museum" alt="Le Vitra Design Museum de Frank Gehry en journée, volumes blancs sous un ciel couvert, reflétés dans un bassin." sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <figcaption class="container caption">{hero.caption}</figcaption>
+  </figure>
 </section>

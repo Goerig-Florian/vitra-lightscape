@@ -1,39 +1,11 @@
 /* ==========================================================================
-   Base : polices, remise à zéro, grille, éléments communs
+   Base : police, remise à zéro, conteneur, boutons, éléments communs
    ========================================================================== */
 
 @font-face {
-  font-family: 'Instrument Sans';
-  src: url('../assets/fonts/InstrumentSans-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Instrument Sans';
-  src: url('../assets/fonts/InstrumentSans-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('../assets/fonts/InstrumentSerif-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('../assets/fonts/InstrumentSerif-Italic.woff') format('woff');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('../assets/fonts/IBMPlexMono-Regular.woff') format('woff');
-  font-weight: 400;
+  font-family: 'Inter';
+  src: url('../assets/fonts/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
@@ -47,7 +19,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scroll-padding-top: var(--space-5);
+  scroll-padding-top: calc(var(--header) + 16px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -58,37 +30,36 @@ html {
 
 body {
   margin: 0;
-  background: var(--c-night);
-  color: var(--c-light);
-  font-family: var(--font-sans);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font);
   font-size: var(--step-0);
   line-height: 1.55;
+  font-feature-settings: 'cv11', 'ss01';
   overflow-x: clip;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2,
-h3,
-p,
-figure,
-dl,
-dd,
-ol,
-ul {
+h1, h2, h3, h4, p, figure, dl, dd, ol, ul, fieldset {
   margin: 0;
 }
 
-ol,
-ul {
+ol, ul {
   padding: 0;
   list-style: none;
 }
 
-img,
-svg,
-picture {
+fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+img, svg, picture {
   display: block;
   max-width: 100%;
 }
@@ -100,7 +71,7 @@ img {
 a {
   color: inherit;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.22em;
 }
 
 button {
@@ -108,13 +79,13 @@ button {
   color: inherit;
 }
 
-:focus-visible {
-  outline: 2px solid var(--c-amber);
-  outline-offset: 3px;
+[hidden] {
+  display: none !important;
 }
 
-.section--light :focus-visible {
-  outline-color: var(--c-amber-deep);
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 
 .sr-only {
@@ -130,15 +101,13 @@ button {
 }
 
 .skip-link {
-  position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
-  z-index: 100;
-  padding: var(--space-3) var(--space-4);
-  background: var(--c-light);
-  color: var(--c-ink);
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 200;
+  padding: 12px 16px;
+  background: var(--ink);
+  color: var(--white);
   transform: translateY(-200%);
 }
 
@@ -146,84 +115,165 @@ button {
   transform: none;
 }
 
-/* Grille : lignes 1 et 15 = marges, colonnes de contenu 1 à 12 = lignes 2 à 14 */
-.grid {
-  display: grid;
-  grid-template-columns:
-    [full-start] minmax(0, calc(var(--margin) - var(--gutter)))
-    [content-start] repeat(12, minmax(0, 1fr))
-    [content-end] minmax(0, calc(var(--margin) - var(--gutter)))
-    [full-end];
-  column-gap: var(--gutter);
-}
-
-.grid > * {
-  grid-column: content;
-}
-
-/* Sections */
-.section {
-  position: relative;
-  padding-block: var(--space-8);
-}
-
-.section--light {
-  background: var(--c-paper);
-  color: var(--c-ink);
-}
-
-.section--dark {
-  background: var(--c-charcoal);
-  color: var(--c-light);
-}
-
-/* Étiquette de section : chiffre romain + intitulé, comme un cartel */
-.section-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.section-label__n {
-  min-width: 2.5em;
-}
-
-.section-label__bar {
-  flex: 0 0 clamp(40px, 8vw, 120px);
-  height: var(--bar);
-  background: currentColor;
-}
-
-.section--light .section-label__n {
-  color: var(--c-amber-deep);
-}
-
-.section--dark .section-label__n {
-  color: var(--c-amber);
-}
-
-/* Légendes (cartels) */
-.caption {
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  line-height: 1.5;
-  letter-spacing: 0.01em;
-}
-
-.caption__credit {
-  display: block;
-  opacity: 0.78;
-}
-
-/* Photographies */
-.photo {
-  display: block;
-}
-
-.photo img {
+.container {
   width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--margin);
+}
+
+.section {
+  padding-block: var(--section);
+}
+
+.eyebrow {
+  margin-bottom: 1.25rem;
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+
+[data-theme='night'] .eyebrow {
+  color: var(--amber);
+}
+
+.caption {
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+[data-theme='night'] .caption {
+  color: var(--night-muted);
+}
+
+/* Boutons — rectangulaires et sobres, comme sur vitra.com */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.25s, color 0.25s, border-color 0.25s, opacity 0.25s;
+}
+
+.btn--solid {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.btn--solid:hover {
+  background: #333;
+  border-color: #333;
+}
+
+.btn--line {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn--line:hover {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.btn--small {
+  min-height: 40px;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn--solid:disabled:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Point lumineux */
+.spark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 0 3px rgba(255, 180, 76, 0.25), 0 0 14px 2px rgba(255, 180, 76, 0.7);
+}
+
+.notice {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  max-width: 62ch;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.notice__dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  transform: translateY(-1px);
+}
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 44px;
+  font-weight: 500;
+}
+
+/* Logo : SVG original, couleur héritée */
+.logo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 346 / 138;
+}
+
+.logo svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Apparitions au défilement */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  }
+
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
 }

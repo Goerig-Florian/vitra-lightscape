@@ -1,31 +1,35 @@
-# Sources et crédits photographiques
+# Sources et crédits
 
-Toutes les photographies sont des **photos de visite de l'équipe**, prises le 16 septembre 2026 au Vitra Campus (Samsung Galaxy S26). Aucune image ne provient de vitra.com et aucune n'est générée par IA. Les métadonnées, y compris le modèle d'appareil, ont été retirées des fichiers publiés.
+## Photographies
 
-| Fichier publié | Bâtiment | Original | Traitement |
-|---|---|---|---|
-| `design-museum-*` | Vitra Design Museum | 20260916_120451.jpg | aucun recadrage à la source |
-| `vitrahaus-*` | VitraHaus | 20260916_093521.jpg | recadrée à droite pour retirer les passants |
-| `vitrahaus-detail-*` | VitraHaus (détail des pignons) | 20260916_093521.jpg | recadrage 1000,0 → 3000,1300 |
-| `slide-tower-*` | Vitra Slide Tower | 20260916_100053.jpg | aucun recadrage |
-| `dome-*` | Dome | 20260916_113210.jpg | aucun recadrage |
-| `dome-detail-*` | Dome (détail de la trame) | 20260916_113210.jpg | recadrage 900,543 → 2000,1553 |
+| Fichiers publiés | Bâtiment | Source |
+|---|---|---|
+| `design-museum-*` | Vitra Design Museum (premier écran) | photo de visite 20260916_120451.jpg |
+| `vitrahaus-jour-*` | VitraHaus | photo de visite 20260916_093521.jpg |
+| `dome-jour-*` | Dome | photo de visite 20260916_113210.jpg |
+| `design-museum-jour-*` | Vitra Design Museum | photo de visite 20260916_120451.jpg |
+| `slide-tower-jour-*` | Vitra Slide Tower | photo de visite 20260916_100053.jpg |
+| `*-nuit-*` | les quatre bâtiments | visualisations de nuit fournies par l'équipe, réalisées à partir des photos de jour |
 
-- **Crédit affiché** : « Équipe Vitra Lightscape ». **À compléter** avec le nom de chaque auteur dans `src/data/photos.ts`.
-- **Droits** : conservés par leurs auteurs (l'équipe). Aucune licence de réutilisation n'a été accordée à des tiers.
-- **Personnes** : les passants visibles sur la photo de la VitraHaus ont été retirés par recadrage. Quelques silhouettes lointaines, non identifiables, subsistent sur les photos du Design Museum et du Dome.
+- Les photos de jour ont été prises par l'équipe le 16 septembre 2026. Leurs métadonnées ont été retirées des fichiers publiés.
+- Les **vues de nuit sont des visualisations de projet**, pas des photographies. Le site les signale par le badge « Visualisation » et par une mention dans la section Bâtiments et dans le pied de page.
+- Les **tracés lumineux (mapping)** sont dessinés en SVG par-dessus les images. Ce sont des intentions de scénographie.
+- Droits : conservés par l'équipe.
 
 ## Informations sur les bâtiments
 
 Fiches officielles Vitra, consultées le 30 septembre 2026 :
 
-- **VitraHaus** — Herzog & de Meuron, 2010 (12 maisons empilées) : https://www.vitra.com/fr-fr/campus/architecture/architecture-vitrahaus
-- **Vitra Slide Tower** — Carsten Höller (artiste), 2014, 30,7 m : https://www.vitra.com/en-un/campus/architecture/architecture-vitra-slide-tower
-- **Vitra Design Museum** — Frank Gehry, 1989 : https://www.vitra.com/en-un/campus/architecture/architecture-vitra-design-museum
-- **Dome** — R. Buckminster Fuller, fabriqué en 1975 avec Thomas C. Howard, installé sur le Campus en 2000 : https://www.vitra.com/en-un/campus/architecture/architecture-dome
+- VitraHaus : Herzog & de Meuron, 2010. https://www.vitra.com/fr-fr/campus/architecture/architecture-vitrahaus
+- Dome : R. Buckminster Fuller avec Thomas C. Howard, 1975, sur le Campus depuis 2000. https://www.vitra.com/en-un/campus/architecture/architecture-dome
+- Vitra Design Museum : Frank Gehry, 1989. https://www.vitra.com/en-un/campus/architecture/architecture-vitra-design-museum
+- Vitra Slide Tower : Carsten Höller, 2014, 30,7 m, toboggan de 38 m. https://www.vitra.com/en-un/campus/architecture/architecture-vitra-slide-tower
+- Caserne de pompiers : Zaha Hadid, 1993. Station envisagée sur le plan, sans photo. https://www.vitra.com/en-un/campus/architecture/architecture-fire-station
 
-## Autres ressources
+## Données provisoires
 
-- Logo Vitra Lightscape : SVG original de l'équipe, inchangé.
-- Polices : Instrument Sans, Instrument Serif, IBM Plex Mono, sous SIL Open Font License. Elles sont limitées aux caractères latins et au format WOFF.
-- Les lignes lumineuses de l'aperçu sont des **simulations graphiques** tracées sur la photo. Elles ne représentent pas une installation existante.
+Les dates, horaires et tarifs de `src/data/billetterie.ts` sont des **propositions** pour l'appel d'offres. Le site les signale comme provisoires.
+
+## Police
+
+Inter, de Rasmus Andersson, sous SIL Open Font License : `src/assets/fonts/Inter-OFL.txt`.

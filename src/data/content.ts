@@ -1,74 +1,84 @@
 /**
- * Textes du site et informations pratiques.
- * Modifiez ce fichier pour mettre à jour le contenu sans toucher aux composants.
+ * Textes du site. Modifiez ce fichier pour changer les contenus
+ * sans toucher aux composants.
  */
 
 export const nav = [
-  { href: '#concept', label: 'Concept' },
-  { href: '#batiments', label: 'Bâtiments' },
-  { href: '#experience', label: 'Aperçu' },
-  { href: '#infos', label: 'Infos pratiques' },
+  { href: '#experience', label: 'L’expérience' },
+  { href: '#stations', label: 'Les bâtiments' },
+  { href: '#parcours', label: 'Le parcours' },
+  { href: '#billetterie', label: 'Billetterie' },
+  { href: '#infos', label: 'Infos' },
 ];
 
 export const hero = {
-  kicker: 'Vitra Campus — Weil am Rhein',
-  titleStart: 'Vitra, sous une',
-  titleAccent: 'autre lumière.',
-  lead: 'Une invitation à découvrir les lignes, les matières et l’architecture du Campus autrement.',
-  cta: 'Découvrir l’expérience',
+  meta: ['Vitra Campus, Weil am Rhein', 'Un parcours lumière, en soirée'],
+  title: 'Vitra, sous une autre lumière.',
+  lead: 'Quand la nuit tombe, la lumière révèle ce que les architectes ont voulu dire. Un parcours nocturne à travers le Vitra Campus, ponctué de mappings projetés sur ses bâtiments.',
+  primary: 'Réserver',
+  secondary: 'Suivre la lumière',
+  caption: 'Vitra Design Museum, Frank Gehry, 1989. Photo de visite de l’équipe.',
 };
 
-export const concept = {
-  label: 'Le concept',
-  statement:
-    'Vitra Lightscape imagine une expérience où la lumière devient une porte d’entrée vers l’architecture.',
-  follow: 'Elle attire le regard sur les formes du Campus et invite à découvrir ce qu’elles racontent.',
-  audienceTitle: 'Pour qui',
-  audience:
-    'Pour celles et ceux qui ne connaissent pas forcément le design ou l’architecture, et cherchent une sortie culturelle à partager.',
-};
-
-export const catalogue = {
-  label: 'Points de découverte',
-  title: 'Quatre bâtiments à regarder autrement',
-  intro:
-    'Des repères pour parcourir le Campus et reconnaître ses architectures. Le périmètre de l’installation lumineuse n’est pas encore défini.',
-};
-
-export const apercu = {
-  label: 'Aperçu',
-  title: 'Suivre une ligne, et voir le bâtiment autrement.',
-  steps: [
-    { key: 'jour', title: 'Le jour', text: 'La façade telle qu’on la découvre en visite.' },
-    { key: 'ombre', title: 'L’ombre', text: 'Les détails s’effacent, les volumes restent.' },
-    { key: 'ligne', title: 'La ligne', text: 'Une lumière suit les pignons ; le regard la suit.' },
+export const experience = {
+  label: 'L’expérience',
+  statement: 'Une soirée pour voir le Campus comme ses architectes l’ont pensé.',
+  items: [
+    {
+      n: '01',
+      title: 'Des mappings sur les façades',
+      text: 'Projetée sur les bâtiments, la lumière souligne leurs lignes, leurs volumes et leurs matières, et traduit en images l’intention de chaque architecte.',
+    },
+    {
+      n: '02',
+      title: 'Un chemin lumineux',
+      text: 'Un tracé de lumière relie les bâtiments et guide la visite, de station en station, sans plan à consulter.',
+    },
+    {
+      n: '03',
+      title: 'Le Campus, une seconde fois',
+      text: 'En complément de la visite de jour : on revient le soir pour découvrir les mêmes lieux autrement, seul, entre amis ou en famille.',
+    },
   ],
-  disclaimer:
-    'Simulation graphique superposée à une photographie de visite de la VitraHaus. Il s’agit d’une intention de scénographie, pas d’une installation existante.',
+};
+
+export const dusk = {
+  from: 18 * 60, // 18:00
+  to: 21 * 60 + 30, // 21:30
+  line: 'La nuit tombe sur le Campus.',
+  sub: 'Continuez à faire défiler : la lumière prend le relais.',
+};
+
+export const stationsIntro = {
+  label: 'Les bâtiments',
+  title: 'Quatre stations, quatre intentions.',
+  text: 'À chaque station, le bâtiment passe du jour à la nuit, puis la lumière dessine ce que l’architecte a voulu exprimer.',
+  notice:
+    'Les vues de nuit et les tracés lumineux sont des visualisations de projet réalisées à partir de nos photos de visite. Ils ne montrent pas une installation existante.',
+};
+
+export const parcours = {
+  label: 'Le parcours',
+  title: 'Suivez la lumière.',
+  text: 'Un chemin lumineux relie les bâtiments et rythme la visite. On avance à son rythme, de station en station.',
+  notice: 'Tracé schématique. L’ordre et le parcours définitifs restent à concevoir avec le Campus.',
 };
 
 export const infos = {
   label: 'Infos pratiques',
-  status: 'Programme à venir',
-  statusNote:
-    'Aucune réservation n’est ouverte pour le moment. Les informations seront publiées ici dès leur validation.',
   rows: [
-    { term: 'Lieu', value: 'Vitra Campus, Weil am Rhein (Allemagne)', pending: false },
-    { term: 'Dates', value: 'À confirmer', pending: true },
-    { term: 'Horaires', value: 'À venir', pending: true },
-    { term: 'Tarifs', value: 'À confirmer', pending: true },
-    { term: 'Accès et accessibilité', value: 'À préciser', pending: true },
+    {
+      term: 'Lieu',
+      value: 'Vitra Campus\nCharles-Eames-Straße 2\n79576 Weil am Rhein, Allemagne',
+    },
+    { term: 'Horaires', value: 'En soirée, entrées échelonnées\n(calendrier provisoire)' },
+    { term: 'Durée', value: 'À préciser' },
+    { term: 'Accessibilité', value: 'À préciser avec le Campus' },
   ],
-  visit: {
-    text: 'Le Campus se visite déjà : horaires et accès actuels sur le site officiel.',
-    href: 'https://www.vitra.com/fr-fr/campus',
-    label: 'Visiter le Campus — vitra.com',
-  },
+  visit: { label: 'Préparer sa venue sur vitra.com', href: 'https://www.vitra.com/fr-fr/campus' },
 };
 
-export const coda = {
-  line: 'Regarder autrement ce qui était déjà là.',
-  top: 'Revenir au début',
-  mention: 'Projet étudiant — proposition de concept pour le Vitra Campus.',
-  disclaimer: 'BUT MMI. Ce site n’est pas un site officiel de Vitra.',
+export const footer = {
+  mention:
+    'Projet étudiant BUT MMI, proposition pour le Vitra Campus. Site de présentation, non officiel.',
 };

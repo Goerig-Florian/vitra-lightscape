@@ -4,6 +4,7 @@
  * Les dimensions réelles sont réservées (width/height) pour éviter les sauts de mise en page.
  */
 import images from '../data/images.json';
+import { url } from '../lib/url';
 
 interface Props {
   id: string;
@@ -11,26 +12,25 @@ interface Props {
   sizes: string;
   loading?: 'lazy' | 'eager';
   fetchpriority?: 'high' | 'low' | 'auto';
-  position?: string;
   class?: string;
+  imgClass?: string;
 }
 
-const { id, alt, sizes, loading = 'lazy', fetchpriority, position, class: className } = Astro.props;
+const { id, alt, sizes, loading = 'lazy', fetchpriority, class: className, imgClass } = Astro.props;
 const meta = (images as Record<string, { width: number; height: number; widths: number[] }>)[id];
-if (!meta) throw new Error(`Photo inconnue : ${id} — lancez scripts/optimize-images.py`);
+if (!meta) throw new Error(`Photo inconnue : ${id} — lancez npm run images`);
 
-const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const url = (w: number, ext: string) => `${base}images/${id}-${w}.${ext}`;
-const srcset = (ext: string) => meta.widths.map((w) => `${url(w, ext)} ${w}w`).join(', ');
-const fallback = meta.widths.find((w) => w >= 1200) ?? meta.widths[meta.widths.length - 1];
-const style = position ? `object-position: ${position}` : undefined;
+const file = (w: number, ext: string) => url(`images/${id}-${w}.${ext}`);
+const srcset = (ext: string) => meta.widths.map((w) => `${file(w, ext)} ${w}w`).join(', ');
+const fallback = meta.widths.find((w) => w >= 1024) ?? meta.widths[meta.widths.length - 1];
 ---
 
 <picture class={className ? `photo ${className}` : 'photo'}>
   <source type="image/avif" srcset={srcset('avif')} sizes={sizes} />
   <source type="image/webp" srcset={srcset('webp')} sizes={sizes} />
   <img
-    src={url(fallback, 'jpg')}
+    class={imgClass}
+    src={file(fallback, 'jpg')}
     srcset={srcset('jpg')}
     sizes={sizes}
     width={meta.width}
@@ -39,6 +39,5 @@ const style = position ? `object-position: ${position}` : undefined;
     loading={loading}
     decoding="async"
     fetchpriority={fetchpriority}
-    style={style}
   />
 </picture>

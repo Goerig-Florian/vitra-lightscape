@@ -4,5 +4,6 @@ dist/
 .DS_Store
 # originaux lourds (7 Mo chacun), gardés en local
 photos-sources/*.jpg
+photos-sources/*.png
 # aperçu généré, inutile avec GitHub Pages
 apercu-statique/

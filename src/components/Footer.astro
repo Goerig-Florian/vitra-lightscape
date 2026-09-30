@@ -1,0 +1,49 @@
+---
+import Logo from './Logo.astro';
+import { nav, footer } from '../data/content';
+import { stations } from '../data/stations';
+import { url } from '../lib/url';
+
+interface Props {
+  home?: boolean;
+}
+const { home = true } = Astro.props;
+const link = (href: string) => (home ? href : url(href));
+---
+
+<footer class="site-footer" data-theme="day">
+  <div class="container">
+    <div class="site-footer__top">
+      <a href={home ? '#top' : url()} class="site-footer__logo" aria-label="Vitra Lightscape, retour en haut">
+        <Logo label={false} />
+      </a>
+      <nav aria-label="Pied de page">
+        <ul class="site-footer__nav">
+          {nav.map((n) => <li><a href={link(n.href)}>{n.label}</a></li>)}
+          <li><a href={url('panier/')}>Panier</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <section class="credits" aria-labelledby="credits-title">
+      <h2 id="credits-title">Crédits</h2>
+      <ul class="credits__list">
+        {
+          stations.map((s) => (
+            <li>
+              <strong>{s.name}</strong>
+              {s.author}, {s.year}.
+            </li>
+          ))
+        }
+      </ul>
+      <p>
+        Photos de jour : photos de visite de l’équipe, 16 septembre 2026. Vues de nuit et tracés lumineux : visualisations de projet réalisées à
+        partir de ces photos, pas des photographies d’une installation existante. Informations sur les bâtiments : fiches architecture de
+        vitra.com. Caractère : Inter (SIL Open Font License).
+      </p>
+    </section>
+
+    <p class="site-footer__mention">{footer.mention}</p>
+  </div>
+</footer>
