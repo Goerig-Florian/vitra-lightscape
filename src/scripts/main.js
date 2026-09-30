@@ -115,6 +115,7 @@
     toggleBtn.addEventListener('click', function () {
       if (video.paused || video.ended) {
         if (video.ended) video.currentTime = 0;
+        video.muted = true;
         video.play().catch(function () {});
       } else {
         video.pause();
@@ -131,6 +132,7 @@
       setPaused(true);
       showNight();
     } else {
+      video.muted = true; // nécessaire à la lecture automatique sur mobile
       var p = video.play();
       if (p && p.catch) p.catch(function () { setPaused(true); });
     }
