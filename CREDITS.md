@@ -18,19 +18,13 @@
 - **Mode de mise en lumière** (façade, intérieur, interactif) : **proposition de l'équipe**, à affiner dans `src/data/batiments.ts`.
 - **Ordre du parcours** : proposition de l'équipe (voir README.md, « Le parcours : ordre et sources »).
 
-## Plan du parcours
+## Carte du parcours
 
-- **Fond de plan, emprises des bâtiments, allées, parking et positions** : données © contributeurs OpenStreetMap, sous licence Open Database License (ODbL), https://www.openstreetmap.org/copyright. Extraites avec l'API Overpass le 30 septembre 2026 par `scripts/make-plan.py`. `src/data/plan.json` est une base dérivée de ces données : elle reste sous ODbL.
-- **Barragán Gallery** : placée dans le bâtiment OSM du Vitra Schaudepot, qui l'abrite (vitra.com).
-- **Positions approchées** : cinq œuvres absentes d'OpenStreetMap sont placées d'après leur description sur vitra.com, consultée le 30 septembre 2026.
-  - Ring et Ruisseau.
-  - Water Garden : voir aussi Wallpaper*, « Bas Smets' Water Garden ».
-  - Place Jean Prouvé.
-  - Vitra Designweg.
-  - Torre Numero Due.
-
-  Le README détaille la règle suivie pour chacune. Le site les signale par un repère en pointillé.
-- L'attribution OpenStreetMap figure sous le plan et dans les crédits du pied de page.
+- **Fond de carte** (`public/campus-map.svg`, original dans `scripts/source/vitra-campus-map.svg`) : carte interactive du Vitra Campus, https://www.vitra.com/fr-fr/campus, fournie par l'équipe le 30 septembre 2026. Seul le calque de dessin est conservé. **Les droits appartiennent à Vitra : à faire confirmer avant tout usage au-delà de la maquette.**
+- **Trajet** : calculé d'après les données © contributeurs OpenStreetMap, sous licence Open Database License (ODbL), https://www.openstreetmap.org/copyright. Extraites avec l'API Overpass le 30 septembre 2026 par `scripts/make-plan.py`. `scripts/data/osm-route.json` est une base dérivée de ces données : elle reste sous ODbL. `src/data/carte.json` en reprend le trajet, transposé dans le repère de la carte Vitra.
+- **Positions** : les bâtiments sont repérés sur la carte Vitra par l'équipe, avec une transformation ajustée sur 13 bâtiments sûrs (voir README.md). Quatre étapes sont **approchées** faute d'élément sur la carte : Ring et Ruisseau, Water Garden, Place Jean Prouvé, Álvaro-Siza-Promenade. Leur emplacement suit les descriptions de vitra.com, consultée le 30 septembre 2026. Le site les signale par un repère en pointillé.
+- **Barragán Gallery** : placée dans le volume du Vitra Schaudepot, qui l'abrite (vitra.com).
+- L'attribution OpenStreetMap figure sous la carte et dans les crédits du pied de page.
 
 ## Données provisoires
 

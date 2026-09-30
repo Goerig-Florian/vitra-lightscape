@@ -1,5 +1,5 @@
 """
-Fabrique le plan du parcours (src/data/plan.json) à partir d'OpenStreetMap.
+Calcule le trajet du parcours (scripts/data/osm-route.json) à partir d'OpenStreetMap.
 
 Usage :  python3 scripts/make-plan.py            (interroge l'API Overpass)
          python3 scripts/make-plan.py osm.json   (réutilise un export déjà téléchargé)
@@ -23,7 +23,7 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "src" / "data" / "plan.json"
+OUT = ROOT / "scripts" / "data" / "osm-route.json"
 
 # Cadre du plan (sud, nord, ouest, est)
 S, N, W, E = 47.5982, 47.6036, 7.6128, 7.6210

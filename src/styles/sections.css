@@ -883,59 +883,28 @@
   stroke-linejoin: round;
 }
 
-.plan__green {
-  fill: rgba(140, 170, 130, 0.07);
-}
-
-.plan__road {
-  stroke: rgba(255, 255, 255, 0.07);
-  stroke-width: 7;
-}
-
-.plan__walk {
-  stroke: rgba(255, 255, 255, 0.13);
-  stroke-width: 0.8;
-}
-
-.plan__walk--main {
-  stroke: rgba(255, 255, 255, 0.22);
-  stroke-width: 1.1;
-}
-
-.plan__parking {
-  fill: rgba(255, 255, 255, 0.03);
-  stroke: rgba(255, 255, 255, 0.28);
-  stroke-width: 0.8;
-  stroke-dasharray: 3 3;
+.plan__map {
+  /* carte de vitra.com (dessin sombre sur fond blanc) → traits clairs sur la nuit */
+  filter: invert(1);
+  mix-blend-mode: screen;
+  opacity: 0.5;
 }
 
 .plan__bldg {
-  fill: #151a2c;
-  stroke: rgba(255, 255, 255, 0.12);
+  fill: rgba(255, 180, 76, 0);
+  stroke: rgba(255, 196, 120, 0);
   stroke-width: 0.6;
-}
-
-.plan__bldg--campus {
-  fill: #1c2238;
-  stroke: rgba(255, 180, 76, 0.32);
-  stroke-width: 0.8;
   transition: fill 0.6s, stroke 0.6s;
 }
 
-.plan__bldg--campus.is-lit {
-  fill: #2a2632;
-  stroke: rgba(255, 196, 120, 0.7);
+.plan__bldg.is-lit {
+  fill: rgba(255, 180, 76, 0.22);
+  stroke: rgba(255, 196, 120, 0.75);
 }
 
-.plan__bldg--campus.is-active {
-  fill: #3a3036;
+.plan__bldg.is-active {
+  fill: rgba(255, 214, 150, 0.5);
   stroke: var(--light);
-}
-
-.plan__street {
-  fill: rgba(176, 174, 187, 0.75);
-  font-size: 9px;
-  letter-spacing: 0.04em;
 }
 
 /* Chemin lumineux */
@@ -995,22 +964,6 @@
   fill: var(--night-text);
   stroke: #0d1120;
   stroke-width: 1.5;
-}
-
-.plan__north path {
-  fill: var(--night-muted);
-}
-
-.plan__north text,
-.plan__scale text {
-  fill: var(--night-muted);
-  font-size: 9px;
-}
-
-.plan__scale path {
-  stroke: var(--night-muted);
-  stroke-width: 1;
-  stroke-linecap: butt;
 }
 
 /* Étapes */
@@ -1102,7 +1055,7 @@
   .stop,
   .stop__halo,
   .stop__dot,
-  .plan__bldg--campus {
+  .plan__bldg {
     transition: none;
   }
 }
@@ -1137,9 +1090,8 @@
     font-size: 11px;
   }
 
-  .plan__street,
   .plan__marks .plan__tag {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .plan__park text {

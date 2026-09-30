@@ -31,7 +31,7 @@ npm run dev      # http://localhost:4321
    - Boutons pause et revoir.
 2. **L'expérience** (sable → pêche → corail) : les trois modes de mise en lumière (façade, intérieur, interactif) et le chemin lumineux.
 3. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
-4. **Le parcours** (nuit) : plan du Campus d'après OpenStreetMap. À l'entrée dans la section, le chemin lumineux s'allume d'étape en étape, avec le numéro et le nom du bâtiment en cours. L'index des 31 bâtiments et œuvres suit l'ordre de la visite et se filtre par mode. Survoler un bâtiment allume son repère sur le plan.
+4. **Le parcours** (nuit) : carte du Campus de vitra.com. À l'entrée dans la section, le chemin lumineux s'allume d'étape en étape, avec le numéro et le nom du bâtiment en cours. L'index des 31 bâtiments et œuvres suit l'ordre de la visite et se filtre par mode. Survoler un bâtiment allume son repère et son volume sur la carte.
 5. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
 6. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
 
@@ -51,27 +51,20 @@ Une boucle d'environ **2,2 km** à pied, qui part du parking visiteurs et y revi
 
 Cette boucle évite les allers-retours. On ne repasse jamais par le même tronçon, sauf les quelques mètres de la sortie du parking et de courts crochets vers des œuvres situées en bord d'allée.
 
-**Comment le plan est fabriqué.** `scripts/make-plan.py` interroge OpenStreetMap (API Overpass) et écrit `src/data/plan.json`. Le fichier contient les emprises des bâtiments, les allées, les rues, le parking, la position de chaque étape et le tracé.
+**La carte.** Le fond est le SVG de la carte interactive de vitra.com : une vue axonométrique, sans nord ni échelle, donc sans coordonnées géographiques. `scripts/make-map.py` en garde le calque de dessin (`public/campus-map.svg`) et fabrique `src/data/carte.json`.
 
-- Le tracé suit le plus court chemin à pied sur les allées et voies OSM entre deux étapes consécutives.
-- Quand deux allées proches ne sont pas reliées dans OSM (parvis, pelouses), le script les raccorde, sans jamais traverser un bâtiment.
+- **Ancrage.** Le trajet calculé sur OpenStreetMap (`scripts/make-plan.py` → `scripts/data/osm-route.json`) est transposé dans le repère du SVG par une transformation affine. Elle est ajustée sur 13 bâtiments reconnus à coup sûr dans les deux sources (VitraHaus, Dôme, les quatre halles, Design Museum, Tane, Diogene, Umbrella House, Tour-Toboggan, caserne). Les écarts sont affichés à chaque exécution : 1 à 2 unités pour la plupart, 10 au plus sur 549 de large.
+- **Bâtiments.** Chaque étape est posée sur la zone correspondante de la carte Vitra. Ces zones, cliquables chez Vitra, servent ici à allumer le bâtiment quand le chemin y arrive, ou au survol.
+- **Trajet.** Il suit l'ordre ci-dessus. Il est décalé vers le bas de 7 unités pour retomber au niveau du sol plutôt qu'au centre des toits.
+- **Sans élément sur la carte Vitra.** Ring et Ruisseau, Water Garden, Place Jean Prouvé et Álvaro-Siza-Promenade n'ont pas de zone sur la carte. Leur repère est **approché** : en pointillé, avec la mention « position approchée ». La Barragán Gallery est dans le Vitra Schaudepot. Elle partage donc son volume, avec un repère décalé.
+- **Identification.** Les zones sûres (nommées dans le SVG ou confirmées par l'ajustement) : VitraHaus, Dôme, Umbrella House, Tane House, Diogene, Schaudepot, Tour-Toboggan, caserne, Designweg. Plus probables qu'attestées : Khudi Bari, Blockhaus, Station-service, Airstream Kiosk, Arrêt de bus, Campus Gallery, Doshi Retreat, Balancing Tools, Torre Numero Due. **À valider.**
 
-Pour mettre à jour le plan :
+Pour mettre à jour le trajet ou la carte :
 
 ```bash
-npm run plan                                   # Python 3, sans dépendance
-python3 scripts/make-plan.py export-osm.json   # ou à partir d'un export déjà téléchargé
+npm run plan     # trajet d'après OpenStreetMap (Python 3, sans dépendance)
+npm run carte    # carte et positions dans le repère du SVG Vitra
 ```
-
-**Positions.** 26 étapes sont placées sur des objets OSM identifiés : bâtiment, œuvre ou allée, référencés dans le script. Parmi elles, la **Barragán Gallery** est installée dans le Vitra Schaudepot (vitra.com). Elle partage donc son bâtiment, avec un repère décalé pour rester lisible.
-
-Cinq œuvres n'existent pas dans OSM. Leur position est **approchée** d'après la description de vitra.com, et signalée par un repère en pointillé et la mention « position approchée » :
-
-- **Ring et Ruisseau** : « dans le pré devant la VitraHaus ». Placé entre la VitraHaus et le Dôme.
-- **Water Garden** : « devant le Vitra Design Museum ». Placé à l'entrée principale du musée.
-- **Place Jean Prouvé** : place entre la caserne de pompiers et le Schaudepot. Placée à mi-chemin.
-- **Vitra Designweg** : chemin qui longe la Müllheimer Straße depuis le tram 8 jusqu'à l'entrée sud du Campus. Placé à son arrivée, au départ de l'Álvaro-Siza-Promenade.
-- **Torre Numero Due** : sur l'Álvaro-Siza-Promenade, devant un mur de la caserne. Placée sur la promenade, au plus près de la caserne.
 
 ## Modifier le contenu
 
@@ -79,11 +72,11 @@ Cinq œuvres n'existent pas dans OSM. Leur position est **approchée** d'après 
 |---|---|
 | Textes | `src/data/content.ts` |
 | Les 31 bâtiments, dans l'ordre du parcours, et leur mode de mise en lumière (**proposition**) | `src/data/batiments.ts` |
-| Plan, positions et tracé du parcours (généré) | `scripts/make-plan.py` → `src/data/plan.json` |
+| Carte, positions et tracé du parcours (généré) | `scripts/make-plan.py` → `scripts/data/osm-route.json` → `scripts/make-map.py` → `src/data/carte.json` |
 | Dates, horaires, tarifs (**provisoires**) | `src/data/billetterie.ts` |
 | Couleurs, typographie, espacements | `src/styles/tokens.css` |
 
-Pour changer l'ordre du parcours, modifiez la liste `STOPS` de `scripts/make-plan.py` **et** l'ordre de `src/data/batiments.ts`, puis relancez `npm run plan`. La compilation échoue si un bâtiment n'a pas de position.
+Pour changer l'ordre du parcours, modifiez la liste `STOPS` de `scripts/make-plan.py` **et** l'ordre de `src/data/batiments.ts`, puis relancez `npm run plan` et `npm run carte`. Les zones et décalages de repères sont dans `CARTE` de `scripts/make-map.py`. La compilation échoue si un bâtiment n'a pas de position.
 
 **Vidéo.** Déposez les originaux dans `photos-sources/` (non versionnés), puis lancez `python3 scripts/make-video.py` (Pillow, NumPy et ffmpeg).
 
@@ -93,13 +86,17 @@ Pour changer l'ordre du parcours, modifiez la liste `STOPS` de `scripts/make-pla
 .github/workflows/deploy.yml   publication GitHub Pages
 public/video/                  vidéo jour → nuit du musée (WebM, MP4) et affiches
 scripts/make-video.py          fabrication de la vidéo
-scripts/make-plan.py           fabrication du plan du parcours (OpenStreetMap)
+scripts/make-plan.py           trajet du parcours (OpenStreetMap)
+scripts/make-map.py            carte et positions dans le repère du SVG Vitra
+scripts/source/                SVG d'origine de la carte de vitra.com
+scripts/data/osm-route.json    trajet intermédiaire
+public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/                Inter (SIL Open Font License), auto-hébergée
   components/                  Header, Hero, Experience, Dusk, Parcours,
                                Billetterie, Infos, Footer, CartDrawer, Logo
-  data/                        contenus, bâtiments, plan.json, billetterie
+  data/                        contenus, bâtiments, carte.json, billetterie
   layouts/Base.astro
   pages/index.astro, pages/panier.astro
   scripts/main.js              vidéo, coucher de soleil, parcours, navigation
@@ -110,6 +107,7 @@ src/
 ## Historique
 
 - La section « Premières visualisations » (quatre vues de nuit) a été retirée, ainsi que ses images (`public/images/`) et leur script. L'image de partage (`og:image`) est désormais `public/video/musee-affiche-nuit.jpg`.
+- Le fond du plan, d'abord dessiné d'après OpenStreetMap, est désormais la carte du Campus de vitra.com.
 - Le détourage néon autour du musée, dans le premier écran, a été retiré. Seule reste une vague de lumière douce.
 
 ## Accessibilité

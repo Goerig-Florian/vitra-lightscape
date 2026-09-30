@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "plan": "python3 scripts/make-plan.py"
+    "plan": "python3 scripts/make-plan.py",
+    "carte": "python3 scripts/make-map.py"
   },
   "dependencies": {
     "astro": "^5.13.0"

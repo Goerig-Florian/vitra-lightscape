@@ -40,8 +40,9 @@ export const parcours = {
   title: 'Tout le Campus, sous une autre lumière.',
   text: 'Du parking visiteurs à la VitraHaus, puis des musées aux halles de production, et retour par l’Álvaro-Siza-Promenade et le jardin Oudolf : trente et une architectures et œuvres, reliées par un chemin lumineux.',
   notice: 'L’ordre du parcours et le mode de mise en lumière de chaque bâtiment sont des propositions, à affiner avec le Campus.',
-  approx: 'Repère en pointillé : œuvre absente d’OpenStreetMap, placée d’après la description de vitra.com.',
+  approx: 'Repère en pointillé : position approchée, sans élément correspondant sur la carte de vitra.com.',
   source: { label: 'Liste des bâtiments : vitra.com', href: 'https://www.vitra.com/fr-fr/campus/architecture' },
+  carte: { label: 'Carte du Campus : vitra.com', href: 'https://www.vitra.com/fr-fr/campus' },
   osm: { label: '© contributeurs OpenStreetMap', href: 'https://www.openstreetmap.org/copyright' },
 };
 
