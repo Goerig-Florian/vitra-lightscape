@@ -767,25 +767,23 @@
 }
 
 @media (min-width: 1024px) {
+  /* carte et fiche ont la même hauteur (celle de la carte) : tout tient à l'écran, sans défiler pour les boutons */
   .parcours__layout {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: stretch;
   }
 
-  .parcours__map,
-  .fiche {
-    position: sticky;
-    top: calc(var(--header) + 24px);
+  .parcours__map {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
   }
 
   /* la carte et la fiche tiennent dans l'écran : la colonne collante ne dépasse pas la fenêtre */
   .plan__frame {
-    width: min(100%, calc((100vh - var(--header) - 300px) * 1.4899));
+    width: min(100%, calc((100vh - var(--header) - 190px) * 1.4899));
   }
 
-  .fiche__photo {
-    aspect-ratio: auto;
-    height: clamp(170px, 30vh, 340px);
-  }
 }
 
 /* Plan du Campus (OpenStreetMap) : fond nuit, traits fins, lumière ambrée */
@@ -1316,19 +1314,24 @@
 
 /* Fiche du bâtiment */
 .fiche {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   background: var(--night-2);
   border: 1px solid var(--night-line);
 }
 
 .fiche__photo {
   position: relative;
+  margin: 0;
+  flex: none;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #0d1120;
 }
 
 .fiche__photo img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1350,7 +1353,7 @@
 }
 
 .fiche__body {
-  padding: 1.25rem 1.25rem 1rem;
+  padding: 1rem 1.25rem 0.5rem;
 }
 
 .fiche__n {
@@ -1375,8 +1378,13 @@
 
 .fiche__modes {
   display: grid;
-  gap: 0.9rem;
-  margin-top: 1.1rem;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+/* deux modes : pastilles des deux, texte du premier seulement */
+.fiche__mode:not(:first-child) > p:last-child {
+  display: none;
 }
 
 .fiche__mode {
@@ -1411,32 +1419,33 @@
 }
 
 .fiche__nav {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--night-line);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 0.75rem;
+  pointer-events: none;
 }
 
 .fiche__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 48px;
-  background: none;
-  border: 0;
-  color: var(--night-text);
-  font: inherit;
-  font-size: 0.9375rem;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: rgba(11, 14, 26, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  color: #fff;
   cursor: pointer;
-  transition: background-color 0.2s;
+  pointer-events: auto;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
 .fiche__btn:hover {
-  background: rgba(255, 180, 76, 0.08);
-}
-
-.fiche__btn + .fiche__btn {
-  border-left: 1px solid var(--night-line);
+  background: rgba(11, 14, 26, 0.92);
+  border-color: #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2328,4 +2337,32 @@
 
 .plan.is-lite2 .plan__path-glow {
   display: none;
+}
+
+/* Légende et mentions sous la carte et la fiche */
+.parcours__notes {
+  margin-top: 1.5rem;
+}
+
+.parcours__notes .plan__legend {
+  margin-top: 0;
+}
+
+.parcours__notes .caption {
+  margin-top: 1rem;
+  max-width: 100ch;
+  color: var(--night-muted);
+}
+
+.parcours__notes .caption a {
+  color: var(--night-text);
+}
+
+/* Écran large : la photo prend la hauteur restante, pour que carte et fiche aient la même hauteur */
+@media (min-width: 1024px) {
+  .fiche__photo {
+    aspect-ratio: auto;
+    flex: 1 1 0;
+    min-height: 170px;
+  }
 }

@@ -290,20 +290,6 @@ const mapped = stops.filter((st) => mapping[st.id]);
           </button>
         </div>
 
-        <ul class="plan__legend" aria-label="Légende de la carte">
-          <li><span class="legend__path" aria-hidden="true"></span>Chemin lumineux</li>
-          <li><span class="legend__mapping" aria-hidden="true"></span>Light mapping</li>
-          <li><span class="mode-mark mode-mark--facade" aria-hidden="true"></span>Façade</li>
-          <li><span class="mode-mark mode-mark--interieur" aria-hidden="true"></span>Intérieur</li>
-          <li><span class="mode-mark mode-mark--interactif" aria-hidden="true"></span>Interactif</li>
-          <li><span class="legend__approx" aria-hidden="true"></span>Repère décalé</li>
-        </ul>
-
-        <figcaption class="caption" id="plan-caption">
-          {parcours.notice}
-          <a href={parcours.carte.href} rel="noopener">{parcours.carte.label}<span class="sr-only"> (site externe)</span></a>. Trajet calculé
-          d’après <a href={parcours.osm.href} rel="noopener">{parcours.osm.label}<span class="sr-only"> (site externe)</span></a>, licence ODbL.
-        </figcaption>
       </figure>
 
       <article class="fiche" data-fiche aria-label="Fiche du bâtiment">
@@ -317,6 +303,14 @@ const mapped = stops.filter((st) => mapping[st.id]);
             decoding="async"
           />
           <figcaption>{parcours.photoCredit}</figcaption>
+          <div class="fiche__nav">
+            <button type="button" class="fiche__btn" data-fiche-prev aria-label="Étape précédente">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" fill="none" /></svg>
+            </button>
+            <button type="button" class="fiche__btn" data-fiche-next aria-label="Étape suivante">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" /></svg>
+            </button>
+          </div>
         </figure>
         <div class="fiche__body" aria-live="polite">
           <p class="fiche__n"><span data-fiche-n>{num(0)}</span> / {batiments.length}</p>
@@ -335,20 +329,26 @@ const mapped = stops.filter((st) => mapping[st.id]);
               ))
             }
           </div>
-          <p class="fiche__hint">Mode de mise en lumière : proposition, à affiner avec le Campus.</p>
           <a class="fiche__link" data-fiche-link href={first.fiche.href} rel="noopener">Voir sur vitra.com<span class="sr-only"> (site externe)</span></a>
         </div>
-        <div class="fiche__nav">
-          <button type="button" class="fiche__btn" data-fiche-prev aria-label="Étape précédente">
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" fill="none" /></svg>
-            Précédent
-          </button>
-          <button type="button" class="fiche__btn" data-fiche-next aria-label="Étape suivante">
-            Suivant
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" fill="none" /></svg>
-          </button>
-        </div>
       </article>
+    </div>
+
+    <div class="parcours__notes">
+    <ul class="plan__legend" aria-label="Légende de la carte">
+      <li><span class="legend__path" aria-hidden="true"></span>Chemin lumineux</li>
+      <li><span class="legend__mapping" aria-hidden="true"></span>Light mapping</li>
+      <li><span class="mode-mark mode-mark--facade" aria-hidden="true"></span>Façade</li>
+      <li><span class="mode-mark mode-mark--interieur" aria-hidden="true"></span>Intérieur</li>
+      <li><span class="mode-mark mode-mark--interactif" aria-hidden="true"></span>Interactif</li>
+      <li><span class="legend__approx" aria-hidden="true"></span>Repère décalé</li>
+    </ul>
+
+    <p class="caption" id="plan-caption">
+      {parcours.notice}
+      <a href={parcours.carte.href} rel="noopener">{parcours.carte.label}<span class="sr-only"> (site externe)</span></a>. Trajet calculé
+      d’après <a href={parcours.osm.href} rel="noopener">{parcours.osm.label}<span class="sr-only"> (site externe)</span></a>, licence ODbL.
+    </p>
     </div>
 
     <details class="steps">
