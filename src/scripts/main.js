@@ -208,9 +208,8 @@
     var fTime = fiche.querySelector('[data-fiche-time]');
     var fTimeLabel = fiche.querySelector('[data-fiche-time-label]');
     var fCredit = fiche.querySelector('[data-fiche-credit]');
-    var nightOn = false; // la personne a choisi « de nuit » : reste actif d'une étape à l'autre
+    var nightOn = false; // vrai seulement après un clic sur « Voir de nuit », pour l'étape affichée
     var selected = 0;
-    var picked = false; // vrai dès que la personne choisit elle-même une étape
     var pauseAnim = function () {};
     var seek = function () {}; // amène le chemin à l'étape choisie (défini avec l'animation)
 
@@ -311,6 +310,7 @@
     // Fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière
     var select = function (i) {
       var d = data[i];
+      nightOn = false; // chaque fiche s'ouvre de jour : la nuit ne se lance qu'au clic sur le bouton
       stops[selected].classList.remove('is-selected');
       items[selected].classList.remove('is-selected');
       selected = i;
@@ -329,9 +329,8 @@
       fillBody(i);
     };
 
-    // Choix de la personne : la fiche ne suit plus l'animation
+    // Choix de la personne : met l'animation en pause et ouvre la fiche
     var pick = function (i) {
-      picked = true;
       pauseAnim();
       select(i);
       seek(i);
@@ -355,7 +354,6 @@
       stops[i].classList.add('is-current');
       current = i;
       show(i);
-      if (!picked) select(i);
     };
 
     var activate = function (i, on) {
@@ -565,7 +563,6 @@
         } else {
           cancelAnimationFrame(seekId);
           if (ctrl.dataset.state === 'done') reset();
-          picked = false; // la fiche suit de nouveau le chemin
           play();
         }
       });
