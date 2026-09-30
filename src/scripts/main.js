@@ -299,10 +299,11 @@
       nightOn = !nightOn;
       if (!reduceMotion) {
         fiche.classList.remove('is-turning');
+        fiche.classList.toggle('is-to-night', nightOn);
         void fiche.offsetWidth; // relance l'animation du crépuscule
         fiche.classList.add('is-turning');
         clearTimeout(fTime._t);
-        fTime._t = setTimeout(function () { fiche.classList.remove('is-turning'); }, 3000);
+        fTime._t = setTimeout(function () { fiche.classList.remove('is-turning'); }, 1400);
       }
       applyTime(selected);
     });
