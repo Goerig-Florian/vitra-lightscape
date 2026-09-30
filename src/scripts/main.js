@@ -206,6 +206,7 @@
     var selected = 0;
     var picked = false; // vrai dès que la personne choisit elle-même une étape
     var pauseAnim = function () {};
+    var seek = function () {}; // amène le chemin à l'étape choisie (défini avec l'animation)
 
     var extras = function (i) {
       var id = stops[i].dataset.id;
@@ -265,6 +266,7 @@
       picked = true;
       pauseAnim();
       select(i);
+      seek(i);
     };
 
     // Précédent / suivant, en sautant les étapes masquées par le filtre
@@ -403,7 +405,51 @@
       setState('paused');
       ctrlLabel.textContent = 'Lancer le parcours';
 
+      // Le chemin avance ou recule jusqu'à l'étape choisie, en allumant ou éteignant les étapes au passage
+      var seekId = null;
+      var sync = function () {
+        var top = -1;
+        stops.forEach(function (st, j) {
+          var on = ats[j] <= p + 0.0005;
+          if (on !== st.classList.contains('is-lit')) {
+            st.classList.toggle('is-lit', on);
+            extras(j).forEach(function (el) { el.classList.toggle('is-lit', on); });
+          }
+          if (on) top = j;
+        });
+        if (top !== current) {
+          if (stops[current]) stops[current].classList.remove('is-current');
+          if (stops[top]) stops[top].classList.add('is-current');
+          current = top;
+        }
+      };
+      seek = function (i) {
+        cancelAnimationFrame(seekId);
+        var from = p, to = ats[i];
+        var dur = Math.min(1600, Math.max(500, Math.abs(to - from) * TRAVEL * 0.45));
+        var t0 = null;
+        k = i + 1; wait = 0;
+        setState('paused');
+        var move = function (t) {
+          if (t0 === null) t0 = t;
+          var u = Math.min(1, (t - t0) / dur);
+          p = from + (to - from) * (u * u * (3 - 2 * u));
+          draw();
+          sync();
+          if (u < 1) {
+            seekId = requestAnimationFrame(move);
+          } else {
+            p = to;
+            draw();
+            sync();
+            show(i);
+          }
+        };
+        seekId = requestAnimationFrame(move);
+      };
+
       pauseAnim = function () {
+        cancelAnimationFrame(seekId);
         if (ctrl.dataset.state === 'playing') {
           playing = false;
           cancelAnimationFrame(frameId);
@@ -417,7 +463,9 @@
           cancelAnimationFrame(frameId);
           setState('paused');
         } else {
-          if (ctrl.dataset.state === 'done') { reset(); picked = false; }
+          cancelAnimationFrame(seekId);
+          if (ctrl.dataset.state === 'done') reset();
+          picked = false; // la fiche suit de nouveau le chemin
           play();
         }
       });
