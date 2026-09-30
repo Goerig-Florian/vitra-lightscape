@@ -370,6 +370,7 @@
       });
     });
 
+    if (reduceMotion) plan.querySelectorAll('animate, animateTransform').forEach(function (n) { n.remove(); }); // motifs fixes
     if (reduceMotion || !('IntersectionObserver' in window)) {
       // Plan affiché d'un coup, sans animation
       Object.keys(bldgs).forEach(function (id) { bldgs[id].forEach(function (b) { b.classList.add('is-lit'); }); });

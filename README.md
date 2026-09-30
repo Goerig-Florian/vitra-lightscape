@@ -32,7 +32,8 @@ npm run dev      # http://localhost:4321
 2. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
 3. **Le parcours** (nuit) : page d'accueil du parcours.
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
-   - La carte du Campus (vitra.com) : le chemin lumineux s'allume d'étape en étape à l'entrée dans la section.
+   - La carte du Campus (vitra.com) : le chemin lumineux, en lumière froide, s'allume d'étape en étape à l'entrée dans la section.
+   - Sept bâtiments reçoivent un motif de light mapping animé quand le chemin y arrive (VitraHaus, caserne et les cinq halles : Gehry, Grimshaw 1981, SANAA, Grimshaw 1983, Siza). Les motifs sont dans `<defs>` de `Parcours.astro`.
    - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Précédent / suivant, et liste repliée des 31 étapes.
    - Filtres façade / intérieur / interactif.
 4. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.

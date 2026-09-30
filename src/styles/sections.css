@@ -828,31 +828,76 @@
   stroke: rgba(255, 196, 120, 0.75);
 }
 
+.plan__bldg.is-mapped.is-lit {
+  fill: rgba(50, 100, 170, 0.32);
+  stroke: rgba(159, 212, 255, 0.75);
+}
+
+.plan__bldg.is-mapped.is-active {
+  fill: rgba(90, 150, 220, 0.45);
+  stroke: #dcefff;
+}
+
 .plan__bldg.is-active {
   fill: rgba(255, 214, 150, 0.5);
   stroke: var(--light);
 }
 
+/* Light mapping : motifs de lumière froide projetés sur les bâtiments, visibles quand le chemin y arrive */
+.plan__mapping {
+  opacity: 0;
+  mix-blend-mode: screen;
+  transition: opacity 0.9s;
+}
+
+/* (la règle générale « .plan path { fill: none } » impose de fixer le remplissage ici) */
+.plan .plan__mapping--hatch { fill: url(#mp-hatch); }
+.plan .plan__mapping--hlines { fill: url(#mp-hlines); }
+.plan .plan__mapping--grid { fill: url(#mp-grid); }
+.plan .plan__mapping--rings { fill: url(#mp-rings); }
+.plan .plan__mapping--diag { fill: url(#mp-diag); }
+.plan .plan__mapping--chevron { fill: url(#mp-chevron); }
+.plan .plan__mapping--vbars { fill: url(#mp-vbars); }
+
+.plan__mapping.is-lit {
+  opacity: 0.75;
+}
+
+.plan__mapping.is-active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plan__mapping.is-lit {
+    animation: mapping-pulse 3.4s ease-in-out infinite;
+  }
+}
+
+@keyframes mapping-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.95; }
+}
+
 /* Chemin lumineux */
 .plan__path-base {
-  stroke: rgba(255, 180, 76, 0.28);
+  stroke: rgba(150, 200, 255, 0.3);
   stroke-width: 1.2;
   stroke-dasharray: 2 4;
 }
 
 .plan__path-glow {
-  stroke: var(--amber);
+  stroke: #5aa9ff;
   stroke-width: 5;
   opacity: 0.35;
 }
 
 .plan__path-lit {
-  stroke: var(--light);
+  stroke: #dcefff;
   stroke-width: 1.6;
 }
 
 .plan__spur {
-  stroke: rgba(255, 196, 120, 0.55);
+  stroke: rgba(170, 215, 255, 0.6);
   stroke-width: 1;
   stroke-dasharray: 1.5 2.5;
 }
@@ -1133,8 +1178,15 @@
   width: 22px;
   height: 3px;
   border-radius: 2px;
-  background: var(--light);
-  box-shadow: 0 0 6px var(--amber);
+  background: #dcefff;
+  box-shadow: 0 0 6px #5aa9ff;
+}
+
+.legend__mapping {
+  width: 14px;
+  height: 10px;
+  border: 1px solid rgba(159, 212, 255, 0.7);
+  background: repeating-linear-gradient(135deg, rgba(159, 212, 255, 0.85) 0 1px, transparent 1px 4px);
 }
 
 .legend__approx {
