@@ -1,7 +1,6 @@
 ---
 import Logo from './Logo.astro';
 import { nav, footer } from '../data/content';
-import { stations } from '../data/stations';
 import { url } from '../lib/url';
 
 interface Props {
@@ -11,7 +10,7 @@ const { home = true } = Astro.props;
 const link = (href: string) => (home ? href : url(href));
 ---
 
-<footer class="site-footer" data-theme="day">
+<footer class="site-footer" data-theme="night">
   <div class="container">
     <div class="site-footer__top">
       <a href={home ? '#top' : url()} class="site-footer__logo" aria-label="Vitra Lightscape, retour en haut">
@@ -27,20 +26,11 @@ const link = (href: string) => (home ? href : url(href));
 
     <section class="credits" aria-labelledby="credits-title">
       <h2 id="credits-title">Crédits</h2>
-      <ul class="credits__list">
-        {
-          stations.map((s) => (
-            <li>
-              <strong>{s.name}</strong>
-              {s.author}, {s.year}.
-            </li>
-          ))
-        }
-      </ul>
       <p>
-        Photos de jour : photos de visite de l’équipe, 16 septembre 2026. Vues de nuit et tracés lumineux : visualisations de projet réalisées à
-        partir de ces photos, pas des photographies d’une installation existante. Informations sur les bâtiments : fiches architecture de
-        vitra.com. Caractère : Inter (SIL Open Font License).
+        Vidéo du premier écran : montage réalisé à partir d’une photo de visite de l’équipe (16 septembre 2026) et de sa visualisation de nuit ; le
+        coucher de soleil est un étalonnage, le tracé lumineux une simulation. Premières visualisations : vues de nuit réalisées à partir de nos
+        photos de visite, pas des photographies d’une installation existante. Liste des bâtiments, auteurs et dates : page « Architecture du Vitra
+        Campus » de vitra.com. Caractère : Inter (SIL Open Font License).
       </p>
     </section>
 

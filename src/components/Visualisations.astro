@@ -1,0 +1,38 @@
+---
+import Photo from './Photo.astro';
+import { visualisations as v } from '../data/content';
+import { visualisations } from '../data/batiments';
+---
+
+<section class="section visus" id="visualisations" data-theme="day" aria-labelledby="visus-title">
+  <div class="container">
+    <div class="visus__head">
+      <div>
+        <p class="eyebrow">{v.label}</p>
+        <h2 class="visus__title reveal" id="visus-title">{v.title}</h2>
+      </div>
+      <div class="visus__intro reveal">
+        <p>{v.text}</p>
+        <p class="notice"><span class="notice__dot" aria-hidden="true"></span>{v.notice}</p>
+      </div>
+    </div>
+    <ul class="visus__grid">
+      {
+        visualisations.map((item, i) => (
+          <li class={`visus__item visus__item--${i + 1}`}>
+            <figure>
+              <div class="visus__frame">
+                <Photo id={item.image} alt={item.alt} sizes="(min-width: 1024px) 40vw, 92vw" />
+                <span class="visus__badge">Visualisation</span>
+              </div>
+              <figcaption>
+                <strong>{item.name}</strong>
+                <span>{item.author}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

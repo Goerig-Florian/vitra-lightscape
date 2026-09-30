@@ -1,38 +1,11 @@
 {
-  "design-museum": {
-    "width": 4000,
-    "height": 2252,
-    "widths": [
-      640,
-      1024,
-      1600,
-      2400
-    ]
-  },
-  "vitrahaus-jour": {
-    "width": 1672,
-    "height": 941,
-    "widths": [
-      640,
-      1024,
-      1672
-    ]
-  },
   "vitrahaus-nuit": {
     "width": 1672,
     "height": 941,
     "widths": [
-      640,
-      1024,
-      1672
-    ]
-  },
-  "dome-jour": {
-    "width": 1672,
-    "height": 941,
-    "widths": [
-      640,
-      1024,
+      480,
+      800,
+      1200,
       1672
     ]
   },
@@ -40,17 +13,9 @@
     "width": 1672,
     "height": 941,
     "widths": [
-      640,
-      1024,
-      1672
-    ]
-  },
-  "design-museum-jour": {
-    "width": 1672,
-    "height": 941,
-    "widths": [
-      640,
-      1024,
+      480,
+      800,
+      1200,
       1672
     ]
   },
@@ -58,26 +23,18 @@
     "width": 1672,
     "height": 941,
     "widths": [
-      640,
-      1024,
-      1672
-    ]
-  },
-  "slide-tower-jour": {
-    "width": 941,
-    "height": 1672,
-    "widths": [
       480,
-      720,
-      941
+      800,
+      1200,
+      1672
     ]
   },
   "slide-tower-nuit": {
     "width": 941,
     "height": 1672,
     "widths": [
-      480,
-      720,
+      400,
+      640,
       941
     ]
   }

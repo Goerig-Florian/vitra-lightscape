@@ -1,28 +1,41 @@
 /* ==========================================================================
    Vitra Lightscape — variables de design
-   Jour : blanc et noir, comme vitra.com. Nuit : bleu nuit et lumière ambrée.
+   La mise en page reprend la sobriété de vitra.com ; les couleurs suivent
+   une soirée : sable de fin d'après-midi, pêche et corail du coucher de
+   soleil, mauve de l'heure bleue, puis bleu nuit et lumière ambrée.
    ========================================================================== */
 
 :root {
-  /* Jour */
-  --white: #ffffff;
-  --ink: #111111;
-  --ink-soft: #55554f;      /* 7:1 sur blanc */
-  --grey-50: #f5f5f3;
-  --grey-100: #ebebe7;
-  --grey-300: #cfcfc9;
+  /* Fin de journée */
+  --sand: #f7ecdf;
+  --peach: #f3d4be;
+  --coral: #e8ab93;
+  --rose: #c9828a;
+  --mauve: #5f4466;
+  --dusk: #231d38;
+
+  /* Encre (sur les tons clairs) */
+  --ink: #1c1512;
+  --ink-soft: #5a463d;       /* ≥ 6:1 sur sable et pêche */
+  --line: rgba(28, 21, 18, 0.18);
 
   /* Nuit */
-  --night: #070a12;
-  --night-2: #0d1220;
+  --night: #0b0e1a;
+  --night-2: #141829;
   --night-line: rgba(255, 255, 255, 0.14);
-  --night-text: #f1eee8;
-  --night-muted: #a9acb5;   /* 8:1 sur --night */
+  --night-text: #f4efe8;
+  --night-muted: #b0aebb;    /* 8:1 sur --night */
 
   /* Lumière */
   --light: #ffe6bd;
   --amber: #ffb44c;
-  --amber-ink: #8a4f0f;     /* ambre lisible sur blanc (5.6:1) */
+  --amber-ink: #8a4f0f;
+
+  /* Compatibilité */
+  --white: #ffffff;
+  --grey-50: #f5f5f3;
+  --grey-100: #ebebe7;
+  --grey-300: #cfcfc9;
 
   /* Typographie */
   --font: 'Inter', 'Helvetica Neue', Arial, sans-serif;
@@ -31,7 +44,7 @@
   --step-1: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
   --step-2: clamp(1.4rem, 1.2rem + 0.9vw, 2rem);
   --step-3: clamp(1.9rem, 1.4rem + 2.2vw, 3.4rem);
-  --step-4: clamp(2.8rem, 1.6rem + 6vw, 8rem);
+  --step-4: clamp(2.6rem, 1.4rem + 5.6vw, 7.5rem);
 
   /* Mise en page */
   --margin: clamp(20px, 4vw, 56px);

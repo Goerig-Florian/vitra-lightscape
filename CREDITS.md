@@ -1,30 +1,20 @@
 # Sources et crédits
 
-## Photographies
+## Vidéo et images
 
-| Fichiers publiés | Bâtiment | Source |
-|---|---|---|
-| `design-museum-*` | Vitra Design Museum (premier écran) | photo de visite 20260916_120451.jpg |
-| `vitrahaus-jour-*` | VitraHaus | photo de visite 20260916_093521.jpg |
-| `dome-jour-*` | Dome | photo de visite 20260916_113210.jpg |
-| `design-museum-jour-*` | Vitra Design Museum | photo de visite 20260916_120451.jpg |
-| `slide-tower-jour-*` | Vitra Slide Tower | photo de visite 20260916_100053.jpg |
-| `*-nuit-*` | les quatre bâtiments | visualisations de nuit fournies par l'équipe, réalisées à partir des photos de jour |
-
-- Les photos de jour ont été prises par l'équipe le 16 septembre 2026. Leurs métadonnées ont été retirées des fichiers publiés.
-- Les **vues de nuit sont des visualisations de projet**, pas des photographies. Le site les signale par le badge « Visualisation » et par une mention dans la section Bâtiments et dans le pied de page.
-- Les **tracés lumineux (mapping)** sont dessinés en SVG par-dessus les images. Ce sont des intentions de scénographie.
-- Droits : conservés par l'équipe.
+- **Vidéo du premier écran** (`public/video/`) : montage fabriqué par `scripts/make-video.py`.
+  - Photo de visite 20260916_120451.jpg (Vitra Design Museum, 16 septembre 2026).
+  - Sa visualisation de nuit.
+  - Le coucher de soleil est un étalonnage numérique.
+  - Le tracé lumineux est un SVG superposé.
+  - C'est une **simulation** : le site l'indique sous la vidéo.
+- **Premières visualisations** (`public/images/*-nuit-*`) : vues de nuit fournies par l'équipe, réalisées à partir des photos de visite. Ce ne sont **pas** des photographies d'une installation existante.
+- Droits : conservés par l'équipe. Métadonnées retirées des fichiers publiés.
 
 ## Informations sur les bâtiments
 
-Fiches officielles Vitra, consultées le 30 septembre 2026 :
-
-- VitraHaus : Herzog & de Meuron, 2010. https://www.vitra.com/fr-fr/campus/architecture/architecture-vitrahaus
-- Dome : R. Buckminster Fuller avec Thomas C. Howard, 1975, sur le Campus depuis 2000. https://www.vitra.com/en-un/campus/architecture/architecture-dome
-- Vitra Design Museum : Frank Gehry, 1989. https://www.vitra.com/en-un/campus/architecture/architecture-vitra-design-museum
-- Vitra Slide Tower : Carsten Höller, 2014, 30,7 m, toboggan de 38 m. https://www.vitra.com/en-un/campus/architecture/architecture-vitra-slide-tower
-- Caserne de pompiers : Zaha Hadid, 1993. Station envisagée sur le plan, sans photo. https://www.vitra.com/en-un/campus/architecture/architecture-fire-station
+- **Liste des 31 bâtiments et œuvres, auteurs et dates** : page « Architecture du Vitra Campus », https://www.vitra.com/fr-fr/campus/architecture, consultée le 30 septembre 2026.
+- **Mode de mise en lumière** (façade, intérieur, interactif) : **proposition de l'équipe**, à affiner dans `src/data/batiments.ts`.
 
 ## Données provisoires
 

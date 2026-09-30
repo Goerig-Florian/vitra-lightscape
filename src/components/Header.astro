@@ -10,7 +10,7 @@ const { home = true } = Astro.props;
 const link = (href: string) => (home ? href : url(href));
 ---
 
-<header class="site-header" data-header data-theme="day">
+<header class="site-header" data-header data-theme={home ? 'hero' : 'day'}>
   <div class="site-header__inner">
     <a class="site-header__logo" href={home ? '#top' : url()} aria-label="Vitra Lightscape, accueil">
       <Logo label={false} />

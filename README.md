@@ -25,49 +25,54 @@ npm run dev      # http://localhost:4321
 
 ## Déroulé de la page
 
-1. **Le jour** : premier écran blanc, dans l'esprit de vitra.com.
-2. **L'expérience** : mappings, chemin lumineux, visite du soir.
-3. **La nuit tombe** : le ciel passe du blanc au bleu nuit au défilement, l'horloge avance de 18:00 à 21:30, puis le logo s'allume.
-4. **Les bâtiments** : quatre stations (VitraHaus, Dome, Vitra Design Museum, Vitra Slide Tower).
-   - Chaque photo passe du jour à la nuit, puis le mapping se dessine.
-   - Le chemin lumineux s'allume le long de la page.
-   - Les boutons Jour / Nuit / Lumière permettent aussi de choisir la vue.
-5. **Le parcours** : plan schématique du chemin lumineux (5 stations).
-6. **Billetterie** : choix d'une soirée et d'un horaire, billets avec règles (les enfants doivent être accompagnés, l'option visite commentée est limitée au nombre de personnes), ajout au panier.
-7. **Panier** : tiroir latéral et page `/panier/`. Le panier est conservé dans le navigateur. **Le paiement n'est pas branché** : un message de démonstration s'affiche.
+1. **Vidéo de fond** : le Vitra Design Museum passe du jour au coucher de soleil, puis à la nuit.
+   - L'horloge suit la vidéo, de 18:00 à 21:30.
+   - À la nuit, la lumière dessine la silhouette du musée.
+   - Boutons pause et revoir.
+2. **L'expérience** (sable) : les trois modes de mise en lumière (façade, intérieur, interactif) et le chemin lumineux.
+3. **Premières visualisations** (pêche → corail) : quatre essais de nuit.
+4. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
+5. **Le parcours** (nuit) : chemin lumineux schématique et index des 31 bâtiments et œuvres du Campus, filtrable par mode. Survoler un bâtiment allume son point sur le plan.
+6. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
+7. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
 
 ## Modifier le contenu
 
 | Quoi | Fichier |
 |---|---|
 | Textes | `src/data/content.ts` |
-| Bâtiments, intentions, tracés du mapping, plan du parcours | `src/data/stations.ts` |
+| Les 31 bâtiments et leur mode de mise en lumière (**proposition**), visualisations | `src/data/batiments.ts` |
 | Dates, horaires, tarifs (**provisoires**) | `src/data/billetterie.ts` |
 | Couleurs, typographie, espacements | `src/styles/tokens.css` |
 
-**Photos.** Déposez les originaux dans `photos-sources/` (non versionnés), puis lancez `npm run images` (Python 3 + Pillow). Chaque vue de jour est recadrée exactement sur sa vue de nuit pour que le fondu soit calé.
+**Images et vidéo.** Déposez les originaux dans `photos-sources/` (non versionnés).
+- Images : lancez `npm run images` (Python 3 + Pillow).
+- Vidéo : lancez `python3 scripts/make-video.py` (Pillow, NumPy et ffmpeg).
 
 ## Arborescence
 
 ```
 .github/workflows/deploy.yml   publication GitHub Pages
-public/images/                 photos jour / nuit optimisées (AVIF, WebP, JPEG)
+public/video/                  vidéo jour → nuit du musée (WebM, MP4) et affiches
+public/images/                 visualisations de nuit optimisées (AVIF, WebP, JPEG)
+scripts/make-video.py          fabrication de la vidéo
 scripts/optimize-images.py     génération des images
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/                Inter (SIL Open Font License), auto-hébergée
-  components/                  Header, Hero, Experience, Dusk, Stations, Station,
-                               Parcours, Billetterie, Infos, Footer, CartDrawer, Logo, Photo
+  components/                  Header, Hero, Experience, Visualisations, Dusk, Parcours,
+                               Billetterie, Infos, Footer, CartDrawer, Logo, Photo
   data/                        contenus, stations, billetterie, images.json
   layouts/Base.astro
   pages/index.astro, pages/panier.astro
-  scripts/main.js              jour → nuit, mappings, chemin lumineux, navigation
+  scripts/main.js              vidéo, coucher de soleil, parcours, navigation
   scripts/cart.js              billetterie et panier
   styles/                      tokens.css, base.css, sections.css
 ```
 
 ## Accessibilité
 
-- Tout le contenu est lisible sans JavaScript : les stations s'affichent alors de nuit, avec le mapping.
-- Avec « réduire les animations » : pas de boucles lumineuses. Les stations s'affichent dans l'état final, et les boutons Jour / Nuit / Lumière restent disponibles.
-- Navigation au clavier, focus visibles, panier en dialogue modal (Échap pour fermer), textes alternatifs pour les vues de jour et de nuit.
+- Tout le contenu est lisible sans JavaScript.
+- Avec « réduire les animations » : la vidéo ne se lance pas toute seule. L'image de nuit s'affiche avec le tracé lumineux, et le bouton Lecture reste disponible.
+- La vidéo a des boutons pause et revoir.
+- Navigation au clavier, focus visibles, panier en dialogue modal (Échap pour fermer). Les filtres du parcours sont des boutons avec état.

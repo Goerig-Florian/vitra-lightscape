@@ -1,5 +1,9 @@
 ---
 import { experience } from '../data/content';
+import { modes, batiments, type Mode } from '../data/batiments';
+
+const order: Mode[] = ['facade', 'interieur', 'interactif'];
+const count = (m: Mode) => batiments.filter((b) => b.modes.includes(m)).length;
 ---
 
 <section class="section experience" id="experience" data-theme="day" aria-labelledby="experience-title">
@@ -8,14 +12,23 @@ import { experience } from '../data/content';
     <h2 class="experience__statement reveal" id="experience-title">{experience.statement}</h2>
     <ol class="experience__list">
       {
-        experience.items.map((item) => (
+        order.map((m, i) => (
           <li class="experience__item reveal">
-            <span class="experience__n">{item.n}</span>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
+            <span class={`mode-mark mode-mark--${m}`} aria-hidden="true" />
+            <span class="experience__n">0{i + 1}</span>
+            <h3>{modes[m].label}</h3>
+            <p>{modes[m].text}</p>
+            <p class="experience__count">{count(m)} bâtiments et œuvres envisagés</p>
           </li>
         ))
       }
+      <li class="experience__item reveal">
+        <span class="mode-mark mode-mark--path" aria-hidden="true" />
+        <span class="experience__n">04</span>
+        <h3>{experience.pathTitle}</h3>
+        <p>{experience.pathText}</p>
+        <p class="experience__count">Tout le Campus, en une soirée</p>
+      </li>
     </ol>
   </div>
 </section>

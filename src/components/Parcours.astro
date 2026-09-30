@@ -1,19 +1,47 @@
 ---
-import { stops } from '../data/stations';
+/**
+ * Le parcours : chemin lumineux schématique qui relie les 31 bâtiments et
+ * œuvres du Campus, et index filtrable par mode de mise en lumière.
+ * Survoler ou parcourir la liste au clavier allume le point correspondant.
+ */
 import { parcours } from '../data/content';
+import { batiments, modes, type Mode } from '../data/batiments';
 
-// Courbe lissée passant par tous les arrêts (entrée à gauche, sortie à droite)
-const pts = [{ x: 20, y: 470 }, ...stops.map((s) => ({ x: s.x, y: s.y })), { x: 1180, y: 250 }];
-let d = `M ${pts[0].x} ${pts[0].y}`;
+// Points du tracé : un serpentin sur 4 rangées
+const W = 1000;
+const rows = [8, 8, 8, 7];
+const rowY = [80, 230, 380, 530];
+const pts: { x: number; y: number }[] = [];
+rows.forEach((n, r) => {
+  for (let i = 0; i < n; i++) {
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    const x = 70 + t * (W - 140);
+    pts.push({ x: r % 2 === 0 ? x : W - x, y: rowY[r] + Math.sin(i * 1.3 + r) * 18 });
+  }
+});
+
+let d = `M 10 ${pts[0].y} L ${pts[0].x} ${pts[0].y}`;
 for (let i = 1; i < pts.length; i++) {
-  const p0 = pts[i - 1];
-  const p1 = pts[i];
-  const mx = (p0.x + p1.x) / 2;
-  d += ` C ${mx} ${p0.y}, ${mx} ${p1.y}, ${p1.x} ${p1.y}`;
+  const a = pts[i - 1];
+  const b = pts[i];
+  if (Math.abs(b.y - a.y) > 80) {
+    const side = a.x > W / 2 ? 1 : -1;
+    const cx = a.x + side * 70;
+    d += ` C ${cx} ${a.y}, ${cx} ${b.y}, ${b.x} ${b.y}`;
+  } else {
+    const mx = (a.x + b.x) / 2;
+    d += ` C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`;
+  }
 }
+const last = pts[pts.length - 1];
+d += ` L ${last.x - 60} ${last.y}`;
+
+const order: Mode[] = ['facade', 'interieur', 'interactif'];
+const count = (m: Mode) => batiments.filter((b) => b.modes.includes(m)).length;
+const num = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
-<section class="section parcours" id="parcours" data-theme="night" aria-labelledby="parcours-title">
+<section class="section parcours" id="parcours" data-theme="night" aria-labelledby="parcours-title" data-parcours>
   <div class="container">
     <div class="parcours__head">
       <div>
@@ -23,47 +51,65 @@ for (let i = 1; i < pts.length; i++) {
       <p class="parcours__text reveal">{parcours.text}</p>
     </div>
 
-    <figure class="parcours__map">
-      <svg viewBox="0 0 1200 520" class="map" data-map aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="map-glow" x="-10%" y="-40%" width="120%" height="180%">
-            <feGaussianBlur stdDeviation="6" />
-          </filter>
-          <pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M40 0H0V40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-          </pattern>
-        </defs>
-        <rect width="1200" height="520" fill="url(#map-grid)" />
-        <path class="map__base" d={d} />
-        <path class="map__glow" d={d} filter="url(#map-glow)" pathLength="1" />
-        <path class="map__lit" d={d} pathLength="1" />
-        <path class="map__flow" d={d} />
-        <text class="map__end" x="20" y="500">Entrée</text>
-        <text class="map__end" x="1180" y="230" text-anchor="end">Sortie</text>
-        {
-          stops.map((s, i) => (
-            <g class="map__stop" style={`--i: ${i}`}>
-              <circle class="map__halo" cx={s.x} cy={s.y} r="26" />
-              <circle class="map__dot" cx={s.x} cy={s.y} r="15" />
-              <text class="map__n" x={s.x} y={s.y + 5} text-anchor="middle">{s.n}</text>
-              <text class="map__label" x={s.x} y={s.y + (s.y > 300 ? 52 : -36)} text-anchor="middle">{s.name}</text>
-            </g>
-          ))
-        }
-      </svg>
-      <figcaption class="caption">{parcours.notice}</figcaption>
-    </figure>
-
-    <ol class="parcours__list">
+    <div class="filters" role="group" aria-label="Filtrer par mode de mise en lumière">
+      <button type="button" class="filter" data-filter="all" aria-pressed="true">Tout <span>{batiments.length}</span></button>
       {
-        stops.map((s) => (
-          <li>
-            <span class="parcours__n">{s.n}</span>
-            <span class="parcours__name">{s.name}</span>
-            <span class="parcours__author">{s.author}</span>
-          </li>
+        order.map((m) => (
+          <button type="button" class="filter" data-filter={m} aria-pressed="false">
+            <span class={`mode-mark mode-mark--${m}`} aria-hidden="true" />
+            {modes[m].short} <span>{count(m)}</span>
+          </button>
         ))
       }
-    </ol>
+    </div>
+
+    <div class="parcours__layout">
+      <figure class="parcours__map">
+        <svg viewBox={`0 0 ${W} 600`} class="map" data-map aria-hidden="true" focusable="false">
+          <defs>
+            <filter id="map-glow" x="-10%" y="-20%" width="120%" height="140%"><feGaussianBlur stdDeviation="6" /></filter>
+          </defs>
+          <path class="map__base" d={d} />
+          <path class="map__glow" d={d} filter="url(#map-glow)" pathLength="1" />
+          <path class="map__lit" d={d} pathLength="1" />
+          <path class="map__flow" d={d} />
+          {
+            pts.map((p, i) => (
+              <g class={`map__stop ${batiments[i].modes.map((m) => 'is-' + m).join(' ')}`} data-stop={String(i)} style={`--i: ${i}`}>
+                <circle class="map__halo" cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r="24" />
+                <circle class="map__dot" cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r="15" />
+                <text class="map__n" x={p.x.toFixed(1)} y={(p.y + 4.5).toFixed(1)} text-anchor="middle">{num(i)}</text>
+              </g>
+            ))
+          }
+        </svg>
+        <figcaption class="caption">{parcours.notice}</figcaption>
+      </figure>
+
+      <ol class="index" data-index>
+        {
+          batiments.map((b, i) => (
+            <li class="index__item" data-item={String(i)} data-modes={b.modes.join(' ')} tabindex="0">
+              <span class="index__n">{num(i)}</span>
+              <span class="index__main">
+                <span class="index__name">{b.name}</span>
+                <span class="index__meta">{b.author ? `${b.author}, ${b.year}` : b.year}</span>
+              </span>
+              <span class="index__modes">
+                {b.modes.map((m) => (
+                  <span class={`tag tag--${m}`}>
+                    <span class={`mode-mark mode-mark--${m}`} aria-hidden="true" />
+                    {modes[m].short}
+                  </span>
+                ))}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <p class="parcours__source">
+      <a href={parcours.source.href} rel="noopener">{parcours.source.label}<span class="sr-only"> (site externe)</span></a>
+    </p>
   </div>
 </section>

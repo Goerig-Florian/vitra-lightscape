@@ -30,7 +30,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--white);
+  background: var(--sand);
   color: var(--ink);
   font-family: var(--font);
   font-size: var(--step-0);
@@ -183,6 +183,59 @@ button {
 .btn--line:hover {
   background: var(--ink);
   color: var(--white);
+}
+
+.btn--light {
+  background: var(--night-text);
+  border-color: var(--night-text);
+  color: var(--ink);
+}
+
+.btn--light:hover {
+  background: #fff;
+  border-color: #fff;
+}
+
+.btn--ghost {
+  background: rgba(0, 0, 0, 0.12);
+  border-color: rgba(255, 255, 255, 0.75);
+  color: #fff;
+}
+
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #fff;
+}
+
+/* Boutons sur fond de nuit */
+[data-theme='night'] .btn--solid {
+  background: var(--night-text);
+  border-color: var(--night-text);
+  color: var(--night);
+}
+
+[data-theme='night'] .btn--solid:hover {
+  background: #fff;
+  border-color: #fff;
+}
+
+[data-theme='night'] .btn--solid:disabled:hover {
+  background: var(--night-text);
+  border-color: var(--night-text);
+}
+
+[data-theme='night'] .btn--line {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: var(--night-text);
+}
+
+[data-theme='night'] .btn--line:hover {
+  background: var(--night-text);
+  color: var(--night);
+}
+
+[data-theme='night'] .notice {
+  color: var(--night-muted);
 }
 
 .btn--small {

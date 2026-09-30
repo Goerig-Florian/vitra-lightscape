@@ -1,4 +1,8 @@
 ---
+/**
+ * « Le soleil se couche » : section collante. Au défilement, le ciel passe du
+ * corail du coucher de soleil au bleu nuit, l'horloge avance et le logo s'allume.
+ */
 import Logo from './Logo.astro';
 import { dusk } from '../data/content';
 
@@ -7,22 +11,25 @@ const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${Str
 
 <section class="dusk" data-dusk data-from={String(dusk.from)} data-to={String(dusk.to)} aria-label="La nuit tombe">
   <div class="dusk__sticky" data-dusk-sticky>
+    <div class="dusk__sun" aria-hidden="true"></div>
     <div class="dusk__sky" aria-hidden="true">
-      <span class="dusk__star" style="--x: 12%; --y: 18%" />
-      <span class="dusk__star" style="--x: 28%; --y: 9%" />
-      <span class="dusk__star" style="--x: 71%; --y: 14%" />
-      <span class="dusk__star" style="--x: 86%; --y: 26%" />
-      <span class="dusk__star" style="--x: 55%; --y: 6%" />
+      <span class="dusk__star" style="--x: 12%; --y: 18%"></span>
+      <span class="dusk__star" style="--x: 28%; --y: 9%"></span>
+      <span class="dusk__star" style="--x: 44%; --y: 22%"></span>
+      <span class="dusk__star" style="--x: 71%; --y: 14%"></span>
+      <span class="dusk__star" style="--x: 86%; --y: 26%"></span>
+      <span class="dusk__star" style="--x: 58%; --y: 6%"></span>
+      <span class="dusk__star" style="--x: 93%; --y: 8%"></span>
     </div>
     <div class="container dusk__content">
-      <p class="dusk__clock" aria-hidden="true">
-        <span data-dusk-clock>{fmt(dusk.from)}</span>
+      <p class="dusk__clock" aria-hidden="true"><span data-dusk-clock>{fmt(dusk.from)}</span></p>
+      <p class="dusk__line">
+        <span class="dusk__line-a">{dusk.line}</span>
+        <span class="dusk__line-b">{dusk.lineNight}</span>
       </p>
-      <p class="dusk__line">{dusk.line}</p>
       <div class="dusk__logo">
         <Logo animated />
       </div>
-      <p class="dusk__sub">{dusk.sub}</p>
     </div>
   </div>
 </section>

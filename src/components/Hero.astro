@@ -1,30 +1,81 @@
 ---
-import Photo from './Photo.astro';
+/**
+ * Premier écran : vidéo de fond du Vitra Design Museum, du jour à la nuit.
+ * L'horloge suit la vidéo (18:00 → 21:30). À la nuit, le mapping SVG
+ * dessine la silhouette du musée, calé sur la dernière image.
+ * Animations réduites : pas de lecture automatique, image de nuit fixe.
+ */
 import { hero } from '../data/content';
+import { museeSilhouette } from '../data/batiments';
+import { url } from '../lib/url';
+
+const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
+const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 ---
 
-<section class="hero" id="top" data-theme="day" aria-labelledby="hero-title">
-  <div class="container hero__head">
+<section class="hero" id="top" data-theme="hero" data-hero data-from={String(hero.clockFrom)} data-to={String(hero.clockTo)} aria-labelledby="hero-title">
+  <div class="hero__media">
+    <video
+      class="hero__video"
+      data-hero-video
+      muted
+      playsinline
+      preload="auto"
+      poster={url('video/musee-affiche-jour.jpg')}
+      data-poster-night={url('video/musee-affiche-nuit.jpg')}
+      aria-label={hero.videoLabel}
+    >
+      <source src={url('video/musee-jour-nuit.webm')} type="video/webm" />
+      <source src={url('video/musee-jour-nuit.mp4')} type="video/mp4" />
+    </video>
+
+    <svg class="hero__mapping" viewBox="0 0 1672 941" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <defs>
+        <clipPath id="hero-clip"><polygon points={pts} /></clipPath>
+        <linearGradient id="hero-band" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#ffd9a0" stop-opacity="0" />
+          <stop offset="0.5" stop-color="#ffe7c2" stop-opacity="0.9" />
+          <stop offset="1" stop-color="#ffd9a0" stop-opacity="0" />
+        </linearGradient>
+        <filter id="hero-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="8" /></filter>
+      </defs>
+      <g clip-path="url(#hero-clip)">
+        <rect class="hero__wash" width="1672" height="941" />
+        <rect class="hero__band" x="-420" width="420" height="941" fill="url(#hero-band)" />
+      </g>
+      <polygon class="hero__outline-glow" points={pts} pathLength="1" filter="url(#hero-glow)" />
+      <polygon class="hero__outline" points={pts} pathLength="1" />
+    </svg>
+    <div class="hero__scrim" aria-hidden="true"></div>
+  </div>
+
+  <div class="container hero__content">
     <p class="hero__meta">
       {hero.meta.map((m) => <span>{m}</span>)}
     </p>
-    <h1 class="hero__title" id="hero-title">{hero.title}</h1>
-    <div class="hero__side">
-      <p class="hero__lead">{hero.lead}</p>
-      <div class="hero__actions">
-        <a class="btn btn--solid" href="#billetterie">{hero.primary}</a>
-        <a class="btn btn--line" href="#stations">
-          <span class="spark" aria-hidden="true"></span>
-          {hero.secondary}
-        </a>
+    <div class="hero__bottom">
+      <h1 class="hero__title" id="hero-title">{hero.title}</h1>
+      <div class="hero__side">
+        <p class="hero__clock" aria-hidden="true"><span data-hero-clock>{fmt(hero.clockFrom)}</span></p>
+        <p class="hero__lead">{hero.lead}</p>
+        <div class="hero__actions">
+          <a class="btn btn--light" href="#billetterie">{hero.primary}</a>
+          <a class="btn btn--ghost" href="#parcours"><span class="spark" aria-hidden="true"></span>{hero.secondary}</a>
+        </div>
       </div>
     </div>
   </div>
 
-  <figure class="hero__media">
-    <div class="hero__frame">
-      <Photo id="design-museum" alt="Le Vitra Design Museum de Frank Gehry en journée, volumes blancs sous un ciel couvert, reflétés dans un bassin." sizes="100vw" loading="eager" fetchpriority="high" />
-    </div>
-    <figcaption class="container caption">{hero.caption}</figcaption>
-  </figure>
+  <div class="hero__controls">
+    <p class="hero__note">Vidéo d’ambiance, simulation</p>
+    <button type="button" class="hero__ctrl" data-video-toggle aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-pause"><path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor" /></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-play"><path d="M8 5l11 7-11 7z" fill="currentColor" /></svg>
+      <span data-video-label>Mettre la vidéo en pause</span>
+    </button>
+    <button type="button" class="hero__ctrl" data-video-replay>
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2.05-4.95M5 4v4h4" stroke="currentColor" stroke-width="1.8" fill="none" /></svg>
+      <span>Revoir la tombée de la nuit</span>
+    </button>
+  </div>
 </section>

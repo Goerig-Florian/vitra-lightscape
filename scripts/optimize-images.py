@@ -5,8 +5,7 @@ Usage :  python3 scripts/optimize-images.py   (ou npm run images)
 Prérequis : Python 3 + Pillow avec prise en charge AVIF (Pillow >= 11.2).
 
 - Applique l'orientation EXIF, supprime toutes les métadonnées.
-- Paires jour / nuit : la photo de jour est ramenée exactement au cadrage et à la
-  taille de la visualisation de nuit, pour que le fondu au défilement soit calé.
+- La vidéo du premier écran est fabriquée à part : scripts/make-video.py.
 - Écrit AVIF + WebP + JPEG dans public/images/ et src/data/images.json.
 """
 import json
@@ -18,17 +17,12 @@ SRC = ROOT / "photos-sources"
 OUT = ROOT / "public" / "images"
 MANIFEST = ROOT / "src" / "data" / "images.json"
 
-# Photos simples
+# Visualisations de nuit (galerie « Premières visualisations »)
 SINGLES = {
-    "design-museum": {"file": "20260916_120451.jpg", "widths": [640, 1024, 1600, 2400]},
-}
-
-# Paires jour / nuit (clé -> photo de jour, visualisation de nuit)
-PAIRS = {
-    "vitrahaus": ("20260916_093521.jpg", "vitrahaus-nuit.png"),
-    "dome": ("20260916_113210.jpg", "dome-nuit.png"),
-    "design-museum": ("20260916_120451.jpg", "design-museum-nuit.png"),
-    "slide-tower": ("20260916_100053.jpg", "slide-tower-nuit.png"),
+    "vitrahaus-nuit": {"file": "vitrahaus-nuit.png", "widths": [480, 800, 1200, 1672]},
+    "dome-nuit": {"file": "dome-nuit.png", "widths": [480, 800, 1200, 1672]},
+    "design-museum-nuit": {"file": "design-museum-nuit.png", "widths": [480, 800, 1200, 1672]},
+    "slide-tower-nuit": {"file": "slide-tower-nuit.png", "widths": [400, 640, 941]},
 }
 
 
@@ -56,13 +50,6 @@ def main():
     manifest = {}
     for name, cfg in SINGLES.items():
         manifest[name] = export(load(cfg["file"]), name, cfg["widths"])
-    for key, (day_file, night_file) in PAIRS.items():
-        night = load(night_file)
-        day = load(day_file).resize(night.size, Image.LANCZOS)
-        portrait = night.height > night.width
-        widths = [480, 720, 941] if portrait else [640, 1024, 1672]
-        manifest[f"{key}-jour"] = export(day, f"{key}-jour", widths)
-        manifest[f"{key}-nuit"] = export(night, f"{key}-nuit", widths)
     MANIFEST.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
 
