@@ -2312,3 +2312,20 @@
 .plan.is-idle .plan__mapping {
   animation-play-state: paused !important;
 }
+
+/* Qualité adaptative (main.js) : niveau 1 sans faisceaux, contours ni silhouette animée ; niveau 2 sans mapping */
+.plan.is-lite .plan__mapping--beam,
+.plan.is-lite .plan__mapping--ring,
+.plan.is-lite .plan__mapping--edge,
+.plan.is-lite2 .plan__mapping {
+  display: none;
+}
+
+.plan.is-lite .plan__mapping,
+.plan.is-lite2 .plan__path-glow {
+  animation: none !important;
+}
+
+.plan.is-lite2 .plan__path-glow {
+  display: none;
+}
