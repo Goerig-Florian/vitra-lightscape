@@ -31,7 +31,11 @@ npm run dev      # http://localhost:4321
    - Boutons pause et revoir.
 2. **L'expérience** (sable → pêche → corail) : les trois modes de mise en lumière (façade, intérieur, interactif) et le chemin lumineux.
 3. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
-4. **Le parcours** (nuit) : carte du Campus de vitra.com. À l'entrée dans la section, le chemin lumineux s'allume d'étape en étape, avec le numéro et le nom du bâtiment en cours. L'index des 31 bâtiments et œuvres suit l'ordre de la visite et se filtre par mode. Survoler un bâtiment allume son repère et son volume sur la carte.
+4. **Le parcours** (nuit) : page d'accueil du parcours.
+   - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
+   - La carte du Campus (vitra.com) : le chemin lumineux s'allume d'étape en étape à l'entrée dans la section.
+   - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Précédent / suivant, et liste repliée des 31 étapes.
+   - Filtres façade / intérieur / interactif.
 5. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
 6. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
 
@@ -56,14 +60,17 @@ Cette boucle évite les allers-retours. On ne repasse jamais par le même tronç
 - **Ancrage.** Le trajet calculé sur OpenStreetMap (`scripts/make-plan.py` → `scripts/data/osm-route.json`) est transposé dans le repère du SVG par une transformation affine. Elle est ajustée sur 13 bâtiments reconnus à coup sûr dans les deux sources (VitraHaus, Dôme, les quatre halles, Design Museum, Tane, Diogene, Umbrella House, Tour-Toboggan, caserne). Les écarts sont affichés à chaque exécution : 1 à 2 unités pour la plupart, 10 au plus sur 549 de large.
 - **Bâtiments.** Chaque étape est posée sur la zone correspondante de la carte Vitra. Ces zones, cliquables chez Vitra, servent ici à allumer le bâtiment quand le chemin y arrive, ou au survol.
 - **Trajet.** Il suit l'ordre ci-dessus. Il est décalé vers le bas de 7 unités pour retomber au niveau du sol plutôt qu'au centre des toits.
-- **Sans élément sur la carte Vitra.** Ring et Ruisseau, Water Garden, Place Jean Prouvé et Álvaro-Siza-Promenade n'ont pas de zone sur la carte. Leur repère est **approché** : en pointillé, avec la mention « position approchée ». La Barragán Gallery est dans le Vitra Schaudepot. Elle partage donc son volume, avec un repère décalé.
-- **Identification.** Les zones sûres (nommées dans le SVG ou confirmées par l'ajustement) : VitraHaus, Dôme, Umbrella House, Tane House, Diogene, Schaudepot, Tour-Toboggan, caserne, Designweg. Plus probables qu'attestées : Khudi Bari, Blockhaus, Station-service, Airstream Kiosk, Arrêt de bus, Campus Gallery, Doshi Retreat, Balancing Tools, Torre Numero Due. **À valider.**
+- **Sans zone sur la carte Vitra.** Ring et Ruisseau, Water Garden, Place Jean Prouvé, Barragán Gallery et Álvaro-Siza-Promenade n'ont pas de zone. Leur repère suit la position des points d'intérêt de vitra.com. Ring et Ruisseau, et la promenade, sont décalés de quelques unités pour ne pas recouvrir leurs voisins : repère en pointillé, mention « repère décalé ». La Barragán Gallery est dans le Vitra Schaudepot.
+- **Identification.** Toutes les étapes ont été recoupées avec les positions officielles de vitra.com : écart de 1 à 10 unités sur 549, sauf Halle Gehry et Halle Grimshaw 1981 (environ 25, le centre du toit diffère du point choisi par Vitra).
 
-Pour mettre à jour le trajet ou la carte :
+**Les fiches.** Les photos de jour et les liens viennent de la page « Architecture » de vitra.com (`scripts/fetch-photos.py`, `npm run photos`). Les positions officielles des points d'intérêt de cette page ont servi à poser les repères. Elles ont confirmé l'identification des bâtiments, avec 2 à 10 unités d'écart.
+
+Pour mettre à jour le trajet, la carte ou les photos :
 
 ```bash
 npm run plan     # trajet d'après OpenStreetMap (Python 3, sans dépendance)
 npm run carte    # carte et positions dans le repère du SVG Vitra
+npm run photos   # photos et liens des fiches (Python 3 + Pillow + curl)
 ```
 
 ## Modifier le contenu
@@ -88,15 +95,17 @@ public/video/                  vidéo jour → nuit du musée (WebM, MP4) et aff
 scripts/make-video.py          fabrication de la vidéo
 scripts/make-plan.py           trajet du parcours (OpenStreetMap)
 scripts/make-map.py            carte et positions dans le repère du SVG Vitra
+scripts/fetch-photos.py        photos et liens des fiches (vitra.com)
 scripts/source/                SVG d'origine de la carte de vitra.com
 scripts/data/osm-route.json    trajet intermédiaire
 public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)
+public/photos/                 photos de jour des bâtiments (vitra.com)
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/                Inter (SIL Open Font License), auto-hébergée
   components/                  Header, Hero, Experience, Dusk, Parcours,
                                Billetterie, Infos, Footer, CartDrawer, Logo
-  data/                        contenus, bâtiments, carte.json, billetterie
+  data/                        contenus, bâtiments, carte.json, fiches.json, billetterie
   layouts/Base.astro
   pages/index.astro, pages/panier.astro
   scripts/main.js              vidéo, coucher de soleil, parcours, navigation
@@ -117,5 +126,5 @@ src/
   - la vidéo ne se lance pas toute seule : l'image de nuit s'affiche, et le bouton Lecture reste disponible ;
   - le plan du parcours s'affiche d'un coup, sans animation.
 - La vidéo a des boutons pause et revoir. L'animation du parcours a un bouton pause, reprendre et rejouer.
-- L'index des étapes est la version texte du plan : ordre de visite, auteurs, dates, modes.
+- Les repères de la carte sont des boutons au clavier (Tab, Entrée). La liste repliée des étapes est la version texte de la carte : ordre de visite, auteurs, dates, modes.
 - Navigation au clavier, focus visibles, panier en dialogue modal (Échap pour fermer). Les filtres du parcours sont des boutons avec état.

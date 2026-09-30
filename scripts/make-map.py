@@ -47,14 +47,16 @@ CENTRES = {
 }
 
 # Étape -> zones du calque 2 à allumer, et repère : (x, y) ou None = centre de la première zone.
-# `approx` : pas d'élément identifiable dans le SVG, position déduite de la transformation.
+# `pos` : positions des points d'intérêt de la carte de vitra.com (données de sa page « Architecture »,
+# en % du cadre du SVG), quand l'étape n'a pas de zone ou que la zone est trop étendue.
+# `approx` : repère décalé de quelques unités par rapport à la position Vitra, pour rester lisible.
 CARTE = {
     "vitrahaus": {"zones": [17]},
-    "ring-ruisseau": {"approx": True},
+    "ring-ruisseau": {"approx": True, "pos": (390.0, 285.0)},  # Vitra : (379, 266), confondu avec Oudolf
     "airstream": {"zones": [11]},
     "arret-bus": {"zones": [24]},
     "campus-gallery": {"zones": [10]},
-    "water-garden": {"approx": True, "pos": CENTRES[22]},
+    "water-garden": {"pos": (217.0, 254.0)},
     "design-museum": {"zones": [9]},
     "balancing-tools": {"zones": [23]},
     "pavillon-ando": {"zones": [27]},
@@ -63,14 +65,14 @@ CARTE = {
     "halle-grimshaw-1981": {"zones": [20]},
     "halle-sanaa": {"zones": [7]},
     "halle-grimshaw-1983": {"zones": [18]},
-    "schaudepot": {"zones": [25], "pos": (420.0, 118.0)},
-    "barragan": {"zones": [], "pos": (434.0, 108.0)},
-    "place-prouve": {"approx": True, "pos": (452.0, 119.0)},
+    "schaudepot": {"zones": [25], "pos": (429.0, 118.0)},
+    "barragan": {"zones": [], "pos": (415.0, 105.0)},
+    "place-prouve": {"pos": (459.0, 101.0)},
     "caserne": {"zones": [8], "pos": (443.0, 135.0)},
-    "designweg": {"zones": [32]},
+    "designweg": {"zones": [31, 32], "pos": (524.0, 71.0)},
     "torre": {"zones": [15], "pos": (455.0, 151.0)},
     "halle-siza": {"zones": [5]},
-    "promenade-siza": {"approx": True, "pos": (494.0, 207.0)},
+    "promenade-siza": {"approx": True, "pos": (431.0, 249.0)},  # Vitra : (420, 246), trop près de Khudi Bari
     "tour-toboggan": {"zones": [6]},
     "khudi-bari": {"zones": [12]},
     "diogene": {"zones": [13]},

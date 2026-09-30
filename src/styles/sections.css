@@ -851,7 +851,8 @@
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   }
 
-  .parcours__map {
+  .parcours__map,
+  .fiche {
     position: sticky;
     top: calc(var(--header) + 24px);
   }
@@ -1075,17 +1076,20 @@
   }
 
   .stop.is-current .stop__dot,
-  .stop.is-active .stop__dot {
+  .stop.is-active .stop__dot,
+  .stop.is-selected .stop__dot {
     r: 10px;
   }
 
   .stop.is-current .stop__halo,
-  .stop.is-active .stop__halo {
+  .stop.is-active .stop__halo,
+  .stop.is-selected .stop__halo {
     r: 17px;
   }
 
   .stop.is-current .stop__n,
-  .stop.is-active .stop__n {
+  .stop.is-active .stop__n,
+  .stop.is-selected .stop__n {
     display: inline;
     font-size: 11px;
   }
@@ -1217,29 +1221,289 @@
   color: var(--night-text);
 }
 
+/* Chiffres clés */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem var(--gutter);
+  margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+}
+
+.kpis__item {
+  padding-top: 1rem;
+  border-top: 1px solid var(--night-line);
+}
+
+.kpis__item dt {
+  font-size: var(--step--1);
+  color: var(--night-muted);
+}
+
+.kpis__item dd {
+  margin-top: 0.4rem;
+  font-size: var(--step-3);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--light);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpis__item dd span {
+  font-size: var(--step-1);
+  letter-spacing: 0;
+  color: var(--night-muted);
+}
+
+.kpis__item dd.kpis__text {
+  font-size: var(--step-1);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--night-text);
+}
+
+.kpis__item p {
+  margin-top: 0.5rem;
+  font-size: var(--step--1);
+  color: var(--night-muted);
+}
+
+.kpis__note {
+  margin-top: 1rem;
+  font-size: var(--step--1);
+  color: var(--night-muted);
+}
+
+@media (min-width: 760px) {
+  .kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Fiche du bâtiment */
+.fiche {
+  display: grid;
+  background: var(--night-2);
+  border: 1px solid var(--night-line);
+}
+
+.fiche__photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #0d1120;
+}
+
+.fiche__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.35s;
+}
+
+.fiche.is-loading .fiche__photo img {
+  opacity: 0.25;
+}
+
+.fiche__photo figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 3px 8px;
+  font-size: 0.6875rem;
+  color: #fff;
+  background: rgba(11, 14, 26, 0.7);
+}
+
+.fiche__body {
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.fiche__n {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.fiche__name {
+  margin-top: 0.35rem;
+  font-size: var(--step-2);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.fiche__meta {
+  margin-top: 0.35rem;
+  color: var(--night-muted);
+}
+
+.fiche__modes {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.1rem;
+}
+
+.fiche__mode {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.fiche__mode > p:last-child {
+  font-size: var(--step--1);
+  color: var(--night-muted);
+  max-width: 46ch;
+}
+
+.fiche__mode .tag {
+  justify-self: start;
+}
+
+.fiche__hint {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--night-muted);
+}
+
+.fiche__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 0.5rem;
+  color: var(--night-text);
+  font-weight: 500;
+}
+
+.fiche__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--night-line);
+}
+
+.fiche__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  background: none;
+  border: 0;
+  color: var(--night-text);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fiche__btn:hover {
+  background: rgba(255, 180, 76, 0.08);
+}
+
+.fiche__btn + .fiche__btn {
+  border-left: 1px solid var(--night-line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fiche__photo img {
+    transition: none;
+  }
+}
+
+/* Liste repliée des étapes */
+.steps {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--night-line);
+}
+
+.steps > summary {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.steps > summary::marker {
+  color: var(--amber);
+}
+
+.steps .index {
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 900px) {
+  .steps .index {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+}
+
+/* Repères cliquables */
+.stop {
+  cursor: pointer;
+  outline: none;
+}
+
+.stop__hit {
+  fill: transparent;
+}
+
+.stop:focus-visible .stop__halo {
+  fill: rgba(255, 180, 76, 0.4);
+  stroke: var(--light);
+  stroke-width: 1.5;
+}
+
+.stop.is-selected .stop__dot {
+  fill: var(--light);
+  stroke: #fff;
+  stroke-width: 2.4;
+}
+
+.stop.is-selected .stop__n {
+  fill: var(--night);
+}
+
+.stop.is-selected .stop__halo {
+  fill: rgba(255, 214, 150, 0.5);
+}
+
 /* Index des bâtiments */
 .index {
   border-top: 1px solid var(--night-line);
 }
 
 .index__item {
+  border-bottom: 1px solid var(--night-line);
+  transition: background-color 0.2s;
+}
+
+.index__item:hover,
+.index__item.is-active,
+.index__item.is-selected {
+  background: rgba(255, 180, 76, 0.08);
+}
+
+.index__btn {
   display: grid;
   grid-template-columns: 2.25rem 1fr auto;
   gap: 0.25rem 0.75rem;
   align-items: baseline;
+  width: 100%;
   padding: 0.85rem 0.5rem 0.85rem 0;
-  border-bottom: 1px solid var(--night-line);
-  transition: background-color 0.2s;
-  cursor: default;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.index__item:hover,
-.index__item:focus-visible,
-.index__item.is-active {
-  background: rgba(255, 180, 76, 0.08);
-}
-
-.index__item:focus-visible {
+.index__btn:focus-visible {
   outline-offset: -2px;
 }
 
@@ -1295,7 +1559,7 @@
 }
 
 @media (max-width: 480px) {
-  .index__item {
+  .index__btn {
     grid-template-columns: 2.25rem 1fr;
   }
 

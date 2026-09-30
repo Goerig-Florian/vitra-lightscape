@@ -182,7 +182,7 @@
     if (duskLogo && logoO > 0.5 && !duskLogo.classList.contains('is-playing')) duskLogo.classList.add('is-playing');
   };
 
-  /* ---------- Parcours : chemin lumineux, filtres, liste ↔ plan ---------- */
+  /* ---------- Parcours : chemin lumineux, fiche du bâtiment, filtres, liste ↔ carte ---------- */
   var parcours = document.querySelector('[data-parcours]');
   var plan = parcours && parcours.querySelector('[data-plan]');
   if (parcours && plan) {
@@ -200,18 +200,83 @@
     var ctrl = parcours.querySelector('[data-plan-toggle]');
     var ctrlLabel = parcours.querySelector('[data-plan-label]');
     var current = 0;
+    var data = JSON.parse(document.getElementById('fiches-data').textContent);
+    var fiche = parcours.querySelector('[data-fiche]');
+    var fImg = fiche.querySelector('[data-fiche-img]');
+    var selected = 0;
+    var picked = false; // vrai dès que la personne choisit elle-même une étape
+    var pauseAnim = function () {};
 
     var extras = function (i) {
       var id = stops[i].dataset.id;
       return (bldgs[id] || []).concat(spurs[id] ? [spurs[id]] : []);
     };
 
-    // Étape affichée sous le plan (numéro, nom, auteur)
+    var two = function (i) { return (i < 9 ? '0' : '') + (i + 1); };
+
+    // Étape affichée sous la carte (numéro, nom, auteur)
     var show = function (i) {
-      nowN.textContent = (i < 9 ? '0' : '') + (i + 1);
-      nowName.textContent = items[i].querySelector('.index__name').textContent;
-      nowMeta.textContent = items[i].querySelector('.index__meta').textContent;
+      nowN.textContent = two(i);
+      nowName.textContent = data[i].name;
+      nowMeta.textContent = data[i].meta;
     };
+
+    // Fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière
+    var select = function (i) {
+      var d = data[i];
+      stops[selected].classList.remove('is-selected');
+      items[selected].classList.remove('is-selected');
+      selected = i;
+      stops[i].classList.add('is-selected');
+      items[i].classList.add('is-selected');
+      fiche.classList.add('is-loading');
+      fImg.onload = function () { fiche.classList.remove('is-loading'); };
+      fImg.src = d.photo;
+      fImg.width = d.w;
+      fImg.height = d.h;
+      fImg.alt = 'Photographie de jour : ' + d.name;
+      if (fImg.complete) fiche.classList.remove('is-loading');
+      fiche.querySelector('[data-fiche-n]').textContent = two(i);
+      fiche.querySelector('[data-fiche-name]').textContent = d.name;
+      fiche.querySelector('[data-fiche-meta]').textContent = d.meta;
+      fiche.querySelector('[data-fiche-link]').href = d.href;
+      var box = fiche.querySelector('[data-fiche-modes]');
+      box.textContent = '';
+      d.modes.forEach(function (m) {
+        var row = document.createElement('div');
+        row.className = 'fiche__mode';
+        var tag = document.createElement('p');
+        tag.className = 'tag tag--' + m.key;
+        var mark = document.createElement('span');
+        mark.className = 'mode-mark mode-mark--' + m.key;
+        mark.setAttribute('aria-hidden', 'true');
+        tag.appendChild(mark);
+        tag.appendChild(document.createTextNode(m.short));
+        var txt = document.createElement('p');
+        txt.textContent = m.text;
+        row.appendChild(tag);
+        row.appendChild(txt);
+        box.appendChild(row);
+      });
+    };
+
+    // Choix de la personne : la fiche ne suit plus l'animation
+    var pick = function (i) {
+      picked = true;
+      pauseAnim();
+      select(i);
+    };
+
+    // Précédent / suivant, en sautant les étapes masquées par le filtre
+    var step = function (dir) {
+      var n = stops.length, i = selected;
+      for (var k = 0; k < n; k++) {
+        i = (i + dir + n) % n;
+        if (!stops[i].classList.contains('is-dim')) { pick(i); return; }
+      }
+    };
+    fiche.querySelector('[data-fiche-prev]').addEventListener('click', function () { step(-1); });
+    fiche.querySelector('[data-fiche-next]').addEventListener('click', function () { step(1); });
 
     var light = function (i) {
       stops[i].classList.add('is-lit');
@@ -220,6 +285,7 @@
       stops[i].classList.add('is-current');
       current = i;
       show(i);
+      if (!picked) select(i);
     };
 
     var activate = function (i, on) {
@@ -230,15 +296,36 @@
     };
 
     items.forEach(function (item, i) {
+      var btn = item.querySelector('[data-item-btn]');
       item.addEventListener('mouseenter', function () { activate(i, true); });
       item.addEventListener('mouseleave', function () { activate(i, false); });
-      item.addEventListener('focus', function () { activate(i, true); });
-      item.addEventListener('blur', function () { activate(i, false); });
+      btn.addEventListener('focus', function () { activate(i, true); });
+      btn.addEventListener('blur', function () { activate(i, false); });
+      btn.addEventListener('click', function () {
+        pick(i);
+        fiche.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+      });
     });
     stops.forEach(function (stop, i) {
       stop.addEventListener('mouseenter', function () { activate(i, true); });
       stop.addEventListener('mouseleave', function () { activate(i, false); });
+      stop.addEventListener('focus', function () { activate(i, true); });
+      stop.addEventListener('blur', function () { activate(i, false); });
+      stop.addEventListener('click', function () {
+        pick(i);
+        // petit écran : la fiche est sous la carte, on l'amène à l'écran
+        if (window.matchMedia('(max-width: 1023px)').matches) {
+          fiche.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+      });
+      stop.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          pick(i);
+        }
+      });
     });
+    select(0);
 
     filters.forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -316,13 +403,21 @@
       setState('paused');
       ctrlLabel.textContent = 'Lancer le parcours';
 
+      pauseAnim = function () {
+        if (ctrl.dataset.state === 'playing') {
+          playing = false;
+          cancelAnimationFrame(frameId);
+          setState('paused');
+        }
+      };
+
       ctrl.addEventListener('click', function () {
         if (ctrl.dataset.state === 'playing') {
           playing = false;
           cancelAnimationFrame(frameId);
           setState('paused');
         } else {
-          if (ctrl.dataset.state === 'done') reset();
+          if (ctrl.dataset.state === 'done') { reset(); picked = false; }
           play();
         }
       });

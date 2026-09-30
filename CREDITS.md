@@ -26,6 +26,12 @@
 - **Barragán Gallery** : placée dans le volume du Vitra Schaudepot, qui l'abrite (vitra.com).
 - L'attribution OpenStreetMap figure sous la carte et dans les crédits du pied de page.
 
+## Photos des fiches
+
+- **Photos de jour des bâtiments** (`public/photos/`) : photographies publiées sur la page « Architecture du Vitra Campus » de vitra.com, https://www.vitra.com/fr-fr/campus/architecture, récupérées le 30 septembre 2026 par `scripts/fetch-photos.py` (redimensionnées à 960 px). **Droits : Vitra et leurs photographes.** Usage limité à cette maquette universitaire fictive ; à remplacer ou à faire autoriser avant tout usage réel. Le site les signale par « Photo : vitra.com » et un lien vers la fiche d'origine.
+- **Vitra Designweg** : photo de la page de présentation du Designweg, vitra.com.
+- **Positions officielles** des points d'intérêt, utilisées pour poser les repères : données de la même page.
+
 ## Données provisoires
 
 Les dates, horaires et tarifs de `src/data/billetterie.ts` sont des **propositions** pour l'appel d'offres. Le site les signale comme provisoires.
