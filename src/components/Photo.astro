@@ -1,0 +1,44 @@
+---
+/**
+ * Photographie responsive (AVIF → WebP → JPEG) générée par scripts/optimize-images.py.
+ * Les dimensions réelles sont réservées (width/height) pour éviter les sauts de mise en page.
+ */
+import images from '../data/images.json';
+
+interface Props {
+  id: string;
+  alt: string;
+  sizes: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  position?: string;
+  class?: string;
+}
+
+const { id, alt, sizes, loading = 'lazy', fetchpriority, position, class: className } = Astro.props;
+const meta = (images as Record<string, { width: number; height: number; widths: number[] }>)[id];
+if (!meta) throw new Error(`Photo inconnue : ${id} — lancez scripts/optimize-images.py`);
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const url = (w: number, ext: string) => `${base}images/${id}-${w}.${ext}`;
+const srcset = (ext: string) => meta.widths.map((w) => `${url(w, ext)} ${w}w`).join(', ');
+const fallback = meta.widths.find((w) => w >= 1200) ?? meta.widths[meta.widths.length - 1];
+const style = position ? `object-position: ${position}` : undefined;
+---
+
+<picture class={className ? `photo ${className}` : 'photo'}>
+  <source type="image/avif" srcset={srcset('avif')} sizes={sizes} />
+  <source type="image/webp" srcset={srcset('webp')} sizes={sizes} />
+  <img
+    src={url(fallback, 'jpg')}
+    srcset={srcset('jpg')}
+    sizes={sizes}
+    width={meta.width}
+    height={meta.height}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    fetchpriority={fetchpriority}
+    style={style}
+  />
+</picture>

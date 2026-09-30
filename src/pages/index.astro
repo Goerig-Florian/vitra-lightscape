@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Concept from '../components/Concept.astro';
+import Catalogue from '../components/Catalogue.astro';
+import Apercu from '../components/Apercu.astro';
+import Infos from '../components/Infos.astro';
+import Coda from '../components/Coda.astro';
+---
+
+<Base
+  title="Vitra Lightscape — Vitra, sous une autre lumière"
+  description="Vitra Lightscape, projet étudiant : une expérience lumineuse imaginée pour révéler les lignes, les matières et l’architecture du Vitra Campus à Weil am Rhein."
+>
+  <Header />
+  <main id="contenu">
+    <Hero />
+    <Concept />
+    <Catalogue />
+    <Apercu />
+    <Infos />
+  </main>
+  <Coda />
+</Base>

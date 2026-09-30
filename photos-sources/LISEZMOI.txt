@@ -1,0 +1,1 @@
+Déposez ici les photos originales de visite (non publiées), puis lancez npm run images.

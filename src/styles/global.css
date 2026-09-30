@@ -1,0 +1,4 @@
+/* Point d'entrée des styles — importé une seule fois dans src/layouts/Base.astro */
+@import './tokens.css';
+@import './base.css';
+@import './sections.css';

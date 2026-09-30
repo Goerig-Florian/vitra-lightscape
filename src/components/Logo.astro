@@ -1,0 +1,34 @@
+---
+/**
+ * Logo Vitra Lightscape — SVG original inséré tel quel (tracés, lettres,
+ * proportions et barre horizontale inchangés).
+ *
+ * animated : le logo sort de l'obscurité, un flare blanc chaud suit la barre
+ * horizontale et révèle le symbole et les textes. Joue une seule fois, en CSS.
+ * Avec « réduire les animations », le logo s'affiche directement éclairé.
+ */
+import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
+
+interface Props {
+  animated?: boolean;
+  class?: string;
+}
+
+const { animated = false, class: className = '' } = Astro.props;
+const svg = logoSvg.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const classes = ['logo', animated ? 'logo--animated' : '', className].filter(Boolean).join(' ');
+---
+
+{
+  animated ? (
+    <div class={classes} role="img" aria-label="Vitra Lightscape">
+      <div class="logo__layer logo__dim" set:html={svg} />
+      <div class="logo__layer logo__lit" set:html={svg} />
+      <span class="logo__beam" aria-hidden="true" />
+      <span class="logo__halo" aria-hidden="true" />
+      <span class="logo__flare" aria-hidden="true" />
+    </div>
+  ) : (
+    <div class={classes} role="img" aria-label="Vitra Lightscape" set:html={svg} />
+  )
+}

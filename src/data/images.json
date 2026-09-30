@@ -1,0 +1,66 @@
+{
+  "design-museum": {
+    "width": 4000,
+    "height": 2252,
+    "widths": [
+      480,
+      800,
+      1200,
+      1800,
+      2400
+    ]
+  },
+  "vitrahaus": {
+    "width": 3450,
+    "height": 2252,
+    "widths": [
+      480,
+      800,
+      1200,
+      1800,
+      2400
+    ]
+  },
+  "slide-tower": {
+    "width": 2252,
+    "height": 4000,
+    "widths": [
+      480,
+      800,
+      1200,
+      1800,
+      2252
+    ]
+  },
+  "dome": {
+    "width": 4000,
+    "height": 2252,
+    "widths": [
+      480,
+      800,
+      1200,
+      1800,
+      2400
+    ]
+  },
+  "vitrahaus-detail": {
+    "width": 2000,
+    "height": 1300,
+    "widths": [
+      480,
+      800,
+      1200,
+      1800,
+      2000
+    ]
+  },
+  "dome-detail": {
+    "width": 1100,
+    "height": 1010,
+    "widths": [
+      480,
+      800,
+      1100
+    ]
+  }
+}

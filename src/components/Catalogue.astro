@@ -1,0 +1,50 @@
+---
+import Photo from './Photo.astro';
+import SectionLabel from './SectionLabel.astro';
+import { catalogue } from '../data/content';
+import { buildings } from '../data/buildings';
+import { photos } from '../data/photos';
+
+// Largeur d'affichage de chaque image, pour que le navigateur choisisse le bon fichier
+const sizes = {
+  wide: '(min-width: 1024px) 66vw, 92vw',
+  tall: '(min-width: 1024px) 30vw, 92vw',
+  offset: '(min-width: 1024px) 48vw, 92vw',
+  band: '(min-width: 1024px) 72vw, 92vw',
+};
+---
+
+<section class="section section--light catalogue" id="batiments" aria-labelledby="catalogue-title">
+  <div class="grid catalogue__head">
+    <div class="rule" aria-hidden="true" />
+    <SectionLabel n="II" text={catalogue.label} />
+    <h2 class="catalogue__title reveal" id="catalogue-title">{catalogue.title}</h2>
+    <p class="catalogue__intro reveal">{catalogue.intro}</p>
+  </div>
+
+  <ol class="grid catalogue__list">
+    {
+      buildings.map((b) => (
+        <li class={`entry entry--${b.layout}`}>
+          <figure class="entry__figure">
+            <div class="entry__frame reveal-mask">
+              <Photo id={b.photo} alt={photos[b.photo].alt} sizes={sizes[b.layout]} position={b.position} />
+            </div>
+            <figcaption class="entry__caption reveal">
+              <span class="entry__n">N° {b.n}</span>
+              <h3 class="entry__name">{b.name}</h3>
+              <p class="entry__meta">{b.author} · {b.year}</p>
+              <p class="entry__note">{b.note}</p>
+              <p class="entry__credit">
+                Photo : {photos[b.photo].credit} ·{' '}
+                <a href={b.source} rel="noopener">
+                  Fiche Vitra<span class="sr-only"> du bâtiment {b.name} (site externe)</span>
+                </a>
+              </p>
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ol>
+</section>

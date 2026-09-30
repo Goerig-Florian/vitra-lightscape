@@ -1,0 +1,43 @@
+---
+import Logo from './Logo.astro';
+import Photo from './Photo.astro';
+import { hero } from '../data/content';
+import { photos } from '../data/photos';
+
+const photo = photos['design-museum'];
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="grid hero__grid">
+    <div class="hero__brand">
+      <Logo animated />
+    </div>
+
+    <div class="hero__copy">
+      <h1 class="hero__title" id="hero-title">{hero.titleStart} <em>{hero.titleAccent}</em></h1>
+      <p class="hero__lead">{hero.lead}</p>
+      <a class="cta" href="#experience">
+        <span class="cta__bar" aria-hidden="true" />
+        <span>{hero.cta}</span>
+        <span class="cta__arrow" aria-hidden="true">↓</span>
+      </a>
+    </div>
+
+    <figure class="hero__media">
+      <div class="hero__frame">
+        <Photo
+          id="design-museum"
+          alt={photo.alt}
+          sizes="(min-width: 1024px) 58vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <span class="hero__slit" aria-hidden="true" />
+      </div>
+      <figcaption class="caption">
+        Vitra Design Museum — Frank Gehry, 1989
+        <span class="caption__credit">Photo : {photo.credit}, {photo.date}</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>

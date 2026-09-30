@@ -1,0 +1,15 @@
+---
+/** Étiquette de section : numéro, barre (motif du logo) et intitulé. */
+interface Props {
+  n: string;
+  text: string;
+  class?: string;
+}
+const { n, text, class: className = '' } = Astro.props;
+---
+
+<p class={`section-label ${className}`.trim()}>
+  <span class="section-label__n">{n}</span>
+  <span class="section-label__bar" aria-hidden="true" />
+  <span>{text}</span>
+</p>

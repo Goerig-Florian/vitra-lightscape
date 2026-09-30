@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+# originaux lourds (7 Mo chacun), gardés en local
+photos-sources/*.jpg
+# aperçu généré, inutile avec GitHub Pages
+apercu-statique/

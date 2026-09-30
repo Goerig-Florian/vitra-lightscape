@@ -1,0 +1,59 @@
+---
+import Photo from './Photo.astro';
+import SectionLabel from './SectionLabel.astro';
+import { apercu } from '../data/content';
+import { photos } from '../data/photos';
+
+const photo = photos['vitrahaus-detail'];
+
+// Tracés relevés sur la photo recadrée (2000 × 1300 px) : bords des deux pignons.
+const lines = ['184,328 542,56 914,314', '1160,428 1442,390 1702,644'];
+---
+
+<section class="section section--dark apercu" id="experience" aria-labelledby="apercu-title">
+  <div class="grid apercu__grid">
+    <SectionLabel n="III" text={apercu.label} />
+
+    <figure class="apercu__stage" data-apercu-stage data-step="3">
+      <div class="apercu__frame">
+        <Photo id="vitrahaus-detail" alt={photo.alt} sizes="(min-width: 1024px) 66vw, 100vw" />
+        <div class="apercu__shade" aria-hidden="true" />
+        <svg class="apercu__lines" viewBox="0 0 2000 1300" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <defs>
+            <filter id="apercu-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="10" />
+            </filter>
+          </defs>
+          <g filter="url(#apercu-glow)">
+            {lines.map((points) => <polyline class="line-glow" points={points} pathLength="1" />)}
+          </g>
+          {lines.map((points) => <polyline class="line-core" points={points} pathLength="1" />)}
+        </svg>
+        <span class="apercu__tag">Simulation</span>
+      </div>
+      <figcaption class="caption">{apercu.disclaimer}</figcaption>
+    </figure>
+
+    <div class="apercu__side">
+      <h2 class="apercu__title" id="apercu-title">{apercu.title}</h2>
+      <ol class="apercu__steps" aria-label="Étapes de l’aperçu">
+        {
+          apercu.steps.map((s, i) => (
+            <li>
+              <button
+                class="step"
+                type="button"
+                data-step-target={String(i + 1)}
+                aria-pressed={i === apercu.steps.length - 1 ? 'true' : 'false'}
+              >
+                <span class="step__n">0{i + 1}</span>
+                <span class="step__title">{s.title}</span>
+              </button>
+              <p class="step__text">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

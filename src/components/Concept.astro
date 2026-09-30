@@ -1,0 +1,32 @@
+---
+import Photo from './Photo.astro';
+import SectionLabel from './SectionLabel.astro';
+import { concept } from '../data/content';
+import { photos } from '../data/photos';
+
+const photo = photos['dome-detail'];
+---
+
+<section class="section section--light concept" id="concept" aria-labelledby="concept-title">
+  <div class="grid concept__grid">
+    <SectionLabel n="I" text={concept.label} />
+
+    <h2 class="concept__statement reveal" id="concept-title">{concept.statement}</h2>
+    <p class="concept__follow reveal">{concept.follow}</p>
+
+    <figure class="concept__media">
+      <div class="concept__frame reveal-mask" data-parallax>
+        <Photo id="dome-detail" alt={photo.alt} sizes="(min-width: 1024px) 34vw, 100vw" />
+      </div>
+      <figcaption class="caption">
+        Dome — R. Buckminster Fuller, avec Thomas C. Howard (détail)
+        <span class="caption__credit">Photo : {photo.credit}, {photo.date}</span>
+      </figcaption>
+    </figure>
+
+    <aside class="concept__aside reveal">
+      <h3>{concept.audienceTitle}</h3>
+      <p>{concept.audience}</p>
+    </aside>
+  </div>
+</section>
