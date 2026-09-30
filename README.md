@@ -29,15 +29,14 @@ npm run dev      # http://localhost:4321
    - L'horloge suit la vidéo, de 18:00 à 21:30.
    - À la nuit, une vague de lumière douce balaie le musée.
    - Boutons pause et revoir.
-2. **L'expérience** (sable → pêche → corail) : les trois modes de mise en lumière (façade, intérieur, interactif) et le chemin lumineux.
-3. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
-4. **Le parcours** (nuit) : page d'accueil du parcours.
+2. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
+3. **Le parcours** (nuit) : page d'accueil du parcours.
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
    - La carte du Campus (vitra.com) : le chemin lumineux s'allume d'étape en étape à l'entrée dans la section.
    - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Précédent / suivant, et liste repliée des 31 étapes.
    - Filtres façade / intérieur / interactif.
-5. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
-6. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
+4. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
+5. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
 
 ## Le parcours : ordre et sources
 
@@ -103,7 +102,7 @@ public/photos/                 photos de jour des bâtiments (vitra.com)
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/                Inter (SIL Open Font License), auto-hébergée
-  components/                  Header, Hero, Experience, Dusk, Parcours,
+  components/                  Header, Hero, Dusk, Parcours,
                                Billetterie, Infos, Footer, CartDrawer, Logo
   data/                        contenus, bâtiments, carte.json, fiches.json, billetterie
   layouts/Base.astro

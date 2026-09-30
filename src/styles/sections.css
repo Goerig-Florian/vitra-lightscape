@@ -1,6 +1,6 @@
 /* ==========================================================================
    Sections — dans l'ordre de la page
-   Une soirée : vidéo (jour → nuit), sable, pêche, coucher de soleil, nuit.
+   Une soirée : vidéo (jour → nuit), coucher de soleil, nuit.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -392,79 +392,6 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   L'expérience — fin d'après-midi (sable → pêche → corail)
-   -------------------------------------------------------------------------- */
-
-.experience {
-  background: linear-gradient(180deg, var(--sand) 0%, #f5e0cf 40%, var(--peach) 72%, var(--coral) 100%);
-}
-
-.experience__statement {
-  max-width: 20ch;
-  font-size: var(--step-3);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-
-.experience__list {
-  display: grid;
-  gap: 2.5rem var(--gutter);
-  margin-top: clamp(3rem, 2rem + 4vw, 6rem);
-}
-
-.experience__item {
-  position: relative;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--ink);
-}
-
-.experience__item .mode-mark {
-  position: absolute;
-  top: 1.35rem;
-  right: 0;
-}
-
-.experience__n {
-  display: block;
-  margin-bottom: 2.5rem;
-  font-size: var(--step--1);
-  font-weight: 500;
-  color: var(--ink-soft);
-}
-
-.experience__item h3 {
-  font-size: var(--step-1);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.experience__item p {
-  max-width: 38ch;
-  margin-top: 0.75rem;
-  color: var(--ink-soft);
-}
-
-.experience__item .experience__count {
-  margin-top: 1.25rem;
-  font-size: var(--step--1);
-  font-weight: 500;
-  color: var(--ink);
-}
-
-@media (min-width: 700px) {
-  .experience__list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1100px) {
-  .experience__list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
 /* Pastilles des modes de mise en lumière */
 .mode-mark {
   display: inline-block;
@@ -489,13 +416,6 @@
   background: transparent;
   border: 2px solid #ff8f6b;
   box-shadow: 0 0 0 3px rgba(255, 143, 107, 0.25);
-}
-
-.mode-mark--path {
-  width: 22px;
-  height: 3px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, rgba(255, 180, 76, 0.2), var(--amber));
 }
 
 /* --------------------------------------------------------------------------

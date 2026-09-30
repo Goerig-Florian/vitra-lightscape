@@ -4,7 +4,6 @@
  */
 
 export const nav = [
-  { href: '#experience', label: 'L’expérience' },
   { href: '#parcours', label: 'Le parcours' },
   { href: '#billetterie', label: 'Billetterie' },
   { href: '#infos', label: 'Infos' },
@@ -19,13 +18,6 @@ export const hero = {
   clockFrom: 18 * 60, // 18:00, début de la vidéo
   clockTo: 21 * 60 + 30, // 21:30, fin de la vidéo
   videoLabel: 'Vidéo d’ambiance : le Vitra Design Museum de Frank Gehry passe du jour au coucher de soleil, puis à la nuit, où la lumière dessine sa silhouette.',
-};
-
-export const experience = {
-  label: 'L’expérience',
-  statement: 'Une soirée pour voir le Campus comme ses architectes l’ont pensé.',
-  pathTitle: 'Un chemin lumineux',
-  pathText: 'Un tracé de lumière relie les bâtiments et guide la visite, d’une œuvre à l’autre, sans plan à consulter.',
 };
 
 export const dusk = {
