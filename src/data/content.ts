@@ -5,7 +5,6 @@
 
 export const nav = [
   { href: '#experience', label: 'L’expérience' },
-  { href: '#visualisations', label: 'Visualisations' },
   { href: '#parcours', label: 'Le parcours' },
   { href: '#billetterie', label: 'Billetterie' },
   { href: '#infos', label: 'Infos' },
@@ -29,13 +28,6 @@ export const experience = {
   pathText: 'Un tracé de lumière relie les bâtiments et guide la visite, d’une œuvre à l’autre, sans plan à consulter.',
 };
 
-export const visualisations = {
-  label: 'Premières visualisations',
-  title: 'Quatre essais, avant la nuit.',
-  text: 'Nos premiers tests de mise en lumière, réalisés à partir de nos photos de visite. Chaque bâtiment du Campus aura sa propre écriture lumineuse.',
-  notice: 'Visualisations de projet, pas des photographies d’une installation existante.',
-};
-
 export const dusk = {
   from: 19 * 60 + 30, // 19:30
   to: 21 * 60 + 30, // 21:30
@@ -46,9 +38,11 @@ export const dusk = {
 export const parcours = {
   label: 'Le parcours',
   title: 'Tout le Campus, sous une autre lumière.',
-  text: 'Trente et une architectures et œuvres, reliées par un chemin lumineux. Filtrez par type de mise en lumière.',
-  notice: 'Tracé schématique. L’ordre du parcours et le mode de mise en lumière de chaque bâtiment sont des propositions, à concevoir avec le Campus.',
+  text: 'Du parking visiteurs à la VitraHaus, puis des musées aux halles de production, et retour par l’Álvaro-Siza-Promenade et le jardin Oudolf : trente et une architectures et œuvres, reliées par un chemin lumineux.',
+  notice: 'L’ordre du parcours et le mode de mise en lumière de chaque bâtiment sont des propositions, à affiner avec le Campus.',
+  approx: 'Repère en pointillé : œuvre absente d’OpenStreetMap, placée d’après la description de vitra.com.',
   source: { label: 'Liste des bâtiments : vitra.com', href: 'https://www.vitra.com/fr-fr/campus/architecture' },
+  osm: { label: '© contributeurs OpenStreetMap', href: 'https://www.openstreetmap.org/copyright' },
 };
 
 export const infos = {

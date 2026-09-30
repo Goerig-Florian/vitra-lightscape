@@ -1,9 +1,9 @@
 /*
  * Vitra Lightscape — interactions de la page
  * - navigation mobile
- * - vidéo du premier écran : horloge synchronisée, mapping à la nuit, pause
+ * - vidéo du premier écran : horloge synchronisée, lumière à la nuit, pause
  * - « Le soleil se couche » : ciel, soleil, horloge et logo liés au défilement
- * - parcours : filtres par mode de mise en lumière, liste ↔ points du plan
+ * - parcours : chemin lumineux étape par étape, filtres, liste ↔ repères du plan
  * - en-tête transparent / jour / nuit, apparitions au défilement
  * Tout le contenu reste lisible sans JavaScript.
  */
@@ -43,7 +43,7 @@
   }
 
   /* ---------- Apparitions ---------- */
-  var revealables = document.querySelectorAll('.reveal, [data-map]');
+  var revealables = document.querySelectorAll('.reveal');
   if (reduceMotion || !('IntersectionObserver' in window)) {
     revealables.forEach(function (el) { el.classList.add('is-visible'); });
   } else {
@@ -182,39 +182,159 @@
     if (duskLogo && logoO > 0.5 && !duskLogo.classList.contains('is-playing')) duskLogo.classList.add('is-playing');
   };
 
-  /* ---------- Parcours : filtres et liaison liste ↔ plan ---------- */
+  /* ---------- Parcours : chemin lumineux, filtres, liste ↔ plan ---------- */
   var parcours = document.querySelector('[data-parcours]');
-  if (parcours) {
-    var map = parcours.querySelector('[data-map]');
-    var stops = Array.prototype.slice.call(parcours.querySelectorAll('[data-stop]'));
-    var items = Array.prototype.slice.call(parcours.querySelectorAll('[data-item]'));
-    var filters = Array.prototype.slice.call(parcours.querySelectorAll('[data-filter]'));
+  var plan = parcours && parcours.querySelector('[data-plan]');
+  if (parcours && plan) {
+    var q = function (sel) { return Array.prototype.slice.call(parcours.querySelectorAll(sel)); };
+    var stops = q('[data-stop]');
+    var items = q('[data-item]');
+    var filters = q('[data-filter]');
+    var ats = stops.map(function (s) { return Number(s.dataset.at); });
+    var bldgs = {}, spurs = {};
+    q('[data-bldg]').forEach(function (b) { (bldgs[b.dataset.bldg] = bldgs[b.dataset.bldg] || []).push(b); });
+    q('[data-spur]').forEach(function (s) { spurs[s.dataset.spur] = s; });
+    var nowN = parcours.querySelector('[data-now-n]');
+    var nowName = parcours.querySelector('[data-now-name]');
+    var nowMeta = parcours.querySelector('[data-now-meta]');
+    var ctrl = parcours.querySelector('[data-plan-toggle]');
+    var ctrlLabel = parcours.querySelector('[data-plan-label]');
+    var current = 0;
 
-    var activate = function (idx, on) {
-      if (stops[idx]) stops[idx].classList.toggle('is-active', on);
-      if (items[idx]) items[idx].classList.toggle('is-active', on);
+    var extras = function (i) {
+      var id = stops[i].dataset.id;
+      return (bldgs[id] || []).concat(spurs[id] ? [spurs[id]] : []);
     };
 
-    items.forEach(function (item) {
-      var idx = Number(item.dataset.item);
-      item.addEventListener('mouseenter', function () { activate(idx, true); });
-      item.addEventListener('mouseleave', function () { activate(idx, false); });
-      item.addEventListener('focus', function () { activate(idx, true); });
-      item.addEventListener('blur', function () { activate(idx, false); });
+    // Étape affichée sous le plan (numéro, nom, auteur)
+    var show = function (i) {
+      nowN.textContent = (i < 9 ? '0' : '') + (i + 1);
+      nowName.textContent = items[i].querySelector('.index__name').textContent;
+      nowMeta.textContent = items[i].querySelector('.index__meta').textContent;
+    };
+
+    var light = function (i) {
+      stops[i].classList.add('is-lit');
+      extras(i).forEach(function (el) { el.classList.add('is-lit'); });
+      if (stops[current]) stops[current].classList.remove('is-current');
+      stops[i].classList.add('is-current');
+      current = i;
+      show(i);
+    };
+
+    var activate = function (i, on) {
+      stops[i].classList.toggle('is-active', on);
+      items[i].classList.toggle('is-active', on);
+      (bldgs[stops[i].dataset.id] || []).forEach(function (b) { b.classList.toggle('is-active', on); });
+      show(on ? i : current);
+    };
+
+    items.forEach(function (item, i) {
+      item.addEventListener('mouseenter', function () { activate(i, true); });
+      item.addEventListener('mouseleave', function () { activate(i, false); });
+      item.addEventListener('focus', function () { activate(i, true); });
+      item.addEventListener('blur', function () { activate(i, false); });
+    });
+    stops.forEach(function (stop, i) {
+      stop.addEventListener('mouseenter', function () { activate(i, true); });
+      stop.addEventListener('mouseleave', function () { activate(i, false); });
     });
 
     filters.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var f = btn.dataset.filter;
         filters.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
-        map.classList.toggle('is-filtered', f !== 'all');
+        plan.classList.toggle('is-filtered', f !== 'all');
         items.forEach(function (item, i) {
           var match = f === 'all' || item.dataset.modes.split(' ').indexOf(f) !== -1;
           item.hidden = !match;
-          if (stops[i]) stops[i].classList.toggle('is-dim', !match);
+          stops[i].classList.toggle('is-dim', !match);
         });
       });
     });
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      // Plan affiché d'un coup, sans animation
+      Object.keys(bldgs).forEach(function (id) { bldgs[id].forEach(function (b) { b.classList.add('is-lit'); }); });
+      stops.forEach(function (s) { s.classList.add('is-lit'); });
+    } else {
+      // Le chemin avance à vitesse de marche constante et marque une pause à chaque étape
+      var TRAVEL = 12000; // durée du trajet complet, en ms
+      var DWELL = 260; // pause à chaque étape, en ms
+      var p = 0, k = 0, wait = 0, last = 0, playing = false, frameId = null;
+
+      var setState = function (state) {
+        ctrl.dataset.state = state;
+        ctrlLabel.textContent = state === 'playing' ? 'Mettre en pause' : state === 'paused' ? 'Reprendre' : 'Rejouer le parcours';
+      };
+
+      var draw = function () { plan.style.setProperty('--dash', (1 - p).toFixed(4)); };
+
+      var tick = function (t) {
+        var dt = Math.min(t - (last || t), 50);
+        last = t;
+        if (wait > 0) {
+          wait -= dt;
+        } else {
+          var target = k < ats.length ? ats[k] : 1;
+          p = Math.min(target, p + dt / TRAVEL);
+          if (p >= target && k < ats.length) {
+            light(k);
+            k++;
+            wait = DWELL;
+          }
+        }
+        draw();
+        if (k >= ats.length && p >= 1) {
+          playing = false;
+          setState('done');
+          return;
+        }
+        if (playing) frameId = requestAnimationFrame(tick);
+      };
+
+      var play = function () {
+        playing = true;
+        last = 0;
+        setState('playing');
+        cancelAnimationFrame(frameId);
+        frameId = requestAnimationFrame(tick);
+      };
+
+      var reset = function () {
+        p = 0; k = 0; wait = 0;
+        stops.forEach(function (s, i) {
+          s.classList.remove('is-lit', 'is-current');
+          extras(i).forEach(function (el) { el.classList.remove('is-lit'); });
+        });
+        draw();
+      };
+
+      plan.classList.add('is-animated');
+      draw();
+      ctrl.hidden = false;
+      setState('paused');
+      ctrlLabel.textContent = 'Lancer le parcours';
+
+      ctrl.addEventListener('click', function () {
+        if (ctrl.dataset.state === 'playing') {
+          playing = false;
+          cancelAnimationFrame(frameId);
+          setState('paused');
+        } else {
+          if (ctrl.dataset.state === 'done') reset();
+          play();
+        }
+      });
+
+      var planIO = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          planIO.disconnect();
+          if (k === 0 && p === 0 && ctrl.dataset.state !== 'playing') play();
+        }
+      }, { threshold: 0.35 });
+      planIO.observe(plan);
+    }
   }
 
   /* ---------- En-tête ---------- */

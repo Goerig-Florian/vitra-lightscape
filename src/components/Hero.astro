@@ -1,8 +1,8 @@
 ---
 /**
  * Premier écran : vidéo de fond du Vitra Design Museum, du jour à la nuit.
- * L'horloge suit la vidéo (18:00 → 21:30). À la nuit, le mapping SVG
- * dessine la silhouette du musée, calé sur la dernière image.
+ * L'horloge suit la vidéo (18:00 → 21:30). À la nuit, une vague de lumière
+ * douce balaie le musée, découpée sur sa silhouette (calée sur la dernière image).
  * Animations réduites : pas de lecture automatique, image de nuit fixe.
  */
 import { hero } from '../data/content';
@@ -37,14 +37,11 @@ const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${Str
           <stop offset="0.5" stop-color="#ffe7c2" stop-opacity="0.9" />
           <stop offset="1" stop-color="#ffd9a0" stop-opacity="0" />
         </linearGradient>
-        <filter id="hero-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="8" /></filter>
       </defs>
       <g clip-path="url(#hero-clip)">
         <rect class="hero__wash" width="1672" height="941" />
         <rect class="hero__band" x="-420" width="420" height="941" fill="url(#hero-band)" />
       </g>
-      <polygon class="hero__outline-glow" points={pts} pathLength="1" filter="url(#hero-glow)" />
-      <polygon class="hero__outline" points={pts} pathLength="1" />
     </svg>
     <div class="hero__scrim" aria-hidden="true"></div>
   </div>

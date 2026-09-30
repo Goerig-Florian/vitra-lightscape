@@ -30,52 +30,51 @@ export const modes: Record<Mode, { label: string; short: string; text: string }>
 };
 
 export interface Batiment {
+  /** Identifiant partagé avec src/data/plan.json (position sur le plan) */
+  id: string;
   name: string;
   author: string;
   year: string;
   modes: Mode[];
 }
 
+/**
+ * Dans l'ORDRE DU PARCOURS (proposition) : départ du parking visiteurs,
+ * VitraHaus, musées, halles de production, Schaudepot et caserne, retour
+ * par l'Álvaro-Siza-Promenade et le jardin Oudolf. Voir README.md.
+ */
 export const batiments: Batiment[] = [
-  { name: 'VitraHaus', author: 'Herzog & de Meuron', year: '2010', modes: ['facade', 'interieur'] },
-  { name: 'Vitra Design Museum', author: 'Frank Gehry', year: '1989', modes: ['facade'] },
-  { name: 'Vitra Campus Gallery', author: 'Frank Gehry', year: '2003', modes: ['facade'] },
-  { name: 'Halle de production', author: 'Frank Gehry', year: '1989', modes: ['facade'] },
-  { name: 'Dôme', author: 'Richard Buckminster Fuller', year: '1975 / 2000', modes: ['interieur'] },
-  { name: 'Airstream Kiosk', author: '', year: '1968 / 2011', modes: ['interieur'] },
-  { name: 'Station-service', author: 'Jean Prouvé', year: 'ca. 1953 / 2003', modes: ['interieur'] },
-  { name: 'Place Jean Prouvé', author: 'Vitra Campus', year: '2022', modes: ['interactif'] },
-  { name: 'Vitra Schaudepot', author: 'Herzog & de Meuron', year: '2016', modes: ['facade'] },
-  { name: 'Barragán Gallery', author: 'Vitra Schaudepot', year: '2022', modes: ['interieur'] },
-  { name: 'Oudolf Garten', author: 'Piet Oudolf', year: '2020', modes: ['interactif'] },
-  { name: 'Tane Garden House', author: 'Tsuyoshi Tane', year: '2023', modes: ['interieur'] },
-  { name: 'Water Garden', author: 'Bas Smets', year: '2026', modes: ['interactif'] },
-  { name: 'Khudi Bari', author: 'Marina Tabassum', year: '2024', modes: ['interieur'] },
-  { name: 'Doshi Retreat', author: 'Balkrishna Doshi, Khushnu Panthaki Hoof, Sönke Hoof', year: '2025', modes: ['interactif'] },
-  { name: 'Umbrella House', author: 'Kazuo Shinohara', year: '1961 / 2022', modes: ['interieur'] },
-  { name: 'Diogene', author: 'Renzo Piano', year: '2013', modes: ['interieur'] },
-  { name: 'Blockhaus', author: 'Thomas Schütte', year: '2018', modes: ['interieur'] },
-  { name: 'Ring et Ruisseau', author: 'Ronan & Erwan Bouroullec', year: '2018', modes: ['interactif'] },
-  { name: 'Vitra Designweg', author: 'Ronan & Erwan Bouroullec', year: '2021', modes: ['interactif'] },
-  { name: 'Torre Numero Due', author: 'Nathalie Du Pasquier', year: '2021', modes: ['facade'] },
-  { name: 'Pavillon de conférences', author: 'Tadao Ando', year: '1993', modes: ['facade'] },
-  { name: 'Caserne de pompiers', author: 'Zaha Hadid', year: '1993', modes: ['facade', 'interactif'] },
-  { name: 'Halle de production', author: 'Álvaro Siza', year: '1994', modes: ['facade'] },
-  { name: 'Álvaro-Siza-Promenade', author: 'Álvaro Siza', year: '2014', modes: ['interactif'] },
-  { name: 'Vitra Tour-Toboggan', author: 'Carsten Höller', year: '2014', modes: ['facade', 'interactif'] },
-  { name: 'Balancing Tools', author: 'Claes Oldenburg & Coosje van Bruggen', year: '1984', modes: ['facade'] },
-  { name: 'Halle de production', author: 'SANAA', year: '2012', modes: ['facade'] },
-  { name: 'Halle de production', author: 'Nicholas Grimshaw', year: '1981', modes: ['facade'] },
-  { name: 'Hall de production', author: 'Nicholas Grimshaw', year: '1983', modes: ['facade'] },
-  { name: 'Arrêt de bus', author: 'Jasper Morrison', year: '2006', modes: ['interieur'] },
-];
-
-/** Premières visualisations (tests) : vues de nuit réalisées à partir de nos photos */
-export const visualisations = [
-  { image: 'vitrahaus-nuit', name: 'VitraHaus', author: 'Herzog & de Meuron, 2010', alt: 'Visualisation de nuit de la VitraHaus : pignons vitrés éclairés de l’intérieur sous un ciel bleu nuit.' },
-  { image: 'dome-nuit', name: 'Dôme', author: 'R. Buckminster Fuller, 1975 / 2000', alt: 'Visualisation de nuit du Dôme : la toile éclairée de l’intérieur laisse apparaître la trame géodésique.' },
-  { image: 'slide-tower-nuit', name: 'Vitra Tour-Toboggan', author: 'Carsten Höller, 2014', alt: 'Visualisation de nuit de la Vitra Tour-Toboggan : plateforme éclairée et toboggan en spirale sous les projecteurs.' },
-  { image: 'design-museum-nuit', name: 'Vitra Design Museum', author: 'Frank Gehry, 1989', alt: 'Visualisation de nuit du Vitra Design Museum : façades blanches éclairées depuis le sol, reflétées dans le bassin.' },
+  { id: 'vitrahaus', name: 'VitraHaus', author: 'Herzog & de Meuron', year: '2010', modes: ['facade', 'interieur'] },
+  { id: 'ring-ruisseau', name: 'Ring et Ruisseau', author: 'Ronan & Erwan Bouroullec', year: '2018', modes: ['interactif'] },
+  { id: 'airstream', name: 'Airstream Kiosk', author: '', year: '1968 / 2011', modes: ['interieur'] },
+  { id: 'arret-bus', name: 'Arrêt de bus', author: 'Jasper Morrison', year: '2006', modes: ['interieur'] },
+  { id: 'campus-gallery', name: 'Vitra Campus Gallery', author: 'Frank Gehry', year: '2003', modes: ['facade'] },
+  { id: 'water-garden', name: 'Water Garden', author: 'Bas Smets', year: '2026', modes: ['interactif'] },
+  { id: 'design-museum', name: 'Vitra Design Museum', author: 'Frank Gehry', year: '1989', modes: ['facade'] },
+  { id: 'balancing-tools', name: 'Balancing Tools', author: 'Claes Oldenburg & Coosje van Bruggen', year: '1984', modes: ['facade'] },
+  { id: 'pavillon-ando', name: 'Pavillon de conférences', author: 'Tadao Ando', year: '1993', modes: ['facade'] },
+  { id: 'doshi', name: 'Doshi Retreat', author: 'Balkrishna Doshi, Khushnu Panthaki Hoof, Sönke Hoof', year: '2025', modes: ['interactif'] },
+  { id: 'halle-gehry', name: 'Halle de production', author: 'Frank Gehry', year: '1989', modes: ['facade'] },
+  { id: 'halle-grimshaw-1981', name: 'Halle de production', author: 'Nicholas Grimshaw', year: '1981', modes: ['facade'] },
+  { id: 'halle-sanaa', name: 'Halle de production', author: 'SANAA', year: '2012', modes: ['facade'] },
+  { id: 'halle-grimshaw-1983', name: 'Halle de production', author: 'Nicholas Grimshaw', year: '1983', modes: ['facade'] },
+  { id: 'schaudepot', name: 'Vitra Schaudepot', author: 'Herzog & de Meuron', year: '2016', modes: ['facade'] },
+  { id: 'barragan', name: 'Barragán Gallery', author: 'Vitra Schaudepot', year: '2022', modes: ['interieur'] },
+  { id: 'place-prouve', name: 'Place Jean Prouvé', author: 'Vitra Campus', year: '2022', modes: ['interactif'] },
+  { id: 'caserne', name: 'Caserne de pompiers', author: 'Zaha Hadid', year: '1993', modes: ['facade', 'interactif'] },
+  { id: 'designweg', name: 'Vitra Designweg', author: 'Ronan & Erwan Bouroullec', year: '2021', modes: ['interactif'] },
+  { id: 'torre', name: 'Torre Numero Due', author: 'Nathalie Du Pasquier', year: '2021', modes: ['facade'] },
+  { id: 'halle-siza', name: 'Halle de production', author: 'Álvaro Siza', year: '1994', modes: ['facade'] },
+  { id: 'promenade-siza', name: 'Álvaro-Siza-Promenade', author: 'Álvaro Siza', year: '2014', modes: ['interactif'] },
+  { id: 'tour-toboggan', name: 'Vitra Tour-Toboggan', author: 'Carsten Höller', year: '2014', modes: ['facade', 'interactif'] },
+  { id: 'khudi-bari', name: 'Khudi Bari', author: 'Marina Tabassum', year: '2024', modes: ['interieur'] },
+  { id: 'diogene', name: 'Diogene', author: 'Renzo Piano', year: '2013', modes: ['interieur'] },
+  { id: 'umbrella', name: 'Umbrella House', author: 'Kazuo Shinohara', year: '1961 / 2022', modes: ['interieur'] },
+  { id: 'station-service', name: 'Station-service', author: 'Jean Prouvé', year: 'ca. 1953 / 2003', modes: ['interieur'] },
+  { id: 'dome', name: 'Dôme', author: 'Richard Buckminster Fuller', year: '1975 / 2000', modes: ['interieur'] },
+  { id: 'tane', name: 'Tane Garden House', author: 'Tsuyoshi Tane', year: '2023', modes: ['interieur'] },
+  { id: 'oudolf', name: 'Oudolf Garten', author: 'Piet Oudolf', year: '2020', modes: ['interactif'] },
+  { id: 'blockhaus', name: 'Blockhaus', author: 'Thomas Schütte', year: '2018', modes: ['interieur'] },
 ];
 
 /** Tracé du mapping sur l'image finale de la vidéo (coordonnées de l'image 1672 × 941) */
