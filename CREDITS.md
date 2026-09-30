@@ -32,6 +32,12 @@
 - **Vitra Designweg** : photo de la page de présentation du Designweg, vitra.com.
 - **Positions officielles** des points d'intérêt, utilisées pour poser les repères : données de la même page.
 
+## Visualisations de nuit
+
+- **Vues de nuit des fiches** (`public/photos/*-nuit.webp`) : visualisations fournies par l'équipe (vagues 1 à 4, « nuit validée »), au même cadrage que les photos de jour. Originaux dans `photos-nuit/` (non versionnés), préparés par `scripts/prepare-night.py`.
+- Ce sont des **visualisations de projet**, pas des photographies d'une installation existante : le site le dit sous la carte et dans l'étiquette de la photo.
+- 30 bâtiments sur 31 en ont une. Le **Vitra Designweg** n'a pas de vue de nuit. L'image « showroom Vitra Circle » livrée dans la vague 3 ne correspond à aucune étape et n'est pas utilisée.
+
 ## Données provisoires
 
 Les dates, horaires et tarifs de `src/data/billetterie.ts` sont des **propositions** pour l'appel d'offres. Le site les signale comme provisoires.

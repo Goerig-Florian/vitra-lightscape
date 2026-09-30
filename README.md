@@ -34,7 +34,7 @@ npm run dev      # http://localhost:4321
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
    - La carte du Campus (vitra.com) : le chemin lumineux, en lumière froide, s'allume d'étape en étape à l'entrée dans la section.
    - Sept bâtiments reçoivent un light mapping animé, chacun dans sa couleur quand le chemin y arrive (motif propre à chacun, faisceau qui le balaie, contours qui pulsent vers l'intérieur, ligne de lumière le long de sa silhouette) (VitraHaus, caserne et les cinq halles : Gehry, Grimshaw 1981, SANAA, Grimshaw 1983, Siza). Les motifs sont dans `<defs>` de `Parcours.astro`.
-   - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Précédent / suivant, et liste repliée des 31 étapes.
+   - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Le bouton « Voir de nuit » fait passer la photo du jour à la nuit par un fondu à teinte de coucher de soleil (30 bâtiments sur 31, le Designweg n'a pas de vue de nuit). Le choix « nuit » reste actif quand on change d'étape. Précédent / suivant, et liste repliée des 31 étapes.
    - Filtres façade / intérieur / interactif.
 4. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
 5. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
@@ -71,6 +71,7 @@ Pour mettre à jour le trajet, la carte ou les photos :
 npm run plan     # trajet d'après OpenStreetMap (Python 3, sans dépendance)
 npm run carte    # carte et positions dans le repère du SVG Vitra
 npm run photos   # photos et liens des fiches (Python 3 + Pillow + curl)
+npm run nuit     # visualisations de nuit, depuis photos-nuit/ (Python 3 + Pillow)
 ```
 
 ## Modifier le contenu
@@ -96,10 +97,11 @@ scripts/make-video.py          fabrication de la vidéo
 scripts/make-plan.py           trajet du parcours (OpenStreetMap)
 scripts/make-map.py            carte et positions dans le repère du SVG Vitra
 scripts/fetch-photos.py        photos et liens des fiches (vitra.com)
+scripts/prepare-night.py       visualisations de nuit (originaux dans photos-nuit/, non versionnés)
 scripts/source/                SVG d'origine de la carte de vitra.com
 scripts/data/osm-route.json    trajet intermédiaire
 public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)
-public/photos/                 photos de jour des bâtiments (vitra.com)
+public/photos/                 photos de jour (vitra.com) et visualisations de nuit (<id>-nuit.webp)
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/                Inter (SIL Open Font License), auto-hébergée

@@ -35,6 +35,8 @@ export const parcours = {
   approx: 'Repère décalé de quelques mètres pour rester lisible.',
   walkNote: 'Durée de marche estimée à 4 km/h, hors arrêts. La durée totale de la soirée reste à préciser.',
   photoCredit: 'Photo : vitra.com',
+  nightCredit: 'Visualisation de nuit, projet',
+  nightNote: 'Les vues de nuit sont des visualisations de projet, pas des photographies d’une installation existante.',
   source: { label: 'Liste des bâtiments : vitra.com', href: 'https://www.vitra.com/fr-fr/campus/architecture' },
   carte: { label: 'Carte du Campus : vitra.com', href: 'https://www.vitra.com/fr-fr/campus' },
   osm: { label: '© contributeurs OpenStreetMap', href: 'https://www.openstreetmap.org/copyright' },

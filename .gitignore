@@ -7,3 +7,5 @@ photos-sources/*.jpg
 photos-sources/*.png
 # aperçu généré, inutile avec GitHub Pages
 apercu-statique/
+# visualisations de nuit d'origine (71 Mo), gardées en local
+photos-nuit/

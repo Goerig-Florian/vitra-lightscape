@@ -200,9 +200,15 @@
     var ctrl = parcours.querySelector('[data-plan-toggle]');
     var ctrlLabel = parcours.querySelector('[data-plan-label]');
     var current = 0;
-    var data = JSON.parse(document.getElementById('fiches-data').textContent);
+    var payload = JSON.parse(document.getElementById('fiches-data').textContent);
+    var data = payload.stops;
     var fiche = parcours.querySelector('[data-fiche]');
     var fImg = fiche.querySelector('[data-fiche-img]');
+    var fNight = fiche.querySelector('[data-fiche-night]');
+    var fTime = fiche.querySelector('[data-fiche-time]');
+    var fTimeLabel = fiche.querySelector('[data-fiche-time-label]');
+    var fCredit = fiche.querySelector('[data-fiche-credit]');
+    var nightOn = false; // la personne a choisi « de nuit » : reste actif d'une étape à l'autre
     var selected = 0;
     var picked = false; // vrai dès que la personne choisit elle-même une étape
     var pauseAnim = function () {};
@@ -270,6 +276,37 @@
     });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockHeight);
 
+    // Jour ou nuit : fondu entre la photo de jour et la visualisation de nuit (quand elle existe)
+    var applyTime = function (i) {
+      var d = data[i];
+      var has = !!d.night;
+      var on = nightOn && has;
+      fiche.classList.toggle('has-night', has);
+      fiche.classList.toggle('is-night', on);
+      fTime.hidden = !has;
+      fTime.setAttribute('aria-pressed', on ? 'true' : 'false');
+      fTimeLabel.textContent = on ? 'Voir de jour' : 'Voir de nuit';
+      fCredit.textContent = on ? payload.credits.night : payload.credits.day;
+      if (has) {
+        if (fNight.getAttribute('src') !== d.night) fNight.src = d.night;
+      } else {
+        fNight.removeAttribute('src');
+      }
+      fImg.alt = (on ? 'Visualisation de nuit : ' : 'Photographie de jour : ') + d.name;
+    };
+
+    fTime.addEventListener('click', function () {
+      nightOn = !nightOn;
+      if (!reduceMotion) {
+        fiche.classList.remove('is-turning');
+        void fiche.offsetWidth; // relance l'animation du crépuscule
+        fiche.classList.add('is-turning');
+        clearTimeout(fTime._t);
+        fTime._t = setTimeout(function () { fiche.classList.remove('is-turning'); }, 3000);
+      }
+      applyTime(selected);
+    });
+
     // Fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière
     var select = function (i) {
       var d = data[i];
@@ -283,8 +320,11 @@
       fImg.src = d.photo;
       fImg.width = d.w;
       fImg.height = d.h;
-      fImg.alt = 'Photographie de jour : ' + d.name;
       if (fImg.complete) fiche.classList.remove('is-loading');
+      // pas de fondu quand on change d'étape : l'état jour / nuit choisi s'applique tout de suite
+      fiche.classList.add('is-switching');
+      applyTime(i);
+      requestAnimationFrame(function () { requestAnimationFrame(function () { fiche.classList.remove('is-switching'); }); });
       fillBody(i);
     };
 

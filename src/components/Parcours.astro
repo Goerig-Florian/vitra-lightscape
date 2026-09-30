@@ -12,6 +12,7 @@ import { batiments, modes, type Mode } from '../data/batiments';
 import { url } from '../lib/url';
 import plan from '../data/carte.json';
 import fiches from '../data/fiches.json';
+import nuit from '../data/nuit.json';
 
 // Positions, trajet et formes des bâtiments : scripts/make-map.py. Photos : scripts/fetch-photos.py.
 const [vx, vy, vw, vh] = plan.viewBox;
@@ -32,6 +33,7 @@ const km = (plan.length / 1000).toLocaleString('fr-FR', { maximumFractionDigits:
 const minutes = Math.round(plan.length / (4000 / 60) / 5) * 5; // marche à 4 km/h, arrondie à 5 min
 const f = (v: number) => v.toFixed(1);
 const photo = (id: string) => url(`photos/${id}.webp`);
+const night = (id: string) => ((nuit as string[]).includes(id) ? url(`photos/${id}-nuit.webp`) : null);
 const label = (b: (typeof stops)[number], i: number) => `Étape ${i + 1} sur ${stops.length} : ${b.name}, ${credit(b)}`;
 
 // Données de la fiche, lues par main.js
@@ -40,12 +42,15 @@ const data = stops.map((b) => ({
   name: b.name,
   meta: credit(b),
   photo: photo(b.id),
+  night: night(b.id),
   w: b.fiche.w,
   h: b.fiche.h,
   href: b.fiche.href,
   modes: b.modes.map((m) => ({ key: m, short: modes[m].short, text: modes[m].text })),
 }));
+const credits = { day: parcours.photoCredit, night: parcours.nightCredit };
 const first = stops[0];
+const firstNight = night(first.id);
 
 // Light mapping projeté sur 7 bâtiments. Chaque bâtiment reçoit :
 //  - un motif (défini dans <defs>), propre à son architecture ;
@@ -302,7 +307,14 @@ const mapped = stops.filter((st) => mapping[st.id]);
             alt={`Photographie de jour : ${first.name}`}
             decoding="async"
           />
-          <figcaption>{parcours.photoCredit}</figcaption>
+          <img class="fiche__night" data-fiche-night src={firstNight ?? undefined} alt="" aria-hidden="true" decoding="async" />
+          <span class="fiche__dusk" aria-hidden="true"></span>
+          <button type="button" class="fiche__time" data-fiche-time aria-pressed="false" hidden>
+            <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor" /></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+            <span data-fiche-time-label>Voir de nuit</span>
+          </button>
+          <figcaption data-fiche-credit>{parcours.photoCredit}</figcaption>
           <div class="fiche__nav">
             <button type="button" class="fiche__btn" data-fiche-prev aria-label="Étape précédente">
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" fill="none" /></svg>
@@ -345,7 +357,7 @@ const mapped = stops.filter((st) => mapping[st.id]);
     </ul>
 
     <p class="caption" id="plan-caption">
-      {parcours.notice}
+      {parcours.notice} {parcours.nightNote}
       <a href={parcours.carte.href} rel="noopener">{parcours.carte.label}<span class="sr-only"> (site externe)</span></a>. Trajet calculé
       d’après <a href={parcours.osm.href} rel="noopener">{parcours.osm.label}<span class="sr-only"> (site externe)</span></a>, licence ODbL.
     </p>
@@ -381,7 +393,7 @@ const mapped = stops.filter((st) => mapping[st.id]);
       </ol>
     </details>
 
-    <script type="application/json" id="fiches-data" set:html={JSON.stringify(data)} />
+    <script type="application/json" id="fiches-data" set:html={JSON.stringify({ stops: data, credits })} />
 
     <p class="parcours__source">
       <a href={parcours.source.href} rel="noopener">{parcours.source.label}<span class="sr-only"> (site externe)</span></a>
