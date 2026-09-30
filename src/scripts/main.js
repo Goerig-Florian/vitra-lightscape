@@ -370,6 +370,20 @@
       });
     });
 
+    // Les animations du mapping s'arrêtent quand la carte n'est pas à l'écran (onglet masqué ou défilement plus bas)
+    if (!reduceMotion && 'IntersectionObserver' in window && plan.pauseAnimations) {
+      var onScreen = true;
+      var applyIdle = function () {
+        var idle = !onScreen || document.hidden;
+        plan.classList.toggle('is-idle', idle);
+        if (idle) plan.pauseAnimations(); else plan.unpauseAnimations();
+      };
+      new IntersectionObserver(function (entries) {
+        onScreen = entries[0].isIntersecting;
+        applyIdle();
+      }, { rootMargin: '100px' }).observe(plan);
+      document.addEventListener('visibilitychange', applyIdle);
+    }
     if (reduceMotion) plan.querySelectorAll('animate, animateTransform').forEach(function (n) { n.remove(); }); // motifs fixes
     if (reduceMotion || !('IntersectionObserver' in window)) {
       // Plan affiché d'un coup, sans animation

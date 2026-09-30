@@ -778,8 +778,8 @@
   }
 
   /* la carte et la fiche tiennent dans l'écran : la colonne collante ne dépasse pas la fenêtre */
-  .plan {
-    max-height: calc(100vh - var(--header) - 300px);
+  .plan__frame {
+    width: min(100%, calc((100vh - var(--header) - 300px) * 1.4899));
   }
 
   .fiche__photo {
@@ -790,14 +790,19 @@
 
 /* Plan du Campus (OpenStreetMap) : fond nuit, traits fins, lumière ambrée */
 .plan__frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   border: 1px solid var(--night-line);
   background: #0d1120;
 }
 
 .plan {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   font-family: var(--font);
 }
 
@@ -810,10 +815,15 @@
 }
 
 .plan__map {
-  /* carte de vitra.com (dessin sombre sur fond blanc) → traits clairs sur la nuit */
+  /* carte de vitra.com (dessin sombre sur fond blanc) → traits clairs sur la nuit.
+     Image HTML et non SVG : elle reste en cache quand les animations de la carte redessinent le SVG. */
+  position: absolute;
+  height: auto;
+  max-width: none;
   filter: invert(1);
   mix-blend-mode: screen;
   opacity: 0.5;
+  pointer-events: none;
 }
 
 .plan__bldg {
@@ -829,13 +839,13 @@
 }
 
 .plan__bldg.is-mapped.is-lit {
-  fill: rgba(50, 100, 170, 0.32);
-  stroke: rgba(159, 212, 255, 0.75);
+  fill: color-mix(in srgb, var(--mc) 22%, transparent);
+  stroke: color-mix(in srgb, var(--mc) 80%, transparent);
 }
 
 .plan__bldg.is-mapped.is-active {
-  fill: rgba(90, 150, 220, 0.45);
-  stroke: #dcefff;
+  fill: color-mix(in srgb, var(--mc) 40%, transparent);
+  stroke: #fff;
 }
 
 .plan__bldg.is-active {
@@ -846,35 +856,25 @@
 /* Light mapping : motifs de lumière froide projetés sur les bâtiments, visibles quand le chemin y arrive */
 .plan__mapping {
   opacity: 0;
-  mix-blend-mode: screen;
   transition: opacity 0.9s;
 }
 
-/* (la règle générale « .plan path { fill: none } » impose de fixer le remplissage ici) */
-.plan .plan__mapping--hatch { fill: url(#mp-hatch); }
-.plan .plan__mapping--waves { fill: url(#mp-waves); }
-.plan .plan__mapping--grid { fill: url(#mp-grid); }
-.plan .plan__mapping--rings { fill: url(#mp-rings); }
-.plan .plan__mapping--diag { fill: url(#mp-diag); }
-.plan .plan__mapping--chevron { fill: url(#mp-chevron); }
-.plan .plan__mapping--vbars { fill: url(#mp-vbars); }
 
 /* Contours qui pulsent vers l'intérieur (bandes clippées à la silhouette) */
 .plan .plan__mapping--ring {
   fill: none;
-  stroke: #9fd4ff;
+  stroke: var(--mc, #9fd4ff);
   stroke-linejoin: round;
 }
 
-.plan .plan__mapping--ring.r1 { stroke-width: 12; stroke-opacity: 0.22; }
-.plan .plan__mapping--ring.r2 { stroke-width: 7; stroke-opacity: 0.35; }
-.plan .plan__mapping--ring.r3 { stroke-width: 2.6; stroke-opacity: 0.85; }
+.plan .plan__mapping--ring.r1 { stroke-width: 11; stroke-opacity: 0.3; }
+.plan .plan__mapping--ring.r3 { stroke-width: 2.6; stroke-opacity: 0.9; }
 
 /* Ligne de lumière qui court le long de la silhouette */
 .plan .plan__mapping--edge {
   fill: none;
-  stroke: #eaf6ff;
-  stroke-width: 0.9;
+  stroke: var(--mc, #eaf6ff);
+  stroke-width: 1;
   stroke-linejoin: round;
   stroke-linecap: round;
   stroke-dasharray: 14 70;
@@ -898,8 +898,7 @@
     animation: ring-in 3s ease-in-out infinite;
   }
 
-  .plan .plan__mapping--ring.r2.is-lit { animation-delay: 0.35s; }
-  .plan .plan__mapping--ring.r3.is-lit { animation-delay: 0.7s; }
+  .plan .plan__mapping--ring.r3.is-lit { animation-delay: 0.5s; }
 
   .plan .plan__mapping--edge.is-lit {
     opacity: 1;
@@ -937,8 +936,8 @@
 
 .plan__path-glow {
   stroke: #5aa9ff;
-  stroke-width: 5;
-  opacity: 0.35;
+  stroke-width: 6;
+  opacity: 0.28;
 }
 
 .plan__path-lit {
@@ -2307,4 +2306,9 @@
   border: 0;
   font-weight: 500;
   cursor: pointer;
+}
+
+/* Animations du mapping en pause quand la carte est hors écran (main.js ajoute .is-idle) */
+.plan.is-idle .plan__mapping {
+  animation-play-state: paused !important;
 }
