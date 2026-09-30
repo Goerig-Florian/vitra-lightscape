@@ -852,12 +852,33 @@
 
 /* (la règle générale « .plan path { fill: none } » impose de fixer le remplissage ici) */
 .plan .plan__mapping--hatch { fill: url(#mp-hatch); }
-.plan .plan__mapping--hlines { fill: url(#mp-hlines); }
+.plan .plan__mapping--waves { fill: url(#mp-waves); }
 .plan .plan__mapping--grid { fill: url(#mp-grid); }
 .plan .plan__mapping--rings { fill: url(#mp-rings); }
 .plan .plan__mapping--diag { fill: url(#mp-diag); }
 .plan .plan__mapping--chevron { fill: url(#mp-chevron); }
 .plan .plan__mapping--vbars { fill: url(#mp-vbars); }
+
+/* Contours qui pulsent vers l'intérieur (bandes clippées à la silhouette) */
+.plan .plan__mapping--ring {
+  fill: none;
+  stroke: #9fd4ff;
+  stroke-linejoin: round;
+}
+
+.plan .plan__mapping--ring.r1 { stroke-width: 12; stroke-opacity: 0.22; }
+.plan .plan__mapping--ring.r2 { stroke-width: 7; stroke-opacity: 0.35; }
+.plan .plan__mapping--ring.r3 { stroke-width: 2.6; stroke-opacity: 0.85; }
+
+/* Ligne de lumière qui court le long de la silhouette */
+.plan .plan__mapping--edge {
+  fill: none;
+  stroke: #eaf6ff;
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 14 70;
+}
 
 .plan__mapping.is-lit {
   opacity: 0.75;
@@ -871,6 +892,35 @@
   .plan__mapping.is-lit {
     animation: mapping-pulse 3.4s ease-in-out infinite;
   }
+
+  .plan .plan__mapping--ring.is-lit {
+    opacity: 0;
+    animation: ring-in 3s ease-in-out infinite;
+  }
+
+  .plan .plan__mapping--ring.r2.is-lit { animation-delay: 0.35s; }
+  .plan .plan__mapping--ring.r3.is-lit { animation-delay: 0.7s; }
+
+  .plan .plan__mapping--edge.is-lit {
+    opacity: 1;
+    animation: edge-run 5s linear infinite;
+  }
+}
+
+/* Sans animation : contours et silhouette fixes */
+@media (prefers-reduced-motion: reduce) {
+  .plan .plan__mapping--edge {
+    stroke-dasharray: none;
+  }
+}
+
+@keyframes ring-in {
+  0%, 100% { opacity: 0; }
+  45% { opacity: 1; }
+}
+
+@keyframes edge-run {
+  to { stroke-dashoffset: -84; }
 }
 
 @keyframes mapping-pulse {

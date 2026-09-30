@@ -47,16 +47,20 @@ const data = stops.map((b) => ({
 }));
 const first = stops[0];
 
-// Light mapping projeté sur 7 bâtiments : un motif par architecture (définis dans <defs>, colorés en lumière froide)
-const mapping: Record<string, string> = {
-  vitrahaus: 'hatch',
-  'halle-gehry': 'hlines',
-  'halle-grimshaw-1981': 'grid',
-  'halle-sanaa': 'rings',
-  'halle-grimshaw-1983': 'diag',
-  caserne: 'chevron',
-  'halle-siza': 'vbars',
+// Light mapping projeté sur 7 bâtiments. Chaque bâtiment reçoit :
+//  - un motif (défini dans <defs>), propre à son architecture ;
+//  - un faisceau qui le balaie (direction et période en fraction de sa taille : x1, y1, x2, y2) ;
+//  - des contours qui pulsent vers l'intérieur et une ligne de lumière qui court le long de sa silhouette.
+const mapping: Record<string, { pattern: string; beam?: [number, number, number, number] }> = {
+  vitrahaus: { pattern: 'hatch', beam: [0, 0, 0.7, 0.25] },
+  'halle-gehry': { pattern: 'waves', beam: [0, 0, 0.6, 0] },
+  'halle-grimshaw-1981': { pattern: 'grid', beam: [0, 0, 0, 0.5] },
+  'halle-sanaa': { pattern: 'rings' },
+  'halle-grimshaw-1983': { pattern: 'diag', beam: [0, 0, 0.45, 0.45] },
+  caserne: { pattern: 'chevron', beam: [0, 0, 0.5, 0.3] },
+  'halle-siza': { pattern: 'vbars', beam: [0, 0, 0.35, 0] },
 };
+const mapped = stops.filter((st) => mapping[st.id]);
 const sanaa = stops.find((s) => s.id === 'halle-sanaa')!;
 ---
 
@@ -143,12 +147,39 @@ const sanaa = stops.find((s) => s.id === 'halle-sanaa')!;
                 <path d="M0 6L4 1L8 6" stroke="#9fd4ff" stroke-width="0.9" fill="none" />
                 <animateTransform attributeName="patternTransform" type="translate" from="0 0" to="0 -6" dur="2.2s" repeatCount="indefinite" />
               </pattern>
+              <pattern id="mp-waves" width="14" height="7" patternUnits="userSpaceOnUse">
+                <path d="M0 3.5C3.5 0 7 7 10.5 3.5S14 3.5 14 3.5" stroke="#9fd4ff" stroke-width="0.9" fill="none" />
+                <path d="M-3.5 3.5C0 0 3.5 7 7 3.5" stroke="#9fd4ff" stroke-width="0.5" stroke-opacity="0.6" fill="none" />
+                <animateTransform attributeName="patternTransform" type="translate" from="0 0" to="14 0" dur="3.2s" repeatCount="indefinite" />
+              </pattern>
               <radialGradient id="mp-rings" gradientUnits="userSpaceOnUse" cx={sanaa.x} cy={sanaa.y} r="9" spreadMethod="repeat">
                 <stop offset="0" stop-color="#9fd4ff" stop-opacity="0" />
                 <stop offset="0.5" stop-color="#9fd4ff" stop-opacity="0.95" />
                 <stop offset="1" stop-color="#9fd4ff" stop-opacity="0" />
                 <animate attributeName="r" values="9;18" dur="3s" repeatCount="indefinite" />
               </radialGradient>
+              {
+                mapped.map((st) => (
+                  <clipPath id={`cp-${st.id}`}>
+                    {st.shapes.map((d) => <path d={d} />)}
+                  </clipPath>
+                ))
+              }
+              {
+                mapped.map((st) => {
+                  const b = mapping[st.id].beam;
+                  return b ? (
+                    <linearGradient id={`bm-${st.id}`} x1={b[0]} y1={b[1]} x2={b[2]} y2={b[3]} spreadMethod="repeat">
+                      <stop offset="0" stop-color="#bfe6ff" stop-opacity="0" />
+                      <stop offset="0.42" stop-color="#bfe6ff" stop-opacity="0" />
+                      <stop offset="0.5" stop-color="#eaf6ff" stop-opacity="0.85" />
+                      <stop offset="0.58" stop-color="#bfe6ff" stop-opacity="0" />
+                      <stop offset="1" stop-color="#bfe6ff" stop-opacity="0" />
+                      <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${b[2] - b[0]} ${b[3] - b[1]}`} dur="3.6s" repeatCount="indefinite" />
+                    </linearGradient>
+                  ) : null;
+                })
+              }
             </defs>
 
             <image class="plan__map" href={url('campus-map.svg')} x={0} y={0} width={549.38} height={396.4} aria-hidden="true" />
@@ -159,9 +190,19 @@ const sanaa = stops.find((s) => s.id === 'halle-sanaa')!;
 
             <g class="plan__mappings" aria-hidden="true">
               {
-                stops.map((s) =>
-                  mapping[s.id] ? s.shapes.map((d) => <path class={`plan__mapping plan__mapping--${mapping[s.id]}`} d={d} fill={`url(#mp-${mapping[s.id]})`} data-bldg={s.id} />) : null,
-                )
+                mapped.map((st) => {
+                  const m = mapping[st.id];
+                  return st.shapes.map((d) => (
+                    <>
+                      <path class={`plan__mapping plan__mapping--${m.pattern}`} d={d} data-bldg={st.id} />
+                      {m.beam && <path class="plan__mapping plan__mapping--beam" d={d} style={`fill: url(#bm-${st.id})`} data-bldg={st.id} />}
+                      <path class="plan__mapping plan__mapping--ring r1" d={d} clip-path={`url(#cp-${st.id})`} data-bldg={st.id} />
+                      <path class="plan__mapping plan__mapping--ring r2" d={d} clip-path={`url(#cp-${st.id})`} data-bldg={st.id} />
+                      <path class="plan__mapping plan__mapping--ring r3" d={d} clip-path={`url(#cp-${st.id})`} data-bldg={st.id} />
+                      <path class="plan__mapping plan__mapping--edge" d={d} data-bldg={st.id} />
+                    </>
+                  ));
+                })
               }
             </g>
 
