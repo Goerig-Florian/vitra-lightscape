@@ -312,9 +312,11 @@
       var d = data[i];
       nightOn = false; // chaque fiche s'ouvre de jour : la nuit ne se lance qu'au clic sur le bouton
       stops[selected].classList.remove('is-selected');
+      (bldgs[stops[selected].dataset.id] || []).forEach(function (b) { b.classList.remove('is-selected'); });
       items[selected].classList.remove('is-selected');
       selected = i;
       stops[i].classList.add('is-selected');
+      (bldgs[stops[i].dataset.id] || []).forEach(function (b) { b.classList.add('is-selected'); });
       items[i].classList.add('is-selected');
       fiche.classList.add('is-loading');
       fImg.onload = function () { fiche.classList.remove('is-loading'); };
@@ -409,21 +411,6 @@
       });
     });
 
-    // Les animations du mapping s'arrêtent quand la carte n'est pas à l'écran (onglet masqué ou défilement plus bas)
-    if (!reduceMotion && 'IntersectionObserver' in window && plan.pauseAnimations) {
-      var onScreen = true;
-      var applyIdle = function () {
-        var idle = !onScreen || document.hidden;
-        plan.classList.toggle('is-idle', idle);
-        if (idle || plan.dataset.lite) plan.pauseAnimations(); else plan.unpauseAnimations();
-      };
-      new IntersectionObserver(function (entries) {
-        onScreen = entries[0].isIntersecting;
-        applyIdle();
-      }, { rootMargin: '100px' }).observe(plan);
-      document.addEventListener('visibilitychange', applyIdle);
-    }
-    if (reduceMotion) plan.querySelectorAll('animate, animateTransform').forEach(function (n) { n.remove(); }); // motifs fixes
     if (reduceMotion || !('IntersectionObserver' in window)) {
       // Plan affiché d'un coup, sans animation
       Object.keys(bldgs).forEach(function (id) { bldgs[id].forEach(function (b) { b.classList.add('is-lit'); }); });
@@ -441,24 +428,8 @@
 
       var draw = function () { plan.style.setProperty('--dash', (1 - p).toFixed(4)); };
 
-      // Qualité adaptative : si l'écran ralentit, on coupe d'abord les animations du mapping, puis le mapping lui-même
-      var slow = 0, level = 0;
-      var degrade = function () {
-        level++;
-        slow = 0;
-        plan.classList.add(level === 1 ? 'is-lite' : 'is-lite2');
-        plan.dataset.lite = '1'; // les animations ne reprennent plus, même au retour à l'écran
-        if (plan.pauseAnimations) plan.pauseAnimations();
-      };
-      var watch = function (raw) {
-        if (raw > 55) slow++; else if (slow > 0) slow--;
-        if (slow >= 12 && level < 2) degrade();
-      };
-
       var tick = function (t) {
-        var raw = t - (last || t);
-        var dt = Math.min(raw, 50);
-        if (last) watch(raw);
+        var dt = Math.min(t - (last || t), 50);
         last = t;
         if (wait > 0) {
           wait -= dt;

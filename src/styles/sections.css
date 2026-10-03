@@ -831,98 +831,15 @@
   transition: fill 0.6s, stroke 0.6s;
 }
 
-.plan__bldg.is-lit {
-  fill: rgba(255, 180, 76, 0.22);
-  stroke: rgba(255, 196, 120, 0.75);
-}
-
-.plan__bldg.is-mapped.is-lit {
-  fill: color-mix(in srgb, var(--mc) 22%, transparent);
-  stroke: color-mix(in srgb, var(--mc) 80%, transparent);
-}
-
-.plan__bldg.is-mapped.is-active {
-  fill: color-mix(in srgb, var(--mc) 40%, transparent);
-  stroke: #fff;
-}
-
+/* Bâtiment survolé (ou au focus), et étape choisie (sur mobile, il n'y a pas de survol) */
 .plan__bldg.is-active {
   fill: rgba(255, 214, 150, 0.5);
   stroke: var(--light);
 }
 
-/* Light mapping : motifs de lumière froide projetés sur les bâtiments, visibles quand le chemin y arrive */
-.plan__mapping {
-  opacity: 0;
-  transition: opacity 0.9s;
-}
-
-
-/* Contours qui pulsent vers l'intérieur (bandes clippées à la silhouette) */
-.plan .plan__mapping--ring {
-  fill: none;
-  stroke: var(--mc, #9fd4ff);
-  stroke-linejoin: round;
-}
-
-.plan .plan__mapping--ring.r1 { stroke-width: 11; stroke-opacity: 0.3; }
-.plan .plan__mapping--ring.r3 { stroke-width: 2.6; stroke-opacity: 0.9; }
-
-/* Ligne de lumière qui court le long de la silhouette */
-.plan .plan__mapping--edge {
-  fill: none;
-  stroke: var(--mc, #eaf6ff);
-  stroke-width: 1;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  stroke-dasharray: 14 70;
-}
-
-.plan__mapping.is-lit {
-  opacity: 0.75;
-}
-
-.plan__mapping.is-active {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .plan__mapping.is-lit {
-    animation: mapping-pulse 3.4s ease-in-out infinite;
-  }
-
-  .plan .plan__mapping--ring.is-lit {
-    opacity: 0;
-    animation: ring-in 3s ease-in-out infinite;
-  }
-
-  .plan .plan__mapping--ring.r3.is-lit { animation-delay: 0.5s; }
-
-  .plan .plan__mapping--edge.is-lit {
-    opacity: 1;
-    animation: edge-run 5s linear infinite;
-  }
-}
-
-/* Sans animation : contours et silhouette fixes */
-@media (prefers-reduced-motion: reduce) {
-  .plan .plan__mapping--edge {
-    stroke-dasharray: none;
-  }
-}
-
-@keyframes ring-in {
-  0%, 100% { opacity: 0; }
-  45% { opacity: 1; }
-}
-
-@keyframes edge-run {
-  to { stroke-dashoffset: -84; }
-}
-
-@keyframes mapping-pulse {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 0.95; }
+.plan__bldg.is-selected {
+  fill: rgba(255, 214, 150, 0.3);
+  stroke: rgba(255, 230, 190, 0.8);
 }
 
 /* Chemin lumineux */
@@ -1227,13 +1144,6 @@
   border-radius: 2px;
   background: #dcefff;
   box-shadow: 0 0 6px #5aa9ff;
-}
-
-.legend__mapping {
-  width: 14px;
-  height: 10px;
-  border: 1px solid rgba(159, 212, 255, 0.7);
-  background: repeating-linear-gradient(135deg, rgba(159, 212, 255, 0.85) 0 1px, transparent 1px 4px);
 }
 
 .legend__approx {
@@ -2315,28 +2225,6 @@
   border: 0;
   font-weight: 500;
   cursor: pointer;
-}
-
-/* Animations du mapping en pause quand la carte est hors écran (main.js ajoute .is-idle) */
-.plan.is-idle .plan__mapping {
-  animation-play-state: paused !important;
-}
-
-/* Qualité adaptative (main.js) : niveau 1 sans faisceaux, contours ni silhouette animée ; niveau 2 sans mapping */
-.plan.is-lite .plan__mapping--beam,
-.plan.is-lite .plan__mapping--ring,
-.plan.is-lite .plan__mapping--edge,
-.plan.is-lite2 .plan__mapping {
-  display: none;
-}
-
-.plan.is-lite .plan__mapping,
-.plan.is-lite2 .plan__path-glow {
-  animation: none !important;
-}
-
-.plan.is-lite2 .plan__path-glow {
-  display: none;
 }
 
 /* Légende et mentions sous la carte et la fiche */
