@@ -279,14 +279,14 @@
     var applyTime = function (i) {
       var d = data[i];
       var has = !!d.night;
-      var on = nightOn && has;
+      var on = nightOn && has && i === selected;
       fiche.classList.toggle('has-night', has);
       fiche.classList.toggle('is-night', on);
-      fTime.hidden = !has;
+      fTime.hidden = !has || i !== selected;
       fTime.setAttribute('aria-pressed', on ? 'true' : 'false');
       fTimeLabel.textContent = on ? 'Voir de jour' : 'Voir de nuit';
       fCredit.textContent = on ? payload.credits.night : payload.credits.day;
-      if (has) {
+      if (has && i === selected) { // la vue de nuit ne se charge que pour l'étape choisie
         if (fNight.getAttribute('src') !== d.night) fNight.src = d.night;
       } else {
         fNight.removeAttribute('src');
@@ -307,9 +307,26 @@
       applyTime(selected);
     });
 
-    // Fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière
-    var select = function (i) {
+    // Affichage de la fiche d'un bâtiment : photo, auteur, année, mode de mise en lumière
+    var shown = 0;
+    var render = function (i) {
       var d = data[i];
+      shown = i;
+      fiche.classList.add('is-loading');
+      fImg.onload = function () { fiche.classList.remove('is-loading'); };
+      fImg.src = d.photo;
+      fImg.width = d.w;
+      fImg.height = d.h;
+      if (fImg.complete) fiche.classList.remove('is-loading');
+      // pas de fondu quand on change de bâtiment : l'état jour / nuit s'applique tout de suite
+      fiche.classList.add('is-switching');
+      applyTime(i);
+      requestAnimationFrame(function () { requestAnimationFrame(function () { fiche.classList.remove('is-switching'); }); });
+      fillBody(i);
+    };
+
+    // Étape choisie (clic, Entrée, précédent / suivant) : repère et bâtiment restent mis en avant
+    var select = function (i) {
       nightOn = false; // chaque fiche s'ouvre de jour : la nuit ne se lance qu'au clic sur le bouton
       stops[selected].classList.remove('is-selected');
       (bldgs[stops[selected].dataset.id] || []).forEach(function (b) { b.classList.remove('is-selected'); });
@@ -318,18 +335,28 @@
       stops[i].classList.add('is-selected');
       (bldgs[stops[i].dataset.id] || []).forEach(function (b) { b.classList.add('is-selected'); });
       items[i].classList.add('is-selected');
-      fiche.classList.add('is-loading');
-      fImg.onload = function () { fiche.classList.remove('is-loading'); };
-      fImg.src = d.photo;
-      fImg.width = d.w;
-      fImg.height = d.h;
-      if (fImg.complete) fiche.classList.remove('is-loading');
-      // pas de fondu quand on change d'étape : l'état jour / nuit choisi s'applique tout de suite
-      fiche.classList.add('is-switching');
-      applyTime(i);
-      requestAnimationFrame(function () { requestAnimationFrame(function () { fiche.classList.remove('is-switching'); }); });
-      fillBody(i);
+      render(i);
     };
+
+    // Aperçu au survol d'un numéro : la fiche montre ce bâtiment, puis revient à l'étape choisie
+    var restoreTimer = null;
+    var preloaded = false;
+    var preload = function () {
+      if (preloaded) return;
+      preloaded = true;
+      data.forEach(function (d) { var im = new Image(); im.src = d.photo; }); // photos en cache : l'aperçu est instantané
+    };
+    var preview = function (i) {
+      preload();
+      clearTimeout(restoreTimer);
+      if (shown !== i) render(i);
+    };
+    var restore = function () {
+      clearTimeout(restoreTimer);
+      // petit délai : en passant d'un numéro à l'autre, la fiche ne repasse pas par l'étape choisie
+      restoreTimer = setTimeout(function () { if (shown !== selected) render(selected); }, 160);
+    };
+    parcours.addEventListener('pointerenter', preload, { once: true });
 
     // Choix de la personne : met l'animation en pause et ouvre la fiche
     var pick = function (i) {
@@ -363,6 +390,7 @@
       items[i].classList.toggle('is-active', on);
       (bldgs[stops[i].dataset.id] || []).forEach(function (b) { b.classList.toggle('is-active', on); });
       show(on ? i : current);
+      if (on) preview(i); else restore();
     };
 
     items.forEach(function (item, i) {

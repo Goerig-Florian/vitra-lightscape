@@ -33,7 +33,7 @@ npm run dev      # http://localhost:4321
 3. **Le parcours** (nuit) : page d'accueil du parcours.
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
    - La carte du Campus (vitra.com) : le chemin lumineux, en lumière froide, s'allume d'étape en étape à l'entrée dans la section.
-   - Au survol d'un bâtiment (ou au focus clavier), son volume s'éclaire sur la carte ; le bâtiment de l'étape choisie reste éclairé.
+   - Au survol d'un numéro (ou au focus clavier), son bâtiment s'éclaire sur la carte et la fiche montre ce bâtiment ; en quittant le numéro, la fiche revient à l'étape choisie, dont le bâtiment reste éclairé. Les 31 photos sont préchargées au premier survol.
    - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Le bouton « Voir de nuit » fait passer la photo du jour à la nuit par un fondu à teinte de coucher de soleil (30 bâtiments sur 31, le Designweg n'a pas de vue de nuit). Le passage à la nuit ne se lance qu'au clic ; chaque fiche s'ouvre de jour, et l'animation du chemin ne change pas la fiche toute seule. Précédent / suivant, et liste repliée des 31 étapes.
    - Filtres façade / intérieur / interactif.
 4. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
