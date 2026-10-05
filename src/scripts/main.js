@@ -591,7 +591,7 @@
       var w = torch.clientWidth, h = torch.clientHeight;
       torch.style.setProperty('--x', (tx * w).toFixed(1) + 'px');
       torch.style.setProperty('--y', (ty * h).toFixed(1) + 'px');
-      torch.style.setProperty('--r', (Math.max(110, w * 0.2)).toFixed(1) + 'px');
+      torch.style.setProperty('--r', (Math.max(140, w * 0.27)).toFixed(1) + 'px');
     };
     var moveTo = function (e) {
       var b = torch.getBoundingClientRect();
