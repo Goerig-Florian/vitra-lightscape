@@ -1,0 +1,31 @@
+---
+/**
+ * Page de titre du livre (dedans de la couverture) : même en-tête que les autres pages,
+ * « Album de collection » et la progression de la collection (un point par bâtiment, doré quand la carte est rangée).
+ */
+import Logo from './Logo.astro';
+
+interface Props {
+  rangees: number;
+  total: number;
+  /** une valeur par bâtiment : la carte est-elle rangée ? */
+  flags: boolean[];
+}
+const { rangees, total, flags } = Astro.props;
+---
+
+<div class="title-page">
+  <header class="sheet__head">
+    <span class="sheet__logo" aria-hidden="true"><Logo label={false} /></span>
+    <span>Vitra Campus</span>
+  </header>
+  <div class="title-page__body">
+    <h3>Album de collection</h3>
+    <span class="title-page__rule" aria-hidden="true"></span>
+    <p>Architectures en lumière : {total} cartes à collectionner, une par bâtiment du Vitra Campus.</p>
+    <ul class="title-page__dots" aria-hidden="true">
+      {flags.map((f) => <li class={f ? 'is-on' : ''}></li>)}
+    </ul>
+    <p class="title-page__score"><strong>{rangees}</strong> cartes rangées sur {total}</p>
+  </div>
+</div>
