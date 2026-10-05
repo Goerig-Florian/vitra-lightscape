@@ -105,11 +105,9 @@
       loop();
     });
     video.addEventListener('pause', function () { setPaused(true); sync(); });
-    var teaserTimer = null;
+    // À la fin, l'image mapping reste affichée (elle ne revient pas à la nuit seule) ; « Revoir la vidéo » la retire
     var teaser = function (on) {
-      clearTimeout(teaserTimer);
       hero.classList.toggle('is-teaser', on);
-      if (on) teaserTimer = setTimeout(function () { hero.classList.remove('is-teaser'); }, 3600);
     };
     video.addEventListener('ended', function () {
       if (!reduceMotion) teaser(true);

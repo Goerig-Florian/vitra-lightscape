@@ -29,7 +29,7 @@ Sur écran large (1024 px et plus), un **fil lumineux** vertical court sur le c�
 
 1. **Vidéo de fond** : le Vitra Design Museum passe du jour au coucher de soleil, puis à la nuit (12 s lues à vitesse ×2, réglable avec `SPEED` dans `src/scripts/main.js`).
    - À la nuit, une vague de lumière douce balaie le musée.
-   - À la fin de la vidéo, **un aperçu de trois secondes** : la version mapping de la dernière image de la vidéo (même cadrage) apparaît en fondu, puis s'éteint (un seul bâtiment, mention « visualisation de projet »).
+   - À la fin de la vidéo, **la version mapping de la dernière image de la vidéo** (même cadrage) apparaît en fondu et **reste affichée** ; « Revoir la vidéo » repart de zéro (un seul bâtiment, mention « visualisation de projet »).
    - Bouton lecture / pause (« Revoir la vidéo » à la fin).
    - Deux boutons, Réserver et Découvrir le parcours, alignés à droite ; au survol (ou au focus clavier), une lumière blanche, comme un néon, fait le tour de leur cadre. Pas d'animation avec « animations réduites ».
 2. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
