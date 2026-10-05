@@ -21,9 +21,30 @@ const MANUEL: string[] = [];
 
 /**
  * Textes du classeur, par identifiant : une ou deux phrases sur le bâtiment, à écrire par l'équipe.
- * Sans texte propre, le classeur affiche l'architecte, l'année et le type de mise en lumière envisagé.
+ * Ces textes d'architecture sont une première rédaction de l'équipe, à relire. Sans texte propre, le livre affiche le type de mise en lumière envisagé.
  */
-export const textes: Record<string, string> = {};
+export const textes: Record<string, string> = {
+  vitrahaus:
+    'Douze maisons en forme de pignon, empilées et croisées, composent une seule grande silhouette. Les extrémités vitrées de chaque « maison » ouvrent de larges vues sur le paysage.',
+  airstream:
+    'Une caravane Airstream de 1968, à la coque d’aluminium poli, transformée en kiosque en 2011. Sa forme arrondie et brillante reflète tout ce qui l’entoure.',
+  'arret-bus':
+    'Un abri d’une grande simplicité, dessiné par Jasper Morrison en 2006 : un petit volume aux parois transparentes qui se fond dans le paysage.',
+  'water-garden':
+    'Le paysagiste Bas Smets met l’eau au centre du jardin : on marche autour, on s’y reflète, et les bâtiments voisins s’y dédoublent.',
+  'design-museum':
+    'Premier bâtiment de Frank Gehry en Europe : des volumes blancs qui s’inclinent et se heurtent, sous des toits en zinc-titane. L’architecture ressemble à une sculpture.',
+  'balancing-tools':
+    'Cette sculpture géante transforme des outils du quotidien en monument : pince et marteau tiennent en équilibre près de l’entrée du site.',
+  'pavillon-ando':
+    'Premier bâtiment de Tadao Ando hors du Japon : du béton lisse, des formes géométriques simples et une partie enterrée dans le sol, pour une architecture calme.',
+  umbrella:
+    'Cette maison japonaise de 1961 a été reconstruite sur le Campus en 2022. Son grand toit, qui rappelle un parapluie, lui donne son nom.',
+  'station-service':
+    'Jean Prouvé, ingénieur et constructeur, a conçu cette station-service vers 1953. Légère et préfabriquée, elle a été remontée sur le Campus en 2003.',
+  oudolf:
+    'Piet Oudolf a dessiné ce jardin en 2020 : graminées et vivaces plantées en larges masses, dont les couleurs changent au fil des saisons.',
+};
 
 /** Réglages de l'effet (voir LightscapeGallery.astro) */
 export const reglages = {
