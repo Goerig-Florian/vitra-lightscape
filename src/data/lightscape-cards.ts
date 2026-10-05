@@ -22,9 +22,9 @@ const MANUEL: string[] = [];
 /** Réglages de l'effet (voir LightscapeGallery.astro) */
 export const reglages = {
   /** Inclinaison maximale en degrés (0 = carte à plat) */
-  tilt: 14,
-  /** Douceur du passage jour → mapping, en part de la largeur de la carte (0,1 = net, 0,8 = très fondu) */
-  reveal: 0.35,
+  tilt: 12,
+  /** Largeur de la zone où l'image bascule du jour au mapping, en part de la carte (0,05 = net, 0,5 = très fondu) */
+  reveal: 0.18,
 };
 
 export interface CarteLightscape {

@@ -1,7 +1,8 @@
 ---
 /**
- * Une carte : la photo de jour dessous, la version mapping dessus (révélée par le curseur ou au toucher).
- * C'est un bouton (clavier et tactile) : Entrée / Espace / tap bascule entre jour et mapping.
+ * Une carte épurée : la photo de jour dessous, la version mapping dessus. Quand la carte s'incline,
+ * l'image bascule du jour au mapping (effet lenticulaire) avec un reflet irisé.
+ * C'est un bouton : Entrée / Espace / tap fige la version mapping.
  */
 import type { CarteLightscape } from '../data/lightscape-cards';
 import { url } from '../lib/url';
@@ -16,6 +17,7 @@ const { carte } = Astro.props;
   <span class="lcard__tilt">
     <img class="lcard__img" src={url(carte.jour)} alt="" width="960" height="720" loading="lazy" decoding="async" />
     <img class="lcard__img lcard__img--map" src={url(carte.mapping)} alt="" width="1448" height="1086" loading="lazy" decoding="async" />
+    <span class="lcard__foil" aria-hidden="true"></span>
     <span class="lcard__shine" aria-hidden="true"></span>
     <span class="lcard__name">{carte.name}</span>
   </span>

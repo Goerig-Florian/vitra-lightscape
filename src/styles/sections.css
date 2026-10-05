@@ -3020,8 +3020,8 @@
 .lcard {
   --x: 50%;
   --y: 50%;
-  --a: -20%;
-  --b: 0%;
+  --m: 0;
+  --f: 0;
   --hue: 0deg;
   --shine: 0;
   display: block;
@@ -3039,7 +3039,7 @@
 
 .lcard:focus-visible {
   outline: 2px solid #dcefff;
-  outline-offset: 4px;
+  outline-offset: 5px;
   border-radius: 20px;
 }
 
@@ -3064,9 +3064,28 @@
   object-fit: cover;
 }
 
+/* l'image bascule d'un coup, d'un côté à l'autre de la carte */
 .lcard__img--map {
-  -webkit-mask-image: linear-gradient(100deg, #000 var(--a), transparent var(--b));
-  mask-image: linear-gradient(100deg, #000 var(--a), transparent var(--b));
+  opacity: var(--m);
+}
+
+/* reflet irisé : bandes qui glissent avec l'inclinaison, plus marquées pendant la bascule */
+.lcard__foil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: calc(var(--f) * 0.8);
+  background: repeating-linear-gradient(
+    115deg,
+    hsl(calc(var(--hue) + 0deg) 95% 60%) 0%,
+    hsl(calc(var(--hue) + 60deg) 95% 62%) 8%,
+    hsl(calc(var(--hue) + 120deg) 95% 60%) 16%,
+    hsl(calc(var(--hue) + 200deg) 95% 64%) 24%,
+    hsl(calc(var(--hue) + 280deg) 95% 62%) 32%
+  );
+  background-size: 220% 220%;
+  background-position: var(--x) var(--y);
+  mix-blend-mode: color-dodge;
 }
 
 .lcard__shine {
@@ -3075,21 +3094,8 @@
   pointer-events: none;
   opacity: var(--shine);
   transition: opacity 0.4s ease;
-  background:
-    radial-gradient(circle at var(--x) var(--y), rgba(255, 255, 255, 0.32), transparent 42%),
-    linear-gradient(115deg, transparent 20%, hsl(var(--hue) 90% 70% / 0.28) 42%, hsl(calc(var(--hue) + 80deg) 90% 70% / 0.22) 58%, transparent 80%);
+  background: radial-gradient(circle at var(--x) var(--y), rgba(255, 255, 255, 0.28), transparent 45%);
   mix-blend-mode: soft-light;
-}
-
-.lcard__name {
-  position: absolute;
-  left: 0.9rem;
-  right: 0.9rem;
-  bottom: 0.75rem;
-  font-size: var(--step--1);
-  color: rgba(244, 239, 232, 0.85);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
-  text-align: left;
 }
 
 .lcard__tilt::after {
@@ -3097,9 +3103,17 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, transparent 55%, rgba(5, 8, 18, 0.7));
+  background: linear-gradient(180deg, transparent 60%, rgba(5, 8, 18, 0.7));
 }
 
 .lcard__name {
+  position: absolute;
   z-index: 1;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: 0.75rem;
+  font-size: var(--step--1);
+  color: rgba(244, 239, 232, 0.85);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+  text-align: left;
 }

@@ -15,7 +15,7 @@ const liste = cartes();
       <div class="container">
         <p class="eyebrow">Cartes à gagner</p>
         <h2 class="lgallery__title" id="lgallery-title">Le bâtiment se transforme en Vitra Lightscape.</h2>
-        <p class="lgallery__lead">Faites bouger la carte : en s’inclinant, la photo de jour laisse place à la version mapping. Un clic ou un tap la fige.</p>
+        <p class="lgallery__lead">Inclinez la carte : le bâtiment change d’image, du jour à sa version Lightscape. Un clic ou un tap la fige.</p>
         <ul class="lgallery__grid" data-lgallery data-tilt={reglages.tilt} data-reveal={reglages.reveal}>
           {liste.map((c) => (
             <li>
@@ -31,8 +31,8 @@ const liste = cartes();
 <script>
   const grid = document.querySelector<HTMLElement>('[data-lgallery]');
   if (grid) {
-    const maxTilt = Number(grid.dataset.tilt ?? 14);
-    const soft = Number(grid.dataset.reveal ?? 0.35); // largeur du balayage, en part de la carte
+    const maxTilt = Number(grid.dataset.tilt ?? 12);
+    const soft = Number(grid.dataset.reveal ?? 0.18); // largeur de la zone de bascule, en part de la carte
     const still = matchMedia('(prefers-reduced-motion: reduce)');
 
     grid.querySelectorAll<HTMLButtonElement>('[data-lcard]').forEach((card) => {
@@ -52,15 +52,15 @@ const liste = cartes();
         cx += (px - cx) * k;
         cy += (py - cy) * k;
         // la carte « change d'image » en s'inclinant : jour à gauche, mapping à droite
-        const goal = pinned ? 1 : active ? Math.min(1, Math.max(0, (px - 0.12) / 0.76)) : 0;
-        sweep += (goal - sweep) * (still.matches ? 1 : 0.16);
-        const edge = sweep * (100 + soft * 100) - soft * 100 * 0.5; // en % : le front passe de bord à bord
+        // effet lenticulaire : l'image bascule du jour au mapping quand la carte passe d'un côté à l'autre
+        const goal = pinned ? 1 : active ? Math.min(1, Math.max(0, (px - 0.5) / soft + 0.5)) : 0;
+        sweep += (goal - sweep) * (still.matches ? 1 : 0.2);
         card.style.setProperty('--x', `${(cx * 100).toFixed(1)}%`);
         card.style.setProperty('--y', `${(cy * 100).toFixed(1)}%`);
-        card.style.setProperty('--a', `${(edge - soft * 50).toFixed(1)}%`);
-        card.style.setProperty('--b', `${(edge + soft * 50).toFixed(1)}%`);
+        card.style.setProperty('--m', sweep.toFixed(3));
+        card.style.setProperty('--f', (active || pinned ? 0.5 + 0.5 * (1 - Math.abs(2 * sweep - 1)) : 0).toFixed(3));
         card.style.setProperty('--shine', (active || pinned ? 1 : 0).toString());
-        card.style.setProperty('--hue', `${Math.round(cx * 120 + cy * 60)}deg`);
+        card.style.setProperty('--hue', `${Math.round(cx * 240 + cy * 80)}deg`);
         tilt.style.transform = still.matches
           ? ''
           : `rotateX(${((0.5 - cy) * 2 * maxTilt).toFixed(2)}deg) rotateY(${((cx - 0.5) * 2 * maxTilt).toFixed(2)}deg) scale(${active ? 1.03 : 1})`;
