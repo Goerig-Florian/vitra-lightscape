@@ -1,8 +1,8 @@
 ---
 /**
- * Le classeur : un vrai classeur à anneaux, plusieurs cartes par page, chacune dans sa pochette transparente
- * avec une phrase d'explication. Un emplacement par bâtiment (31) : la carte est rangée si elle existe,
- * sinon la pochette reste vide (« à découvrir sur le parcours »). Pensé pour les enfants : mots simples, tutoiement.
+ * Le livre-classeur : fermé, puis il s'ouvre sur une double page. Trois cartes par page, chacune dans sa pochette
+ * transparente avec son texte ; une pochette vide quand la carte n'existe pas encore (31 emplacements, un par bâtiment).
+ * Pensé pour les enfants : mots simples, tutoiement. Rendu 100 % CSS / SVG.
  */
 import { classeur } from '../data/lightscape-cards';
 import Logo from './Logo.astro';
@@ -10,74 +10,114 @@ import { url } from '../lib/url';
 
 const slots = classeur();
 const rangees = slots.filter((s) => s.carte).length;
-const PAR_PAGE = 6;
-const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) => slots.slice(i * PAR_PAGE, (i + 1) * PAR_PAGE));
+const PAR_PAGE = 3;
+const entrees = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) => slots.slice(i * PAR_PAGE, (i + 1) * PAR_PAGE));
+const total = entrees.length + 1; // + la page de titre
+const doubles = Math.ceil(total / 2);
 ---
 
 <section class="binder" data-theme="night" aria-labelledby="binder-title">
   <div class="container">
-    <p class="eyebrow">Le classeur de la collection</p>
+    <p class="eyebrow">Le livre de la collection</p>
     <h2 class="binder__title" id="binder-title">Collectionne les {slots.length} cartes du Campus.</h2>
-    <p class="binder__lead">Chaque bâtiment a sa carte. Touche une carte pour voir le bâtiment s’allumer : le jour, puis la nuit. Les pochettes vides, c’est pour les cartes que tu n’as pas encore trouvées.</p>
-    <p class="binder__score"><strong>{rangees}</strong> cartes rangées sur {slots.length}</p>
+    <p class="binder__lead">Chaque bâtiment a sa carte. Touche une carte pour voir le bâtiment s’allumer. Les pochettes vides attendent les cartes que tu n’as pas encore trouvées.</p>
 
-    <div class="bk" data-binder role="group" aria-roledescription="classeur" aria-label="Classeur de cartes Lightscape">
+    <div class="bk" data-binder role="group" aria-roledescription="livre" aria-label="Livre de cartes Lightscape">
       <div class="bk__scene">
-       <div class="bk__tilt" data-tilt>
-      <div class="bk__cover">
-        <p class="bk__plate"><span>Vitra Campus</span> Classeur Lightscape</p>
-        <span class="bk__strip" aria-hidden="true"></span>
-        <div class="bk__pages" data-sheets>
-          {
-            pages.map((page, i) => (
-              <section class="sheet" data-sheet data-side={i % 2 ? 'r' : 'l'} hidden={i > 1} aria-label={`Page ${i + 1} sur ${pages.length}`}>
-                <ol class="sheet__grid">
-                  {page.map((s) => (
-                    <li class="slot">
-                      <div class={`slot__pocket${s.carte ? '' : ' is-empty'}`}>
-                        {s.carte ? (
-                          <button class="mini" type="button" data-mini aria-pressed="false" aria-label={`${s.name}, carte ${s.n} : voir le bâtiment de nuit`}>
-                            <img class="mini__img" src={url(s.jour)} alt="" width="960" height="720" loading="lazy" decoding="async" draggable="false" />
-                            <img class="mini__img mini__img--map" src={url(s.mapping)} alt="" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" />
-                            <span class="mini__frame" aria-hidden="true"></span>
-                            <span class="mini__logo" aria-hidden="true"><Logo label={false} /></span>
-                          </button>
-                        ) : (
-                          <div class="mini mini--empty" aria-hidden="true">
-                            <span class="mini__n">{s.n}</span>
-                            <span class="mini__q">?</span>
-                          </div>
-                        )}
-                      </div>
-                      {s.carte ? (
-                        <p class="slot__cap">
-                          <strong><span class="slot__n">{s.n}</span> {s.name}</strong>
-                          <span>{s.text}</span>
-                        </p>
-                      ) : (
-                        <p class="slot__cap slot__cap--empty">
-                          <strong><span class="slot__n">{s.n}</span> Carte à trouver</strong>
-                          <span>Elle t’attend sur le parcours.</span>
-                        </p>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-                <p class="sheet__no" aria-hidden="true">{i + 1}</p>
+        <div class="bk__tilt" data-tilt>
+          <div class="bk__book">
+            <div class="bk__block" data-sheets>
+              <section class="sheet sheet--title" data-sheet data-side="l" aria-label="Page de titre">
+                <div class="title-page">
+                  <span class="title-page__logo" aria-hidden="true"><Logo label={false} /></span>
+                  <h3>Classeur de collection</h3>
+                  <p>{slots.length} cartes à collectionner, une par bâtiment du Vitra Campus.</p>
+                  <p class="title-page__score"><strong>{rangees}</strong> déjà rangées</p>
+                </div>
               </section>
-            ))
-          }
+
+              {
+                entrees.map((page, i) => (
+                  <section class="sheet" data-sheet data-side={(i + 1) % 2 ? 'r' : 'l'} hidden aria-label={`Page ${i + 2} sur ${total}`}>
+                    <header class="sheet__head">
+                      {(i + 1) % 2 ? (
+                        <>
+                          <span>L’architecture en lumière</span>
+                          <span class="sheet__pg">{String(i + 2).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span class="sheet__logo" aria-hidden="true"><Logo label={false} /></span>
+                          <span>Vitra Campus</span>
+                        </>
+                      )}
+                    </header>
+                    <ol class="entries">
+                      {page.map((s) => (
+                        <li class="entry">
+                          <div class={`pocket${s.carte ? '' : ' is-empty'}`}>
+                            {s.carte ? (
+                              <button class="mini" type="button" data-mini aria-pressed="false" aria-label={`${s.name}, carte ${s.n} : voir le bâtiment de nuit`}>
+                                <img class="mini__img" src={url(s.jour)} alt="" width="960" height="720" loading="lazy" decoding="async" draggable="false" />
+                                <img class="mini__img mini__img--map" src={url(s.mapping)} alt="" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" />
+                                <span class="mini__frame" aria-hidden="true"></span>
+                                <span class="mini__logo" aria-hidden="true"><Logo label={false} /></span>
+                                <span class="mini__no" aria-hidden="true">{s.n} / {slots.length}</span>
+                              </button>
+                            ) : (
+                              <div class="mini mini--empty" aria-hidden="true">
+                                <span class="mini__n">{s.n}</span>
+                              </div>
+                            )}
+                          </div>
+                          {s.carte ? (
+                            <div class="entry__txt">
+                              <h4>{s.name}</h4>
+                              <p class="entry__by">{[s.author, s.year].filter(Boolean).join(', ')}</p>
+                              <p class="entry__text">{s.text}</p>
+                            </div>
+                          ) : (
+                            <div class="entry__txt entry__txt--empty">
+                              <h4>Carte n° {s.n}</h4>
+                              <p class="entry__text">Pochette vide : cette carte t’attend sur le parcours.</p>
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ol>
+                  </section>
+                ))
+              }
+              <span class="bk__gutter" aria-hidden="true"></span>
+            </div>
+
+            <div class="cvr" data-cover>
+              <button class="cvr__front" type="button" data-open aria-label="Ouvrir le livre de cartes">
+                <span class="cvr__inner">
+                  <span class="cvr__logo" aria-hidden="true"><Logo label={false} /></span>
+                  <span class="cvr__title">Classeur de collection</span>
+                  <span class="cvr__sub">{slots.length} cartes · Vitra Campus</span>
+                </span>
+                <span class="cvr__hint" aria-hidden="true">Ouvrir</span>
+              </button>
+              <div class="cvr__back" aria-hidden="true">
+                <div class="title-page">
+                  <span class="title-page__logo"><Logo label={false} /></span>
+                  <h3>Classeur de collection</h3>
+                  <p>{slots.length} cartes à collectionner, une par bâtiment du Vitra Campus.</p>
+                  <p class="title-page__score"><strong>{rangees}</strong> déjà rangées</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <span class="bk__rings" aria-hidden="true"><i></i><i></i><i></i></span>
-      </div>
-       </div>
       </div>
 
       <div class="bk__nav">
         <button class="bk__btn" type="button" data-prev aria-label="Pages précédentes">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
         </button>
-        <p class="bk__count" aria-live="polite">Pages <span data-from>1</span><span data-to>–2</span> / {pages.length}</p>
+        <p class="bk__count" aria-live="polite">Double page <span data-cur>1</span> / {doubles}</p>
         <button class="bk__btn" type="button" data-next aria-label="Pages suivantes">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
         </button>
@@ -90,13 +130,13 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
   const bk = document.querySelector<HTMLElement>('[data-binder]');
   if (bk) {
     const sheets = [...bk.querySelectorAll<HTMLElement>('[data-sheet]')];
-    const cover = bk.querySelector<HTMLElement>('.bk__cover')!;
-    const from = bk.querySelector<HTMLElement>('[data-from]')!;
-    const to = bk.querySelector<HTMLElement>('[data-to]')!;
+    const block = bk.querySelector<HTMLElement>('.bk__block')!;
+    const cur = bk.querySelector<HTMLElement>('[data-cur]')!;
     const still = matchMedia('(prefers-reduced-motion: reduce)');
     const narrow = matchMedia('(max-width: 760px)');
     let at = 0; // première page visible
     let turning = false;
+    let opened = false;
 
     // toucher une carte : le bâtiment passe du jour à la nuit (survol et clavier aussi, en CSS)
     bk.querySelectorAll<HTMLButtonElement>('[data-mini]').forEach((m) =>
@@ -106,16 +146,34 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
       }),
     );
 
-    const render = () => {
-      const step = narrow.matches ? 1 : 2;
-      sheets.forEach((s, i) => (s.hidden = i < at || i >= at + step));
-      from.textContent = String(at + 1);
-      to.textContent = step === 2 && at + 2 <= sheets.length ? `–${at + 2}` : '';
-    };
     const stepSize = () => (narrow.matches ? 1 : 2);
+    const render = () => {
+      const step = stepSize();
+      sheets.forEach((s, i) => (s.hidden = i < at || i >= at + step));
+      cur.textContent = String(Math.floor(at / step) + 1);
+    };
 
-    // vrai tourne-page : une feuille se soulève depuis les anneaux, et les pages changent à mi-course
+    // le livre fermé s'ouvre : la couverture pivote autour de la reliure, la double page apparaît
+    const open = () => {
+      if (opened) return;
+      opened = true;
+      bk.classList.add('is-open');
+      setTimeout(() => bk.classList.add('is-done'), still.matches ? 0 : 1700);
+    };
+    bk.querySelector('[data-open]')!.addEventListener('click', open);
+    new IntersectionObserver(
+      (entries, io) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          setTimeout(open, still.matches || narrow.matches ? 0 : 900);
+        }
+      },
+      { threshold: 0.4 },
+    ).observe(bk);
+
+    // tourne-page : une feuille se soulève depuis la reliure, et les pages changent à mi-course
     const go = (dir: number) => {
+      if (!opened) return open();
       const step = stepSize();
       let next = at + dir * step;
       if (next >= sheets.length) next = 0;
@@ -130,7 +188,7 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
       const leaf = document.createElement('span');
       leaf.className = `bk__leaf bk__leaf--${dir > 0 ? 'next' : 'prev'}`;
       leaf.setAttribute('aria-hidden', 'true');
-      cover.appendChild(leaf);
+      block.appendChild(leaf);
       const sign = dir > 0 ? -1 : 1;
       const anim = leaf.animate(
         [
@@ -152,7 +210,6 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
       anim.onfinish = done;
       setTimeout(done, 1150); // garde-fou
     };
-
     bk.querySelector('[data-next]')!.addEventListener('click', () => go(1));
     bk.querySelector('[data-prev]')!.addEventListener('click', () => go(-1));
     bk.addEventListener('keydown', (e) => {
@@ -165,17 +222,17 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
     });
     render();
 
-    // lumière et perspective : le classeur suit doucement le curseur, le reflet des pochettes aussi
+    // perspective et lumière : le livre suit doucement le curseur
     const tiltEl = bk.querySelector<HTMLElement>('[data-tilt]')!;
     let tr = 0;
     bk.addEventListener('pointermove', (e) => {
-      if (e.pointerType !== 'mouse' || still.matches || tr) return;
+      if (e.pointerType !== 'mouse' || still.matches || narrow.matches || tr) return;
       tr = requestAnimationFrame(() => {
         tr = 0;
         const r = bk.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
         const y = (e.clientY - r.top) / r.height - 0.5;
-        tiltEl.style.transform = `rotateX(${(7 - y * 4).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg)`;
+        tiltEl.style.transform = `rotateX(${(6 - y * 4).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg)`;
         bk.style.setProperty('--lx', `${((x + 0.5) * 100).toFixed(1)}%`);
         bk.style.setProperty('--ly', `${((y + 0.5) * 100).toFixed(1)}%`);
       });
@@ -185,16 +242,5 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
       bk.style.removeProperty('--lx');
       bk.style.removeProperty('--ly');
     });
-
-    // à l'arrivée sur la page, le classeur s'ouvre
-    new IntersectionObserver(
-      (entries, io) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          bk.classList.add('is-open');
-          io.disconnect();
-        }
-      },
-      { threshold: 0.25 },
-    ).observe(bk);
   }
 </script>

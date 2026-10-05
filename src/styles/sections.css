@@ -3158,8 +3158,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   Classeur à cartes : un vrai classeur à anneaux, six pochettes par page.
-   Design Vitra : noir, papier clair, une seule couleur d'accent, beaucoup d'air.
+   Livre de cartes : couverture toilée marine, double page, trois pochettes par page.
+   Tout est dessiné en CSS / SVG (grain, reliure, plastique, ombres) : aucune image externe.
    -------------------------------------------------------------------------- */
 
 .binder {
@@ -3183,134 +3183,293 @@
   color: var(--night-muted);
 }
 
-.binder__score {
-  display: inline-block;
-  margin-top: 1.25rem;
-  padding: 0.35rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 180, 76, 0.5);
-  color: var(--amber);
-  font-size: var(--step--1);
-}
-
-.binder__score strong {
-  font-weight: 600;
-}
-
 .bk {
-  --paper: #f3f1ec;
-  --ink: #141414;
+  --ink: #eef1fb;
+  --muted: #a8b4d3;
+  --gold: #d9b26a;
+  --page: #0f1d3d;
+  --page-2: #0a1530;
+  --lx: 25%;
+  --ly: 10%;
+  --cloth: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='c' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .85' numOctaves='2' seed='11' result='n'/%3E%3CfeDiffuseLighting in='n' lighting-color='%23a9b4d6' surfaceScale='1.4'%3E%3CfeDistantLight azimuth='225' elevation='62'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23c)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .6 0 0 0 0 .66 0 0 0 0 .85 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23g)'/%3E%3C/svg%3E");
   margin-top: clamp(2rem, 5vw, 3rem);
-  max-width: 66rem;
 }
 
-/* couverture noire grainée, coins arrondis, ombre posée */
-.bk__cover {
+/* la table : pierre sombre, lampe chaude en haut à gauche */
+.bk__scene {
   position: relative;
-  padding: clamp(2.5rem, 5vw, 3.25rem) clamp(0.75rem, 1.8vw, 1.1rem) clamp(0.9rem, 2vw, 1.25rem);
-  border-radius: 14px;
+  padding: clamp(1.75rem, 5vw, 3.5rem) clamp(1rem, 4vw, 3rem) clamp(2.25rem, 6vw, 4rem);
+  border-radius: 22px;
   background:
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 5px),
-    linear-gradient(160deg, #2a2a2a, #121212 60%, #1c1c1c);
-  box-shadow: 0 40px 70px rgba(0, 0, 0, 0.6), 0 8px 0 -2px #0b0b0b, inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    radial-gradient(55% 60% at 8% 0%, rgba(255, 186, 104, 0.22), transparent 62%),
+    radial-gradient(70% 70% at 50% 55%, rgba(60, 80, 140, 0.18), transparent 70%),
+    var(--grain),
+    linear-gradient(160deg, #141a2c, #0a0e1a 70%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), inset 0 0 90px rgba(0, 0, 0, 0.55);
+  perspective: 2200px;
+  overflow: hidden;
 }
 
-.bk__plate {
+.bk__tilt {
+  position: relative;
+  max-width: 62rem;
+  margin-inline: auto;
+  transform: rotateX(6deg);
+  transform-origin: 50% 85%;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.bk__book {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1.3s cubic-bezier(0.5, 0, 0.2, 1);
+}
+
+/* livre fermé : la couverture seule, centrée */
+.js .bk:not(.is-open) .bk__book {
+  transform: translateX(-25%);
+}
+
+/* ombre portée du livre sur la table */
+.bk__tilt::after {
+  content: '';
   position: absolute;
-  top: 0.9rem;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 0.7rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  left: 2%;
+  right: 2%;
+  bottom: -2.2rem;
+  height: 3rem;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.8), transparent 72%);
+  filter: blur(12px);
+  transform: translateZ(-1px);
+  pointer-events: none;
 }
 
-.bk__plate span {
-  color: var(--amber);
-}
-
-.bk__pages {
+/* dos et plats cartonnés du livre : épaisseur visible */
+.bk__block {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-radius: 4px;
+  box-shadow:
+    0 0 0 6px #162a58,
+    0 0 0 7px rgba(255, 255, 255, 0.1),
+    0 7px 0 3px #0c1836,
+    0 12px 0 3px #091226,
+    0 18px 30px rgba(0, 0, 0, 0.6);
 }
 
-/* tranche des feuilles empilées, de chaque côté */
-.bk__pages::before,
-.bk__pages::after {
+/* livre fermé : seuls la couverture et son épaisseur se voient */
+.js .bk:not(.is-open) .bk__block {
+  box-shadow: none;
+}
+
+.js .bk:not(.is-open) .bk__block::before,
+.js .bk:not(.is-open) .bk__block::after {
+  opacity: 0;
+}
+
+.js .bk .bk__block {
+  transition: box-shadow 0.6s ease 0.6s;
+}
+
+.js .bk .bk__block::before,
+.js .bk .bk__block::after {
+  transition: opacity 0.6s ease 0.6s;
+}
+
+/* tranche des feuilles, de chaque côté */
+.bk__block::before,
+.bk__block::after {
   content: '';
   position: absolute;
-  top: 3px;
-  bottom: -3px;
-  width: 9px;
-  background: repeating-linear-gradient(180deg, #d9d6cf 0 1px, #f3f1ec 1px 3px);
-  opacity: 0.8;
+  top: 4px;
+  bottom: 4px;
+  width: 7px;
+  background: repeating-linear-gradient(180deg, rgba(190, 205, 240, 0.35) 0 1px, rgba(20, 34, 70, 0.9) 1px 3px);
+  pointer-events: none;
 }
 
-.bk__pages::before {
-  left: -7px;
-  border-radius: 3px 0 0 3px;
+.bk__block::before {
+  left: -5px;
+  border-radius: 2px 0 0 2px;
 }
 
-.bk__pages::after {
-  right: -7px;
-  border-radius: 0 3px 3px 0;
+.bk__block::after {
+  right: -5px;
+  border-radius: 0 2px 2px 0;
 }
 
 .sheet {
   position: relative;
-  padding: clamp(1rem, 2.4vw, 1.75rem) clamp(0.9rem, 2.2vw, 1.6rem);
-  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(30rem, 54vw, 41rem);
+  padding: clamp(1rem, 2.4vw, 1.75rem) clamp(1.1rem, 2.6vw, 2rem);
   color: var(--ink);
+  background-color: var(--page);
+  background-image: var(--grain);
 }
 
 .sheet[hidden] {
   display: none;
 }
 
-/* ombre du pli vers les anneaux */
+/* creux près de la reliure, léger brillant sur la courbure */
 .sheet[data-side='l'] {
   border-radius: 4px 0 0 4px;
-  background: linear-gradient(90deg, var(--paper) 78%, #ded9d0 100%);
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0) 60%, rgba(0, 4, 20, 0.45) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 12%),
+    var(--grain);
 }
 
 .sheet[data-side='r'] {
   border-radius: 0 4px 4px 0;
-  background: linear-gradient(270deg, var(--paper) 78%, #ded9d0 100%);
+  background-image:
+    linear-gradient(270deg, rgba(0, 0, 0, 0) 60%, rgba(0, 4, 20, 0.45) 100%),
+    linear-gradient(270deg, rgba(255, 255, 255, 0.05), transparent 12%),
+    var(--grain);
 }
 
-.sheet__grid {
+.bk__gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 36px;
+  margin-left: -18px;
+  background: linear-gradient(90deg, transparent, rgba(0, 3, 14, 0.55) 46%, rgba(0, 3, 14, 0.7) 50%, rgba(0, 3, 14, 0.55) 54%, transparent);
+  pointer-events: none;
+}
+
+.sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(190, 205, 240, 0.16);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sheet__logo {
+  width: 5.5rem;
+  color: #fff;
+}
+
+.sheet__logo .logo,
+.sheet__logo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sheet__pg {
+  letter-spacing: 0.14em;
+  color: var(--ink);
+}
+
+.entries {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(0.8rem, 1.8vw, 1.25rem) clamp(0.6rem, 1.4vw, 1rem);
+  flex: 1;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.9rem;
   margin: 0;
-  padding: 0;
+  padding: 0.6rem 0 0;
   list-style: none;
 }
 
-.sheet__no {
-  margin-top: 0.9rem;
-  text-align: center;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  color: rgba(20, 20, 20, 0.45);
+.entry {
+  display: grid;
+  grid-template-columns: minmax(5.6rem, 6.8rem) 1fr;
+  gap: clamp(0.9rem, 2vw, 1.4rem);
+  align-items: center;
 }
 
-/* pochette transparente : plastique brillant, bord supérieur ourlé */
-.slot__pocket {
-  padding: 0.4rem 0.4rem 0.35rem;
-  border-radius: 7px;
-  border: 1px solid rgba(20, 20, 20, 0.2);
-  border-top: 3px solid rgba(20, 20, 20, 0.18);
+.entry__txt h4 {
+  margin: 0;
+  font-size: var(--step-0);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.entry__by {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.entry__by::after {
+  content: '';
+  display: block;
+  width: 1.8rem;
+  height: 1px;
+  margin-top: 0.6rem;
+  background: rgba(217, 178, 106, 0.8);
+}
+
+.entry__text {
+  margin: 0.55rem 0 0;
+  max-width: 30ch;
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.entry__txt--empty h4 {
+  color: rgba(238, 241, 251, 0.55);
+}
+
+.entry__txt--empty .entry__text {
+  margin-top: 0.3rem;
+  opacity: 0.7;
+}
+
+/* pochette transparente : plastique brillant, ourlet du haut, soudures */
+.pocket {
+  position: relative;
+  padding: 0.5rem 0.4rem 0.4rem;
+  border-radius: 4px 4px 9px 9px;
+  border: 1px solid rgba(200, 218, 255, 0.34);
+  border-top-width: 0;
   background:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0) 62%, rgba(255, 255, 255, 0.4) 100%),
-    rgba(255, 255, 255, 0.22);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    radial-gradient(120% 80% at var(--lx) var(--ly), rgba(255, 255, 255, 0.2), transparent 55%),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.12) 100%),
+    rgba(180, 200, 255, 0.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 -8px 12px -8px rgba(0, 0, 0, 0.4),
+    0 8px 14px rgba(0, 0, 0, 0.45);
+}
+
+.pocket::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1px;
+  right: -1px;
+  height: 8px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, rgba(200, 218, 255, 0.34), rgba(200, 218, 255, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+/* voile de reflet par-dessus la carte (le plastique est devant) */
+.pocket::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(118deg, transparent 36%, rgba(255, 255, 255, 0.16) 45%, rgba(255, 255, 255, 0.03) 52%, transparent 60%);
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 
 .mini {
@@ -3318,18 +3477,19 @@
   display: block;
   width: 100%;
   aspect-ratio: 2 / 3;
+  margin-top: 0.3rem;
   padding: 0;
   overflow: hidden;
   border: 0;
   border-radius: 7% / 4.7%;
-  background: #0b0e1a;
+  background: #070b18;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.4);
   -webkit-tap-highlight-color: transparent;
 }
 
 .mini:focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 
@@ -3357,8 +3517,8 @@
   position: absolute;
   inset: 2.6% 3.4%;
   border-radius: 6% / 4%;
-  border: 1.5px solid rgba(255, 246, 228, 0.7);
-  box-shadow: 0 0 6px rgba(255, 214, 150, 0.5);
+  border: 1.5px solid rgba(255, 232, 190, 0.7);
+  box-shadow: 0 0 6px rgba(255, 190, 110, 0.55);
   pointer-events: none;
 }
 
@@ -3368,7 +3528,7 @@
   left: 11%;
   width: 40%;
   color: #fff;
-  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.7));
   pointer-events: none;
 }
 
@@ -3379,83 +3539,249 @@
   height: auto;
 }
 
-/* pochette vide : un pointillé, le numéro, un point d'interrogation */
+.mini__no {
+  position: absolute;
+  left: 11%;
+  right: 11%;
+  bottom: 5%;
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: 0.42rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+
+/* pochette vide : on voit à travers le plastique, un numéro discret */
 .mini--empty {
   display: grid;
   place-content: center;
-  gap: 0.2rem;
-  text-align: center;
   cursor: default;
-  background: repeating-linear-gradient(135deg, rgba(20, 20, 20, 0.05) 0 8px, rgba(20, 20, 20, 0.09) 8px 9px);
-  border: 1.5px dashed rgba(20, 20, 20, 0.3);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px dashed rgba(200, 218, 255, 0.22);
   box-shadow: none;
-  color: rgba(20, 20, 20, 0.55);
+  color: rgba(200, 218, 255, 0.45);
 }
 
 .mini__n {
   font-size: var(--step-1);
-  font-weight: 600;
-}
-
-.mini__q {
-  font-size: var(--step-3);
   font-weight: 500;
-  line-height: 1;
 }
 
-.slot__cap {
+/* page de titre */
+.title-page {
   display: grid;
-  gap: 0.15rem;
-  margin: 0.55rem 0 0;
-  font-size: 0.72rem;
-  line-height: 1.35;
-  color: rgba(20, 20, 20, 0.75);
+  flex: 1;
+  place-content: center;
+  justify-items: center;
+  gap: 0.9rem;
+  height: 100%;
+  padding: 2rem 1.5rem;
+  text-align: center;
 }
 
-.slot__cap strong {
-  font-size: 0.78rem;
-  font-weight: 600;
+.title-page__logo {
+  width: min(13rem, 70%);
+  color: var(--gold);
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.6));
+}
+
+.title-page__logo .logo,
+.title-page__logo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.title-page h3 {
+  margin: 0.4rem 0 0;
+  font-size: var(--step-2);
+  font-weight: 400;
   color: var(--ink);
 }
 
-.slot__n {
-  display: inline-block;
-  min-width: 1.6em;
-  margin-right: 0.15em;
-  color: #b4620a;
-  font-weight: 600;
+.title-page p {
+  max-width: 26ch;
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
 }
 
-.slot__cap--empty strong {
-  color: rgba(20, 20, 20, 0.6);
+.title-page__score {
+  margin-top: 0.4rem !important;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid rgba(217, 178, 106, 0.55);
+  border-radius: 999px;
+  color: var(--gold) !important;
 }
 
-/* anneaux métalliques au centre */
-.bk__rings {
+.sheet--title {
+  padding: 0;
+}
+
+/* couverture : toile marine grainée, piqûre, logo doré en creux */
+.cvr {
   position: absolute;
-  top: clamp(2.5rem, 5vw, 3.25rem);
-  bottom: clamp(0.9rem, 2vw, 1.25rem);
+  z-index: 3;
+  top: 0;
+  bottom: 0;
   left: 50%;
-  width: 34px;
-  margin-left: -17px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  pointer-events: none;
-  z-index: 2;
+  width: 50%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.5s cubic-bezier(0.55, 0, 0.2, 1);
 }
 
-.bk__rings i {
-  display: block;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 5px solid transparent;
+.js .bk.is-open .cvr {
+  transform: rotateY(-180deg);
+}
+
+.bk.is-done .cvr {
+  visibility: hidden;
+}
+
+.cvr__front,
+.cvr__back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.cvr__front {
+  display: grid;
+  place-items: center;
+  margin: -6px -6px -6px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px 14px 14px 4px;
+  color: var(--gold);
+  cursor: pointer;
   background:
-    linear-gradient(#1a1a1a, #1a1a1a) padding-box,
-    linear-gradient(135deg, #f2f2f2, #8a8a8a 45%, #e6e6e6 60%, #6b6b6b) border-box;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
+    radial-gradient(90% 70% at var(--lx) var(--ly), rgba(255, 255, 255, 0.18), transparent 60%),
+    var(--cloth),
+    linear-gradient(160deg, #142a58, #0b1836 55%, #10224a);
+  background-blend-mode: normal, soft-light, normal;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    inset 10px 0 12px -8px rgba(0, 0, 0, 0.6),
+    0 7px 0 2px #0c1836,
+    0 12px 0 2px #091226,
+    0 18px 30px rgba(0, 0, 0, 0.6);
+}
+
+.cvr__front::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 3px 9px 9px 3px;
+  border: 1px solid rgba(217, 178, 106, 0.55);
+  pointer-events: none;
+}
+
+.cvr__front:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+.cvr__inner {
+  display: grid;
+  justify-items: center;
+  gap: 1.1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.cvr__logo {
+  width: min(15rem, 78%);
+  filter: drop-shadow(0 -1px 0 rgba(0, 0, 0, 0.8)) drop-shadow(0 1px 0 rgba(255, 230, 170, 0.3));
+}
+
+.cvr__logo .logo,
+.cvr__logo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cvr__title {
+  font-size: var(--step-1);
+  letter-spacing: 0.04em;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 230, 170, 0.25);
+}
+
+.cvr__sub {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(217, 178, 106, 0.75);
+}
+
+.cvr__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.6rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(238, 241, 251, 0.6);
+  animation: hint 2.4s ease-in-out infinite;
+}
+
+@keyframes hint {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* envers de la couverture : la page de titre, identique à celle du dessous */
+.cvr__back {
+  transform: rotateY(180deg);
+  border-radius: 14px 4px 4px 14px;
+  background-color: var(--page);
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 60%, rgba(0, 4, 20, 0.45) 100%), var(--grain);
+}
+
+/* page qui se tourne */
+.bk__leaf {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  pointer-events: none;
+  background-color: var(--page);
+  background-image: linear-gradient(90deg, #16295a, #0e1c40 60%, #0a1530), var(--grain);
+  background-blend-mode: normal;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(200, 218, 255, 0.12);
+}
+
+.bk__leaf--next {
+  left: 50%;
+  transform-origin: left center;
+  border-radius: 0 4px 4px 0;
+}
+
+.bk__leaf--prev {
+  left: 0;
+  transform-origin: right center;
+  border-radius: 4px 0 0 4px;
+  background-image: linear-gradient(270deg, #16295a, #0e1c40 60%, #0a1530), var(--grain);
+}
+
+/* les pages gauches n'apparaissent qu'une fois la couverture ouverte */
+.js .bk:not(.is-open) .sheet[data-side='l'] {
+  opacity: 0;
+}
+
+.js .bk .sheet[data-side='l'] {
+  transition: opacity 0.4s ease 0.55s;
 }
 
 .bk__nav {
@@ -3486,297 +3812,71 @@
 }
 
 .bk__count {
-  min-width: 9rem;
+  min-width: 11rem;
   text-align: center;
   font-variant-numeric: tabular-nums;
   color: var(--night-muted);
 }
 
-/* feuille qui se tourne autour des anneaux */
-.bk__leaf {
-  position: absolute;
-  z-index: 3;
-  top: clamp(2.5rem, 5vw, 3.25rem);
-  bottom: clamp(0.9rem, 2vw, 1.25rem);
-  width: calc(50% - clamp(0.75rem, 1.8vw, 1.1rem));
-  pointer-events: none;
-  background: linear-gradient(90deg, #f3f1ec, #e4e0d7);
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-}
-
-.bk__leaf--next {
-  left: 50%;
-  transform-origin: left center;
-  border-radius: 0 4px 4px 0;
-}
-
-.bk__leaf--prev {
-  left: clamp(0.75rem, 1.8vw, 1.1rem);
-  transform-origin: right center;
-  border-radius: 4px 0 0 4px;
-  background: linear-gradient(270deg, #f3f1ec, #e4e0d7);
-}
-
-/* ouverture à l'arrivée sur la page */
-.js .bk__cover {
-  opacity: 0;
-  transform: perspective(1800px) rotateX(12deg) scale(0.94);
-  transform-origin: 50% 100%;
-  transition: opacity 0.9s ease, transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.js .bk.is-open .bk__cover {
-  opacity: 1;
-  transform: none;
-}
-
 @media (max-width: 760px) {
-  .bk__pages {
+  .bk__tilt {
+    transform: none !important;
+  }
+
+  .js .bk:not(.is-open) .bk__book {
+    transform: none;
+  }
+
+  .js .bk:not(.is-open) .sheet[data-side='l'] {
+    opacity: 1;
+  }
+
+  .cvr,
+  .bk__gutter {
+    display: none;
+  }
+
+  .bk__block {
     grid-template-columns: 1fr;
-  }
-
-  .bk__rings {
-    display: none;
-  }
-
-  .bk__pages::before,
-  .bk__pages::after {
-    display: none;
   }
 
   .sheet[data-side] {
     border-radius: 4px;
-    background: var(--paper);
+    min-height: 0;
+    background-image: var(--grain);
   }
 
-  .sheet__grid {
-    grid-template-columns: repeat(2, 1fr);
+  .entries {
+    grid-template-rows: none;
+    gap: 1.25rem;
+    padding-top: 1rem;
   }
 
-  .slot__cap {
-    font-size: 0.78rem;
+  .entry {
+    grid-template-columns: 6.5rem 1fr;
+  }
+
+  .entry__text {
+    max-width: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .bk__cover {
-    opacity: 1;
-    transform: none;
+  .bk__tilt {
+    transform: none !important;
     transition: none;
+  }
+
+  .bk__book,
+  .cvr {
+    transition: none;
+  }
+
+  .cvr__hint {
+    animation: none;
   }
 
   .mini__img--map {
-    transition: none;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Classeur : rendu réaliste (cuir grainé, tranche, anneaux chromés, papier, plastique brillant)
-   Tout est dessiné en CSS / SVG : aucune image externe.
-   -------------------------------------------------------------------------- */
-
-.bk {
-  --leather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='l' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' lighting-color='%23b8b8b8' surfaceScale='1.8'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23l)'/%3E%3C/svg%3E");
-  --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7 .09' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .32 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)'/%3E%3C/svg%3E");
-  --lx: 30%;
-  --ly: 20%;
-}
-
-/* la scène : une table sombre, le classeur posé en légère perspective */
-.bk__scene {
-  position: relative;
-  padding: clamp(1rem, 3vw, 2.25rem) 0 clamp(1.5rem, 4vw, 3rem);
-  perspective: 1800px;
-}
-
-.bk__scene::before {
-  content: '';
-  position: absolute;
-  inset: 8% -4% -2%;
-  background: radial-gradient(60% 55% at 50% 55%, rgba(255, 255, 255, 0.07), transparent 70%);
-  pointer-events: none;
-}
-
-/* ombre portée sur la table */
-.bk__scene::after {
-  content: '';
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: clamp(0.8rem, 2.4vw, 1.9rem);
-  height: 9%;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.75), transparent 72%);
-  filter: blur(14px);
-  transform: translateY(35%);
-  pointer-events: none;
-}
-
-.bk__tilt {
-  position: relative;
-  z-index: 1;
-  transform: rotateX(7deg);
-  transform-origin: 50% 80%;
-  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-/* couverture : cuir grainé, éclairé d'en haut à gauche, épaisseur visible en dessous */
-.bk__cover {
-  background:
-    radial-gradient(90% 70% at var(--lx) var(--ly), rgba(255, 255, 255, 0.16), transparent 60%),
-    var(--leather),
-    linear-gradient(160deg, #2b2b2b, #151515 55%, #202020);
-  background-blend-mode: normal, overlay, normal;
-  border-radius: 16px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
-    inset 1px 0 0 rgba(255, 255, 255, 0.08),
-    0 1px 0 #101010,
-    0 2px 0 #0e0e0e,
-    0 3px 0 #0c0c0c,
-    0 4px 0 #0a0a0a,
-    0 5px 0 #090909,
-    0 6px 0 #080808,
-    0 8px 14px rgba(0, 0, 0, 0.55);
-}
-
-/* piqûre de la couverture : fil clair, points réguliers */
-.bk__cover::before {
-  content: '';
-  position: absolute;
-  inset: 7px;
-  border-radius: 11px;
-  border: 1.5px dashed rgba(236, 225, 200, 0.42);
-  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.7));
-  pointer-events: none;
-}
-
-/* étiquette gaufrée : texte en creux dans le cuir */
-.bk__plate {
-  color: rgba(255, 255, 255, 0.42);
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.18);
-}
-
-.bk__plate span {
-  color: #c9a15b;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 220, 160, 0.25);
-}
-
-/* pages : papier à grain, creux près des anneaux, bord légèrement relevé */
-.sheet {
-  background-color: #f3f1ec;
-  background-image: var(--fibre);
-  background-blend-mode: multiply;
-}
-
-.sheet[data-side='l'] {
-  background-color: #f3f1ec;
-  background-blend-mode: normal, multiply;
-  background-image:
-    linear-gradient(90deg, rgba(0, 0, 0, 0) 55%, rgba(60, 50, 35, 0.12) 88%, rgba(40, 32, 20, 0.34) 100%),
-    var(--fibre);
-  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7);
-}
-
-.sheet[data-side='r'] {
-  background-color: #f3f1ec;
-  background-blend-mode: normal, multiply;
-  background-image:
-    linear-gradient(270deg, rgba(0, 0, 0, 0) 55%, rgba(60, 50, 35, 0.12) 88%, rgba(40, 32, 20, 0.34) 100%),
-    var(--fibre);
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.7);
-}
-
-/* barre métallique du mécanisme, derrière les anneaux */
-.bk__strip {
-  position: absolute;
-  top: clamp(2.5rem, 5vw, 3.25rem);
-  bottom: clamp(0.9rem, 2vw, 1.25rem);
-  left: 50%;
-  width: 14px;
-  margin-left: -7px;
-  z-index: 1;
-  background: linear-gradient(90deg, #5c5c5c, #e4e4e4 30%, #fafafa 48%, #9a9a9a 70%, #4a4a4a);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.55), inset 0 0 2px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-}
-
-/* anneaux chromés : reflet vif en haut, ombre portée sur le papier */
-.bk__rings i {
-  width: 40px;
-  height: 40px;
-  border-width: 6px;
-  background:
-    linear-gradient(#0f0f0f, #0f0f0f) padding-box,
-    conic-gradient(from 210deg, #fdfdfd, #8c8c8c 18%, #f4f4f4 32%, #5f5f5f 52%, #e8e8e8 70%, #7d7d7d 86%, #fdfdfd) border-box;
-  box-shadow: 4px 5px 7px rgba(0, 0, 0, 0.5), -2px 0 3px rgba(0, 0, 0, 0.25), inset 1px 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-/* pochettes : plastique avec reflets qui suivent la lumière, soudures latérales, fente du haut */
-.slot__pocket {
-  position: relative;
-  border: 1px solid rgba(20, 20, 20, 0.22);
-  border-top: 0;
-  border-radius: 3px 3px 8px 8px;
-  background:
-    radial-gradient(120% 90% at var(--lx) var(--ly), rgba(255, 255, 255, 0.55), transparent 55%),
-    linear-gradient(115deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.18) 55%, rgba(255, 255, 255, 0) 75%, rgba(255, 255, 255, 0.35) 100%),
-    rgba(255, 255, 255, 0.16);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.8),
-    0 3px 7px rgba(60, 45, 20, 0.28),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
-    inset 0 -6px 10px -6px rgba(0, 0, 0, 0.18);
-}
-
-/* ourlet d'ouverture : bord soudé plus épais avec un petit creux d'ombre */
-.slot__pocket::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -1px;
-  right: -1px;
-  height: 7px;
-  border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, rgba(20, 20, 20, 0.3), rgba(20, 20, 20, 0.08));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  pointer-events: none;
-}
-
-/* la carte projette une ombre sur le papier à travers le plastique */
-.mini {
-  margin-top: 0.35rem;
-  box-shadow: 0 4px 9px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-/* voile brillant par-dessus la carte (le plastique est devant) */
-.slot__pocket::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(118deg, transparent 38%, rgba(255, 255, 255, 0.22) 46%, rgba(255, 255, 255, 0.05) 52%, transparent 60%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-.sheet__no {
-  color: rgba(60, 50, 35, 0.5);
-}
-
-@media (max-width: 760px) {
-  .bk__strip {
-    display: none;
-  }
-
-  .bk__tilt {
-    transform: none !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bk__tilt {
-    transform: none !important;
     transition: none;
   }
 }
