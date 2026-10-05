@@ -1,0 +1,94 @@
+---
+/**
+ * Galerie de cartes Lightscape (page de présentation).
+ * Le tilt et la révélation se règlent dans src/data/lightscape-cards.ts (objet `reglages`).
+ */
+import LightscapeCard from './LightscapeCard.astro';
+import { cartes, reglages } from '../data/lightscape-cards';
+
+const liste = cartes();
+---
+
+{
+  liste.length > 0 && (
+    <section class="lgallery" data-theme="night" aria-labelledby="lgallery-title">
+      <div class="container">
+        <p class="eyebrow">Cartes à gagner</p>
+        <h2 class="lgallery__title" id="lgallery-title">Le bâtiment se transforme en Vitra Lightscape.</h2>
+        <p class="lgallery__lead">Passez le curseur sur une carte (ou touchez-la) : la photo de jour laisse place à la version mapping.</p>
+        <ul class="lgallery__grid" data-lgallery data-tilt={reglages.tilt} data-reveal={reglages.reveal}>
+          {liste.map((c) => (
+            <li>
+              <LightscapeCard carte={c} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  const grid = document.querySelector<HTMLElement>('[data-lgallery]');
+  if (grid) {
+    const maxTilt = Number(grid.dataset.tilt ?? 7);
+    const maxReveal = Number(grid.dataset.reveal ?? 1);
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const fine = matchMedia('(hover: hover) and (pointer: fine)');
+
+    grid.querySelectorAll<HTMLButtonElement>('[data-lcard]').forEach((card) => {
+      const tilt = card.querySelector<HTMLElement>('.lcard__tilt')!;
+      let target = 0; // révélation visée au survol (0 à 1)
+      let reveal = 0; // révélation affichée
+      let px = 0.5;
+      let py = 0.5;
+      let raf = 0;
+      let pinned = false; // bascule par clic, tap ou clavier
+
+      const draw = () => {
+        raf = 0;
+        const goal = pinned ? 1 : target;
+        reveal += (goal - reveal) * (still.matches ? 1 : 0.12);
+        if (Math.abs(goal - reveal) < 0.003) reveal = goal;
+        const diag = Math.hypot(card.clientWidth, card.clientHeight);
+        card.style.setProperty('--x', `${px * 100}%`);
+        card.style.setProperty('--y', `${py * 100}%`);
+        card.style.setProperty('--in', `${(reveal * diag * 0.75 * maxReveal).toFixed(1)}px`);
+        card.style.setProperty('--out', `${(reveal * diag * 1.25 * maxReveal).toFixed(1)}px`);
+        card.style.setProperty('--shine', String(Math.min(1, target + (pinned ? 0.35 : 0))));
+        const live = fine.matches && !still.matches && target > 0;
+        tilt.style.transform = live
+          ? `rotateX(${((0.5 - py) * 2 * maxTilt).toFixed(2)}deg) rotateY(${((px - 0.5) * 2 * maxTilt).toFixed(2)}deg)`
+          : '';
+        if (reveal !== goal || live) raf = requestAnimationFrame(draw);
+      };
+      const go = () => {
+        if (!raf) raf = requestAnimationFrame(draw);
+      };
+
+      const move = (e: PointerEvent) => {
+        if (e.pointerType !== 'mouse') return;
+        const r = card.getBoundingClientRect();
+        px = (e.clientX - r.left) / r.width;
+        py = (e.clientY - r.top) / r.height;
+        target = 0.55 + 0.45 * Math.min(1, Math.hypot(px - 0.5, py - 0.5) * 1.6);
+        go();
+      };
+      card.addEventListener('pointerenter', move);
+      card.addEventListener('pointermove', move);
+      card.addEventListener('pointerleave', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        target = 0;
+        px = 0.5;
+        py = 0.5;
+        go();
+      });
+
+      card.addEventListener('click', () => {
+        pinned = !pinned;
+        card.setAttribute('aria-pressed', String(pinned));
+        go();
+      });
+    });
+  }
+</script>
