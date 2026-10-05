@@ -3020,8 +3020,9 @@
 .lcard {
   --x: 50%;
   --y: 50%;
-  --in: 0px;
-  --out: 0px;
+  --a: -20%;
+  --b: 0%;
+  --hue: 0deg;
   --shine: 0;
   display: block;
   width: 100%;
@@ -3032,6 +3033,7 @@
   font: inherit;
   cursor: pointer;
   perspective: 900px;
+  touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -3063,8 +3065,8 @@
 }
 
 .lcard__img--map {
-  -webkit-mask-image: radial-gradient(circle at var(--x) var(--y), #000 var(--in), transparent var(--out));
-  mask-image: radial-gradient(circle at var(--x) var(--y), #000 var(--in), transparent var(--out));
+  -webkit-mask-image: linear-gradient(100deg, #000 var(--a), transparent var(--b));
+  mask-image: linear-gradient(100deg, #000 var(--a), transparent var(--b));
 }
 
 .lcard__shine {
@@ -3072,7 +3074,10 @@
   inset: 0;
   pointer-events: none;
   opacity: var(--shine);
-  background: radial-gradient(circle at var(--x) var(--y), rgba(255, 255, 255, 0.28), transparent 45%);
+  transition: opacity 0.4s ease;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(255, 255, 255, 0.32), transparent 42%),
+    linear-gradient(115deg, transparent 20%, hsl(var(--hue) 90% 70% / 0.28) 42%, hsl(calc(var(--hue) + 80deg) 90% 70% / 0.22) 58%, transparent 80%);
   mix-blend-mode: soft-light;
 }
 
@@ -3097,19 +3102,4 @@
 
 .lcard__name {
   z-index: 1;
-}
-
-/* tactile ou sans survol : bascule douce au tap */
-@media (hover: none), (pointer: coarse) {
-  .lcard__img--map {
-    -webkit-mask-image: none;
-    mask-image: none;
-    opacity: 0;
-    transition: opacity 0.7s ease;
-  }
-
-  .lcard.is-on .lcard__img--map,
-  .lcard[aria-pressed='true'] .lcard__img--map {
-    opacity: 1;
-  }
 }

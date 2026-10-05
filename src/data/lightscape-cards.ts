@@ -21,10 +21,10 @@ const MANUEL: string[] = [];
 
 /** Réglages de l'effet (voir LightscapeGallery.astro) */
 export const reglages = {
-  /** Inclinaison maximale en degrés (0 = pas de tilt) */
-  tilt: 7,
-  /** Taille maximale du cercle de révélation, en part de la diagonale de la carte (0 à 1,5) */
-  reveal: 1,
+  /** Inclinaison maximale en degrés (0 = carte à plat) */
+  tilt: 14,
+  /** Douceur du passage jour → mapping, en part de la largeur de la carte (0,1 = net, 0,8 = très fondu) */
+  reveal: 0.35,
 };
 
 export interface CarteLightscape {
