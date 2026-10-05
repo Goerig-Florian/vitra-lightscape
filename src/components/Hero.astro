@@ -10,6 +10,28 @@ import { museeSilhouette } from '../data/batiments';
 import { url } from '../lib/url';
 
 const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
+
+// Aperçu de fin de vidéo : des faisceaux de lumière partent de quelques foyers et se posent sur la façade,
+// DANS L'IMAGE DE LA VIDÉO (même repère 1672 x 941, découpés sur la silhouette du musée). Aucune coupure.
+const rand = (seed: number) => () => {
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+const foyers: [number, number][] = [[690, 432], [905, 458], [1090, 424], [1258, 462]];
+const rays = foyers.flatMap(([cx, cy], f) => {
+  const r = rand(11 + f * 7);
+  return Array.from({ length: 54 }, (_, i) => {
+    const a = (i / 54) * Math.PI * 2 + (r() - 0.5) * 0.09;
+    const len = 150 + r() * 330;
+    return {
+      x1: cx.toFixed(1), y1: cy.toFixed(1),
+      x2: (cx + Math.cos(a) * len).toFixed(1), y2: (cy + Math.sin(a) * len).toFixed(1),
+      w: (0.45 + r() * 0.95).toFixed(2), d: (f * 0.16 + r() * 0.9).toFixed(2), o: (0.3 + r() * 0.5).toFixed(2),
+    };
+  });
+});
 ---
 
 <section class="hero" id="top" data-theme="hero" data-hero aria-labelledby="hero-title">
@@ -36,13 +58,23 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
           <stop offset="0.5" stop-color="#ffe7c2" stop-opacity="0.9" />
           <stop offset="1" stop-color="#ffd9a0" stop-opacity="0" />
         </linearGradient>
+        <radialGradient id="hero-foyer">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0.95" />
+          <stop offset="0.35" stop-color="#cfe0ff" stop-opacity="0.5" />
+          <stop offset="1" stop-color="#cfe0ff" stop-opacity="0" />
+        </radialGradient>
       </defs>
       <g clip-path="url(#hero-clip)">
         <rect class="hero__wash" width="1672" height="941" />
         <rect class="hero__band" x="-420" width="420" height="941" fill="url(#hero-band)" />
       </g>
+      <g clip-path="url(#hero-clip)" class="hero__rays">
+        <rect class="hero__dim" width="1672" height="941" />
+        <rect class="hero__veil" width="1672" height="941" />
+        {rays.map((l) => <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} pathLength="1" style={`--d:${l.d};--o:${l.o};stroke-width:${l.w}`} />)}
+        {foyers.map(([cx, cy]) => <circle class="hero__foyer" cx={cx} cy={cy} r="26" fill="url(#hero-foyer)" />)}
+      </g>
     </svg>
-    <img class="hero__teaser" src={url('mapping/apercu-musee.webp')} alt="" aria-hidden="true" decoding="async" />
     <div class="hero__scrim" aria-hidden="true"></div>
   </div>
 

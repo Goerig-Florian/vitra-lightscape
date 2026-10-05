@@ -29,11 +29,11 @@ Sur écran large (1024 px et plus), un **fil lumineux** vertical court sur le c�
 
 1. **Vidéo de fond** : le Vitra Design Museum passe du jour au coucher de soleil, puis à la nuit.
    - À la nuit, une vague de lumière douce balaie le musée.
-   - À la fin de la vidéo, **un aperçu de trois secondes** : une lumière blanche se pose sur la façade du musée, puis s'éteint (un seul bâtiment, mention « visualisation de projet »).
+   - À la fin de la vidéo, **un aperçu de trois secondes**, sur la même image que la vidéo : des faisceaux de lumière blanche partent de quelques foyers et se posent sur la façade du musée, puis tout s'éteint (un seul bâtiment, mention « visualisation de projet »). Les faisceaux sont dessinés en SVG, découpés sur la silhouette du musée.
    - Bouton lecture / pause (« Revoir la vidéo » à la fin).
    - Deux boutons, Réserver et Découvrir le parcours, alignés à droite ; au survol (ou au focus clavier), une lumière blanche, comme un néon, fait le tour de leur cadre. Pas d'animation avec « animations réduites ».
 2. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
-3. **La lumière** : la promesse en une phrase et trois verbes (elle souligne, elle s'allume du dedans, elle répond à vos pas), sans montrer le projet. Un seul exemple, en « lampe torche » : une façade calme, et la visualisation n'apparaît que dans le cercle de lumière que l'on déplace (souris ou doigt). Sans action, la torche se promène seule.
+3. **La lumière** : la promesse en une phrase et trois verbes (elle souligne, elle s'allume du dedans, elle répond à vos pas), sans montrer le projet. Un seul exemple, en « lampe torche » : la caserne de nuit (la même visualisation que sa fiche), et le mapping n'apparaît que dans le cercle de lumière que l'on déplace (souris ou doigt). Sans action, la torche se promène seule.
 4. **Le parcours** (nuit) : page d'accueil du parcours.
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
    - La carte du Campus (vitra.com) : le chemin lumineux, en lumière froide, s'allume d'étape en étape à l'entrée dans la section.
@@ -111,7 +111,7 @@ scripts/source/                SVG d'origine de la carte de vitra.com
 scripts/data/osm-route.json    trajet intermédiaire
 public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)
 public/photos/                 photos de jour (vitra.com) et visualisations de nuit (<id>-nuit.webp)
-public/mapping/                4 visualisations de mapping : aperçu de la vidéo, lampe torche (2), vue aérienne
+public/mapping/                2 images : caserne avec mapping (lampe torche), vue aérienne du Campus
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/futura/         Futura (ParaType), 4 graisses, auto-hébergée (licence : voir CREDITS.md)
