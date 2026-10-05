@@ -1,24 +1,20 @@
 /**
  * Billetterie — DONNÉES PROVISOIRES (proposition pour l'appel d'offres).
- * Dates, horaires et tarifs sont à valider avec le Vitra Campus.
+ * Dates et horaires d'ouverture : proposition de l'équipe (17 et 18 septembre 2027, 19h00 – 23h00).
+ * Horaires d'entrée et tarifs : provisoires, à valider avec le Vitra Campus.
  * Le panier fonctionne dans le navigateur ; aucun paiement n'est branché.
  */
 
 export const provisional = true;
 
 export const notice =
-  'Calendrier et tarifs provisoires, proposés pour l’appel d’offres. Le paiement en ligne n’est pas encore branché.';
+  'Soirées des 17 et 18 septembre 2027, de 19h00 à 23h00. Tarifs et horaires d’entrée provisoires, proposés pour l’appel d’offres. Le paiement en ligne n’est pas encore branché.';
 
-/** Soirées (format AAAA-MM-JJ) */
-export const dates = [
-  '2026-11-13', '2026-11-14',
-  '2026-11-20', '2026-11-21',
-  '2026-11-27', '2026-11-28',
-  '2026-12-04', '2026-12-05',
-];
+/** Soirées (format AAAA-MM-JJ) : vendredi 17 et samedi 18 septembre 2027 */
+export const dates = ['2027-09-17', '2027-09-18'];
 
-/** Horaires d'entrée */
-export const slots = ['18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'];
+/** Horaires d'entrée : le site ouvre à 19h00 et ferme à 23h00 (dernière entrée à 21h30 : proposition à valider) */
+export const slots = ['19:00', '19:30', '20:00', '20:30', '21:00', '21:30'];
 
 /** Billets (prix en euros) */
 export const tickets = [

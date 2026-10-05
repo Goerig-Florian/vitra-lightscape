@@ -2682,3 +2682,90 @@
   font-size: var(--step-1);
   line-height: 1.35;
 }
+
+/* --------------------------------------------------------------------------
+   Programme de la soirée : une ligne lumineuse, un point par temps fort
+   -------------------------------------------------------------------------- */
+
+.soiree__lead {
+  max-width: 44ch;
+  margin-top: 1.25rem;
+  font-size: var(--step-1);
+  color: var(--night-muted);
+}
+
+.programme {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin-top: 2rem;
+  padding-left: 1.75rem;
+}
+
+.programme::before {
+  content: '';
+  position: absolute;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  left: 0.4rem;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(220, 239, 255, 0.9), rgba(220, 239, 255, 0.25));
+  box-shadow: 0 0 6px rgba(90, 169, 255, 0.55);
+}
+
+.programme__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: 0.5rem 1rem;
+  align-items: baseline;
+  padding-block: 0.7rem;
+}
+
+.programme__dot {
+  position: absolute;
+  top: 1.15rem;
+  left: -1.75rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0d1120;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  transition: background-color 0.5s, border-color 0.5s, box-shadow 0.5s;
+}
+
+.programme__item.is-visible .programme__dot {
+  background: #dcefff;
+  border-color: #dcefff;
+  box-shadow: 0 0 6px #5aa9ff, 0 0 12px rgba(90, 169, 255, 0.7);
+}
+
+.programme__time {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.programme__text {
+  color: var(--night-muted);
+}
+
+.programme__item.is-key .programme__text {
+  font-weight: 500;
+  color: var(--night-text);
+}
+
+/* coucher du soleil : point chaud */
+.programme__item.is-sun.is-visible .programme__dot {
+  background: var(--amber);
+  border-color: var(--amber);
+  box-shadow: 0 0 8px var(--amber), 0 0 16px rgba(255, 180, 76, 0.6);
+}
+
+@media (max-width: 480px) {
+  .programme__item {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+}

@@ -22,15 +22,15 @@ const minutes = Math.round(plan.length / (4000 / 60) / 5) * 5; // marche à 4 km
       <p class="eyebrow">{soiree.label}</p>
       <h2 class="soiree__title reveal" id="soiree-title">{soiree.title}</h2>
 
-      <ol class="soiree__steps">
+      <p class="soiree__lead reveal">{soiree.text}</p>
+
+      <ol class="programme" aria-label="Déroulé de la soirée">
         {
-          soiree.steps.map((s, i) => (
-            <li class="soiree__step reveal">
-              <span class="soiree__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
-              </div>
+          soiree.programme.map((e) => (
+            <li class={`programme__item reveal${e.key ? ' is-key' : ''}${e.sun ? ' is-sun' : ''}`}>
+              <span class="programme__dot" aria-hidden="true"></span>
+              <span class="programme__time">{e.time}</span>
+              <span class="programme__text">{e.text}</span>
             </li>
           ))
         }
