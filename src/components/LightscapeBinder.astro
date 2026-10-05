@@ -22,8 +22,11 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
     <p class="binder__score"><strong>{rangees}</strong> cartes rangées sur {slots.length}</p>
 
     <div class="bk" data-binder role="group" aria-roledescription="classeur" aria-label="Classeur de cartes Lightscape">
+      <div class="bk__scene">
+       <div class="bk__tilt" data-tilt>
       <div class="bk__cover">
         <p class="bk__plate"><span>Vitra Campus</span> Classeur Lightscape</p>
+        <span class="bk__strip" aria-hidden="true"></span>
         <div class="bk__pages" data-sheets>
           {
             pages.map((page, i) => (
@@ -66,6 +69,8 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
           }
         </div>
         <span class="bk__rings" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+       </div>
       </div>
 
       <div class="bk__nav">
@@ -159,6 +164,27 @@ const pages = Array.from({ length: Math.ceil(slots.length / PAR_PAGE) }, (_, i) 
       render();
     });
     render();
+
+    // lumière et perspective : le classeur suit doucement le curseur, le reflet des pochettes aussi
+    const tiltEl = bk.querySelector<HTMLElement>('[data-tilt]')!;
+    let tr = 0;
+    bk.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || still.matches || tr) return;
+      tr = requestAnimationFrame(() => {
+        tr = 0;
+        const r = bk.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        tiltEl.style.transform = `rotateX(${(7 - y * 4).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg)`;
+        bk.style.setProperty('--lx', `${((x + 0.5) * 100).toFixed(1)}%`);
+        bk.style.setProperty('--ly', `${((y + 0.5) * 100).toFixed(1)}%`);
+      });
+    });
+    bk.addEventListener('pointerleave', () => {
+      tiltEl.style.transform = '';
+      bk.style.removeProperty('--lx');
+      bk.style.removeProperty('--ly');
+    });
 
     // à l'arrivée sur la page, le classeur s'ouvre
     new IntersectionObserver(

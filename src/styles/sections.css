@@ -3569,3 +3569,214 @@
     transition: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Classeur : rendu réaliste (cuir grainé, tranche, anneaux chromés, papier, plastique brillant)
+   Tout est dessiné en CSS / SVG : aucune image externe.
+   -------------------------------------------------------------------------- */
+
+.bk {
+  --leather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='l' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' lighting-color='%23b8b8b8' surfaceScale='1.8'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23l)'/%3E%3C/svg%3E");
+  --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7 .09' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .32 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)'/%3E%3C/svg%3E");
+  --lx: 30%;
+  --ly: 20%;
+}
+
+/* la scène : une table sombre, le classeur posé en légère perspective */
+.bk__scene {
+  position: relative;
+  padding: clamp(1rem, 3vw, 2.25rem) 0 clamp(1.5rem, 4vw, 3rem);
+  perspective: 1800px;
+}
+
+.bk__scene::before {
+  content: '';
+  position: absolute;
+  inset: 8% -4% -2%;
+  background: radial-gradient(60% 55% at 50% 55%, rgba(255, 255, 255, 0.07), transparent 70%);
+  pointer-events: none;
+}
+
+/* ombre portée sur la table */
+.bk__scene::after {
+  content: '';
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: clamp(0.8rem, 2.4vw, 1.9rem);
+  height: 9%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.75), transparent 72%);
+  filter: blur(14px);
+  transform: translateY(35%);
+  pointer-events: none;
+}
+
+.bk__tilt {
+  position: relative;
+  z-index: 1;
+  transform: rotateX(7deg);
+  transform-origin: 50% 80%;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* couverture : cuir grainé, éclairé d'en haut à gauche, épaisseur visible en dessous */
+.bk__cover {
+  background:
+    radial-gradient(90% 70% at var(--lx) var(--ly), rgba(255, 255, 255, 0.16), transparent 60%),
+    var(--leather),
+    linear-gradient(160deg, #2b2b2b, #151515 55%, #202020);
+  background-blend-mode: normal, overlay, normal;
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    inset 1px 0 0 rgba(255, 255, 255, 0.08),
+    0 1px 0 #101010,
+    0 2px 0 #0e0e0e,
+    0 3px 0 #0c0c0c,
+    0 4px 0 #0a0a0a,
+    0 5px 0 #090909,
+    0 6px 0 #080808,
+    0 8px 14px rgba(0, 0, 0, 0.55);
+}
+
+/* piqûre de la couverture : fil clair, points réguliers */
+.bk__cover::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 11px;
+  border: 1.5px dashed rgba(236, 225, 200, 0.42);
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.7));
+  pointer-events: none;
+}
+
+/* étiquette gaufrée : texte en creux dans le cuir */
+.bk__plate {
+  color: rgba(255, 255, 255, 0.42);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.bk__plate span {
+  color: #c9a15b;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 220, 160, 0.25);
+}
+
+/* pages : papier à grain, creux près des anneaux, bord légèrement relevé */
+.sheet {
+  background-color: #f3f1ec;
+  background-image: var(--fibre);
+  background-blend-mode: multiply;
+}
+
+.sheet[data-side='l'] {
+  background-color: #f3f1ec;
+  background-blend-mode: normal, multiply;
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0) 55%, rgba(60, 50, 35, 0.12) 88%, rgba(40, 32, 20, 0.34) 100%),
+    var(--fibre);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+.sheet[data-side='r'] {
+  background-color: #f3f1ec;
+  background-blend-mode: normal, multiply;
+  background-image:
+    linear-gradient(270deg, rgba(0, 0, 0, 0) 55%, rgba(60, 50, 35, 0.12) 88%, rgba(40, 32, 20, 0.34) 100%),
+    var(--fibre);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+/* barre métallique du mécanisme, derrière les anneaux */
+.bk__strip {
+  position: absolute;
+  top: clamp(2.5rem, 5vw, 3.25rem);
+  bottom: clamp(0.9rem, 2vw, 1.25rem);
+  left: 50%;
+  width: 14px;
+  margin-left: -7px;
+  z-index: 1;
+  background: linear-gradient(90deg, #5c5c5c, #e4e4e4 30%, #fafafa 48%, #9a9a9a 70%, #4a4a4a);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.55), inset 0 0 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* anneaux chromés : reflet vif en haut, ombre portée sur le papier */
+.bk__rings i {
+  width: 40px;
+  height: 40px;
+  border-width: 6px;
+  background:
+    linear-gradient(#0f0f0f, #0f0f0f) padding-box,
+    conic-gradient(from 210deg, #fdfdfd, #8c8c8c 18%, #f4f4f4 32%, #5f5f5f 52%, #e8e8e8 70%, #7d7d7d 86%, #fdfdfd) border-box;
+  box-shadow: 4px 5px 7px rgba(0, 0, 0, 0.5), -2px 0 3px rgba(0, 0, 0, 0.25), inset 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* pochettes : plastique avec reflets qui suivent la lumière, soudures latérales, fente du haut */
+.slot__pocket {
+  position: relative;
+  border: 1px solid rgba(20, 20, 20, 0.22);
+  border-top: 0;
+  border-radius: 3px 3px 8px 8px;
+  background:
+    radial-gradient(120% 90% at var(--lx) var(--ly), rgba(255, 255, 255, 0.55), transparent 55%),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.18) 55%, rgba(255, 255, 255, 0) 75%, rgba(255, 255, 255, 0.35) 100%),
+    rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8),
+    0 3px 7px rgba(60, 45, 20, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 -6px 10px -6px rgba(0, 0, 0, 0.18);
+}
+
+/* ourlet d'ouverture : bord soudé plus épais avec un petit creux d'ombre */
+.slot__pocket::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1px;
+  right: -1px;
+  height: 7px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.3), rgba(20, 20, 20, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+/* la carte projette une ombre sur le papier à travers le plastique */
+.mini {
+  margin-top: 0.35rem;
+  box-shadow: 0 4px 9px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+/* voile brillant par-dessus la carte (le plastique est devant) */
+.slot__pocket::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(118deg, transparent 38%, rgba(255, 255, 255, 0.22) 46%, rgba(255, 255, 255, 0.05) 52%, transparent 60%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.sheet__no {
+  color: rgba(60, 50, 35, 0.5);
+}
+
+@media (max-width: 760px) {
+  .bk__strip {
+    display: none;
+  }
+
+  .bk__tilt {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk__tilt {
+    transform: none !important;
+    transition: none;
+  }
+}
