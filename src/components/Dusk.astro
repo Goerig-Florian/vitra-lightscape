@@ -9,7 +9,7 @@ import { dusk } from '../data/content';
 const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 ---
 
-<section class="dusk" data-dusk data-from={String(dusk.from)} data-to={String(dusk.to)} aria-label="La nuit tombe">
+<section class="dusk" id="soir" data-dusk data-from={String(dusk.from)} data-to={String(dusk.to)} aria-label="La nuit tombe">
   <div class="dusk__sticky" data-dusk-sticky>
     <div class="dusk__sun" aria-hidden="true"></div>
     <div class="dusk__sky" aria-hidden="true">

@@ -2294,3 +2294,124 @@
   60% { opacity: 0.55; }
   100% { opacity: 1; }
 }
+
+/* --------------------------------------------------------------------------
+   Fil d'Ariane lumineux : ligne qui descend et points qui s'allument, bloc après bloc
+   -------------------------------------------------------------------------- */
+
+.rail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .rail {
+    position: fixed;
+    z-index: 45;
+    top: 50%;
+    left: max(10px, calc((100vw - var(--max)) / 2 + var(--margin) - 44px));
+    display: block;
+    width: 28px;
+    height: min(46vh, 340px);
+    padding: 6px 0;
+    transform: translateY(-50%);
+    background: rgba(8, 8, 14, 0.42);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+
+  .rail__track {
+    position: absolute;
+    top: 18px;
+    bottom: 18px;
+    left: calc(50% - 1px);
+    width: 2px;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 1px;
+  }
+
+  .rail__fill {
+    position: absolute;
+    inset: 0;
+    background: #dcefff;
+    border-radius: 1px;
+    box-shadow: 0 0 5px #5aa9ff, 0 0 12px rgba(90, 169, 255, 0.65);
+    transform: scaleY(var(--rail-p, 0));
+    transform-origin: top;
+    transition: transform 0.25s linear;
+  }
+
+  .rail__list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .rail__dot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 24px;
+    text-decoration: none;
+  }
+
+  .rail__dot::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0d1120;
+    border: 1.5px solid rgba(255, 255, 255, 0.55);
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
+
+  .rail__dot.is-lit::before {
+    background: #dcefff;
+    border-color: #dcefff;
+    box-shadow: 0 0 6px #5aa9ff, 0 0 12px rgba(90, 169, 255, 0.7);
+  }
+
+  .rail__dot.is-active::before {
+    transform: scale(1.5);
+  }
+
+  /* nom du bloc : au survol, au focus, et un instant quand on y arrive */
+  .rail__label {
+    position: absolute;
+    left: 36px;
+    padding: 4px 10px;
+    background: rgba(8, 8, 14, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-4px);
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+  }
+
+  .rail__dot:hover .rail__label,
+  .rail__dot:focus-visible .rail__label,
+  .rail__dot.is-flash .rail__label {
+    opacity: 1;
+    transform: none;
+  }
+
+  .rail__dot:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+    border-radius: 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail__fill,
+  .rail__dot::before,
+  .rail__label {
+    transition: none;
+  }
+}

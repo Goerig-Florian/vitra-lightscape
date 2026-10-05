@@ -567,12 +567,51 @@
     if (header.getAttribute('data-theme') !== theme) header.setAttribute('data-theme', theme);
   };
 
+  /* ---------- Fil d'Ariane lumineux : la ligne descend, les points s'allument bloc après bloc ---------- */
+  var rail = document.querySelector('[data-rail]');
+  var updateRail = function () {};
+  if (rail) {
+    var railLinks = Array.prototype.slice.call(rail.querySelectorAll('.rail__dot'));
+    var railTargets = railLinks.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+    var railLast = -1;
+    var flashTimer = null;
+    updateRail = function () {
+      var n = railTargets.length;
+      var anchor = window.innerHeight * 0.4; // repère de lecture : 40 % de la hauteur de la fenêtre
+      var tops = railTargets.map(function (t) { return t.getBoundingClientRect().top - anchor; });
+      var idx = 0;
+      for (var i = 0; i < n; i++) if (tops[i] <= 0) idx = i;
+      var frac = 0;
+      if (idx < n - 1) frac = clamp(-tops[idx] / (tops[idx + 1] - tops[idx]), 0, 1);
+      // premier tronçon : la ligne part de zéro tout en haut de la page
+      if (idx === 0 && n > 1) frac = clamp(window.scrollY / (tops[1] + window.scrollY), 0, 1);
+      // tout en bas de la page, le dernier bloc compte comme atteint
+      var doc = document.documentElement;
+      if (window.scrollY + window.innerHeight >= doc.scrollHeight - 4) { idx = n - 1; frac = 0; }
+      rail.style.setProperty('--rail-p', ((idx + frac) / (n - 1)).toFixed(4));
+      railLinks.forEach(function (a, i) {
+        a.classList.toggle('is-lit', i <= idx);
+        a.classList.toggle('is-active', i === idx);
+        if (i === idx) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+      });
+      if (idx !== railLast) {
+        if (railLast !== -1) {
+          railLinks[idx].classList.add('is-flash');
+          clearTimeout(flashTimer);
+          flashTimer = setTimeout(function () { railLinks.forEach(function (a) { a.classList.remove('is-flash'); }); }, 1800);
+        }
+        railLast = idx;
+      }
+    };
+  }
+
   /* ---------- Boucle ---------- */
   var ticking = false;
   var frame = function () {
     ticking = false;
     updateDusk();
     updateHeader();
+    updateRail();
   };
   var request = function () {
     if (!ticking) {

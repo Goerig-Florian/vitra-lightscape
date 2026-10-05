@@ -25,6 +25,8 @@ npm run dev      # http://localhost:4321
 
 ## Déroulé de la page
 
+Sur écran large (1024 px et plus), un **fil lumineux** vertical court sur le côté gauche : il descend au fil du défilement et allume un point par grand bloc (Accueil, Le soir, Le parcours, Billetterie, Infos), comme le chemin du parcours. Les points sont des liens, au clavier aussi ; le nom du bloc s'affiche au survol, au focus et un instant quand on y arrive (`Rail.astro`).
+
 1. **Vidéo de fond** : le Vitra Design Museum passe du jour au coucher de soleil, puis à la nuit.
    - À la nuit, une vague de lumière douce balaie le musée.
    - Bouton lecture / pause (« Revoir la vidéo » à la fin).

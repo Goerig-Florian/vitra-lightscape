@@ -1,0 +1,30 @@
+---
+/**
+ * Fil d'Ariane lumineux : une ligne verticale sur le côté de la page, un point par grand bloc.
+ * La ligne descend au fil du défilement et allume les points l'un après l'autre, comme le chemin
+ * du parcours. Les points sont des liens (clavier : Tab, Entrée). Masqué sur petit écran.
+ */
+const blocs = [
+  { href: '#top', label: 'Accueil' },
+  { href: '#soir', label: 'Le soir' },
+  { href: '#parcours', label: 'Le parcours' },
+  { href: '#billetterie', label: 'Billetterie' },
+  { href: '#infos', label: 'Infos' },
+];
+---
+
+<nav class="rail" data-rail aria-label="Blocs de la page">
+  <span class="rail__track" aria-hidden="true"><span class="rail__fill"></span></span>
+  <ol class="rail__list">
+    {
+      blocs.map((b) => (
+        <li>
+          <a class="rail__dot" href={b.href}>
+            <span class="rail__label" aria-hidden="true">{b.label}</span>
+            <span class="sr-only">{b.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
