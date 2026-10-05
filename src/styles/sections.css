@@ -3031,29 +3031,46 @@
   background: none;
   color: inherit;
   font: inherit;
-  cursor: pointer;
-  perspective: 900px;
+  cursor: grab;
+  perspective: 1100px;
   touch-action: pan-y;
+  user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.lcard:active {
+  cursor: grabbing;
 }
 
 .lcard:focus-visible {
   outline: 2px solid #dcefff;
-  outline-offset: 5px;
-  border-radius: 20px;
+  outline-offset: 6px;
+  border-radius: 22px;
 }
 
+/* la carte : ratio 2 / 3, deux faces dans un volume 3D */
 .lcard__tilt {
   position: relative;
   display: block;
-  aspect-ratio: 5 / 7;
-  overflow: hidden;
-  border-radius: 18px;
-  background: var(--night-2);
-  border: 1px solid rgba(220, 239, 255, 0.22);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 18px rgba(90, 169, 255, 0.12);
+  aspect-ratio: 2 / 3;
   transform-style: preserve-3d;
   will-change: transform;
+}
+
+.lcard__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 7% / 4.7%;
+  background: #070a16;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55), 0 0 22px rgba(255, 214, 150, 0.12);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.lcard__back {
+  transform: rotateY(180deg);
+  background: radial-gradient(120% 80% at 50% 30%, #1a2142, #070a16 70%);
 }
 
 .lcard__img {
@@ -3062,11 +3079,47 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
 }
 
 /* l'image bascule d'un coup, d'un côté à l'autre de la carte */
 .lcard__img--map {
   opacity: var(--m);
+}
+
+/* filet lumineux arrondi, comme sur la carte de référence */
+.lcard__frame {
+  position: absolute;
+  inset: 2.6% 3.2%;
+  border-radius: 5.5% / 3.7%;
+  border: 2px solid rgba(255, 246, 228, 0.75);
+  box-shadow: 0 0 10px rgba(255, 214, 150, 0.55), inset 0 0 10px rgba(255, 214, 150, 0.35);
+  pointer-events: none;
+}
+
+/* logo Vitra Lightscape en haut à gauche (au centre au dos) */
+.lcard__logo {
+  position: absolute;
+  top: 8%;
+  left: 10%;
+  width: 36%;
+  color: #fff;
+  filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.lcard__logo--back {
+  top: 50%;
+  left: 50%;
+  width: 62%;
+  transform: translate(-50%, -50%);
+}
+
+.lcard__logo .logo,
+.lcard__logo svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* reflet irisé : bandes qui glissent avec l'inclinaison, plus marquées pendant la bascule */
@@ -3098,22 +3151,8 @@
   mix-blend-mode: soft-light;
 }
 
-.lcard__tilt::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent 60%, rgba(5, 8, 18, 0.7));
-}
-
-.lcard__name {
-  position: absolute;
-  z-index: 1;
-  left: 0.9rem;
-  right: 0.9rem;
-  bottom: 0.75rem;
-  font-size: var(--step--1);
-  color: rgba(244, 239, 232, 0.85);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
-  text-align: left;
+@media (prefers-reduced-motion: reduce) {
+  .lcard__img--map {
+    transition: opacity 0.3s ease;
+  }
 }

@@ -1,10 +1,12 @@
 ---
 /**
- * Une carte épurée : la photo de jour dessous, la version mapping dessus. Quand la carte s'incline,
- * l'image bascule du jour au mapping (effet lenticulaire) avec un reflet irisé.
- * C'est un bouton : Entrée / Espace / tap fige la version mapping.
+ * Une carte façon TCG : image pleine carte, filet lumineux arrondi, logo Vitra Lightscape en haut à gauche.
+ * Quand la carte s'incline, l'image bascule du jour au mapping (effet lenticulaire, reflet irisé).
+ * On peut la faire tourner presque à 360° (glisser) ; au dos : le logo. Un clic, un tap ou Entrée la retourne
+ * d'un tour complet et fige l'autre version.
  */
 import type { CarteLightscape } from '../data/lightscape-cards';
+import Logo from './Logo.astro';
 import { url } from '../lib/url';
 
 interface Props {
@@ -15,10 +17,19 @@ const { carte } = Astro.props;
 
 <button class="lcard" type="button" data-lcard aria-pressed="false" aria-label={`${carte.name}, version mapping`}>
   <span class="lcard__tilt">
-    <img class="lcard__img" src={url(carte.jour)} alt="" width="960" height="720" loading="lazy" decoding="async" />
-    <img class="lcard__img lcard__img--map" src={url(carte.mapping)} alt="" width="1448" height="1086" loading="lazy" decoding="async" />
-    <span class="lcard__foil" aria-hidden="true"></span>
-    <span class="lcard__shine" aria-hidden="true"></span>
-    <span class="lcard__name">{carte.name}</span>
+    <span class="lcard__face lcard__front">
+      <img class="lcard__img" src={url(carte.jour)} alt="" width="960" height="720" loading="lazy" decoding="async" draggable="false" />
+      <img class="lcard__img lcard__img--map" src={url(carte.mapping)} alt="" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" />
+      <span class="lcard__foil" aria-hidden="true"></span>
+      <span class="lcard__shine" aria-hidden="true"></span>
+      <span class="lcard__frame" aria-hidden="true"></span>
+      <span class="lcard__logo" aria-hidden="true"><Logo label={false} /></span>
+    </span>
+    <span class="lcard__face lcard__back" aria-hidden="true">
+      <span class="lcard__foil"></span>
+      <span class="lcard__shine"></span>
+      <span class="lcard__frame"></span>
+      <span class="lcard__logo lcard__logo--back"><Logo label={false} /></span>
+    </span>
   </span>
 </button>

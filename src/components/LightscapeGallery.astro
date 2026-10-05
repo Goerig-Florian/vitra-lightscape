@@ -1,7 +1,7 @@
 ---
 /**
  * Galerie de cartes Lightscape (page de présentation).
- * Le tilt et la révélation se règlent dans src/data/lightscape-cards.ts (objet `reglages`).
+ * Le tilt et la bascule se règlent dans src/data/lightscape-cards.ts (objet `reglages`).
  */
 import LightscapeCard from './LightscapeCard.astro';
 import { cartes, reglages } from '../data/lightscape-cards';
@@ -15,7 +15,7 @@ const liste = cartes();
       <div class="container">
         <p class="eyebrow">Cartes à gagner</p>
         <h2 class="lgallery__title" id="lgallery-title">Le bâtiment se transforme en Vitra Lightscape.</h2>
-        <p class="lgallery__lead">Inclinez la carte : le bâtiment change d’image, du jour à sa version Lightscape. Un clic ou un tap la fige.</p>
+        <p class="lgallery__lead">Inclinez la carte : le bâtiment passe du jour à sa version Lightscape. Glissez pour la faire tourner, cliquez pour la retourner.</p>
         <ul class="lgallery__grid" data-lgallery data-tilt={reglages.tilt} data-reveal={reglages.reveal}>
           {liste.map((c) => (
             <li>
@@ -41,9 +41,13 @@ const liste = cartes();
       let py = 0.5;
       let cx = 0.5; // position affichée
       let cy = 0.5;
-      let active = false;
-      let pinned = false; // bascule par tap ou clavier : mapping fixe
-      let sweep = 0; // avancée du balayage jour -> mapping (0 à 1)
+      let active = false; // la souris est sur la carte
+      let pinned = false; // version mapping figée
+      let sweep = 0; // bascule jour -> mapping (0 à 1)
+      let spin = 0; // rotation autour de l'axe vertical, en degrés (affichée)
+      let spinTo = 0; // rotation visée
+      let drag: { x: number; base: number } | null = null;
+      let moved = false;
       let raf = 0;
 
       const draw = () => {
@@ -51,20 +55,23 @@ const liste = cartes();
         const k = still.matches ? 1 : 0.14;
         cx += (px - cx) * k;
         cy += (py - cy) * k;
-        // la carte « change d'image » en s'inclinant : jour à gauche, mapping à droite
+        spin += (spinTo - spin) * (still.matches ? 1 : drag ? 0.35 : 0.09);
         // effet lenticulaire : l'image bascule du jour au mapping quand la carte passe d'un côté à l'autre
         const goal = pinned ? 1 : active ? Math.min(1, Math.max(0, (px - 0.5) / soft + 0.5)) : 0;
         sweep += (goal - sweep) * (still.matches ? 1 : 0.2);
+        const on = active || pinned || Math.abs(spinTo - spin) > 1;
         card.style.setProperty('--x', `${(cx * 100).toFixed(1)}%`);
         card.style.setProperty('--y', `${(cy * 100).toFixed(1)}%`);
         card.style.setProperty('--m', sweep.toFixed(3));
-        card.style.setProperty('--f', (active || pinned ? 0.5 + 0.5 * (1 - Math.abs(2 * sweep - 1)) : 0).toFixed(3));
-        card.style.setProperty('--shine', (active || pinned ? 1 : 0).toString());
-        card.style.setProperty('--hue', `${Math.round(cx * 240 + cy * 80)}deg`);
+        card.style.setProperty('--f', (on ? 0.5 + 0.5 * (1 - Math.abs(2 * sweep - 1)) : 0).toFixed(3));
+        card.style.setProperty('--shine', on ? '1' : '0');
+        card.style.setProperty('--hue', `${Math.round(cx * 240 + cy * 80 + spin)}deg`);
+        const hover = active && !drag ? (cx - 0.5) * 2 * maxTilt : 0;
         tilt.style.transform = still.matches
           ? ''
-          : `rotateX(${((0.5 - cy) * 2 * maxTilt).toFixed(2)}deg) rotateY(${((cx - 0.5) * 2 * maxTilt).toFixed(2)}deg) scale(${active ? 1.03 : 1})`;
-        const moving = Math.abs(px - cx) > 0.002 || Math.abs(py - cy) > 0.002 || Math.abs(goal - sweep) > 0.002;
+          : `rotateX(${((0.5 - cy) * 2 * maxTilt).toFixed(2)}deg) rotateY(${(hover + spin).toFixed(2)}deg) scale(${active ? 1.03 : 1})`;
+        const moving =
+          Math.abs(px - cx) > 0.002 || Math.abs(py - cy) > 0.002 || Math.abs(goal - sweep) > 0.002 || Math.abs(spinTo - spin) > 0.05;
         if (moving) raf = requestAnimationFrame(draw);
       };
       const go = () => {
@@ -76,22 +83,73 @@ const liste = cartes();
         px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
         py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
         active = true;
+      };
+
+      card.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'mouse') {
+          point(e);
+          go();
+        }
+      });
+      card.addEventListener('pointerdown', (e) => {
+        drag = { x: e.clientX, base: spinTo };
+        moved = false;
+        point(e);
+        go();
+      });
+      card.addEventListener('pointermove', (e) => {
+        if (drag) {
+          const dx = e.clientX - drag.x;
+          if (!moved && Math.abs(dx) > 6) {
+            moved = true;
+            card.setPointerCapture(e.pointerId);
+          }
+          if (moved) spinTo = drag.base + (dx / card.clientWidth) * 330; // presque un tour pour une largeur de carte
+          point(e);
+          go();
+        } else if (e.pointerType === 'mouse') {
+          point(e);
+          go();
+        }
+      });
+      const release = () => {
+        if (drag && moved) spinTo = Math.round(spinTo / 360) * 360; // la carte se repose sur une face
+        drag = null;
         go();
       };
-      const leave = () => {
+      card.addEventListener('pointerup', (e) => {
+        release();
+        if (e.pointerType !== 'mouse') {
+          active = false;
+          px = 0.5;
+          py = 0.5;
+          go();
+        }
+      });
+      card.addEventListener('pointercancel', () => {
+        release();
         active = false;
-        px = 0.5;
-        py = 0.5;
         go();
-      };
-      card.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && point(e));
-      card.addEventListener('pointermove', (e) => (e.pointerType === 'mouse' || e.buttons) && point(e));
-      card.addEventListener('pointerleave', leave);
-      card.addEventListener('pointerup', (e) => e.pointerType !== 'mouse' && leave());
-      card.addEventListener('pointercancel', leave);
+      });
+      card.addEventListener('pointerleave', (e) => {
+        if (drag) return;
+        if (e.pointerType === 'mouse') {
+          active = false;
+          px = 0.5;
+          py = 0.5;
+          go();
+        }
+      });
+
+      // clic, tap ou clavier : la carte fait un tour complet et fige l'autre version
       card.addEventListener('click', () => {
+        if (moved) {
+          moved = false;
+          return;
+        }
         pinned = !pinned;
         card.setAttribute('aria-pressed', String(pinned));
+        spinTo += 360;
         go();
       });
     });
