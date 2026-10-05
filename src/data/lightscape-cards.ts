@@ -11,13 +11,19 @@
  */
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { batiments } from './batiments';
+import { batiments, modes } from './batiments';
 
 /** Nombre maximum de cartes affichées */
 export const MAX_CARTES = 10;
 
 /** Liste explicite d'identifiants (laisser vide pour la détection automatique) */
 const MANUEL: string[] = [];
+
+/**
+ * Textes du classeur, par identifiant : une ou deux phrases sur le bâtiment, à écrire par l'équipe.
+ * Sans texte propre, le classeur affiche l'architecte, l'année et le type de mise en lumière envisagé.
+ */
+export const textes: Record<string, string> = {};
 
 /** Réglages de l'effet (voir LightscapeGallery.astro) */
 export const reglages = {
@@ -30,6 +36,14 @@ export const reglages = {
 export interface CarteLightscape {
   id: string;
   name: string;
+  author: string;
+  year: string;
+  /** Numéro dans le parcours (« 07 ») sur le total */
+  n: string;
+  total: number;
+  /** Type de mise en lumière envisagé (proposition) */
+  mode: string;
+  text: string;
   jour: string;
   mapping: string;
 }
@@ -52,10 +66,20 @@ export function cartes(): CarteLightscape[] {
   return ids
     .filter((id) => present(`${id}.webp`) && present(`${id}-mapping.png`))
     .slice(0, MAX_CARTES)
-    .map((id) => ({
-      id,
-      name: batiments.find((b) => b.id === id)?.name ?? id,
-      jour: `photos/${id}.webp`,
-      mapping: `photos/${id}-mapping.png`,
-    }));
+    .map((id) => {
+      const b = batiments.find((x) => x.id === id);
+      const m = modes[b?.modes[0] ?? 'facade'];
+      return {
+        id,
+        name: b?.name ?? id,
+        author: b?.author ?? '',
+        year: b?.year ?? '',
+        n: String(Math.max(0, rang(id)) + 1).padStart(2, '0'),
+        total: batiments.length,
+        mode: m.label,
+        text: textes[id] ?? m.text,
+        jour: `photos/${id}.webp`,
+        mapping: `photos/${id}-mapping.png`,
+      };
+    });
 }
