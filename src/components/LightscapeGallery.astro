@@ -46,6 +46,9 @@ const liste = cartes();
       let sweep = 0; // bascule jour -> mapping (0 à 1)
       let spin = 0; // rotation autour de l'axe vertical, en degrés (affichée)
       let spinTo = 0; // rotation visée
+      let from = 0; // départ du dernier mouvement chronométré
+      let t0 = 0;
+      let dur = 0; // durée (ms) du mouvement chronométré en cours, 0 si aucun
       let drag: { x: number; base: number } | null = null;
       let moved = false;
       let raf = 0;
@@ -55,7 +58,16 @@ const liste = cartes();
         const k = still.matches ? 1 : 0.14;
         cx += (px - cx) * k;
         cy += (py - cy) * k;
-        spin += (spinTo - spin) * (still.matches ? 1 : drag ? 0.35 : 0.09);
+        let lift = 0;
+        if (still.matches) spin = spinTo;
+        else if (drag) spin += (spinTo - spin) * 0.35;
+        else if (dur) {
+          // tour chronométré : démarrage doux, pleine vitesse au milieu, arrêt doux (on voit vraiment la carte tourner)
+          const u = Math.min(1, (performance.now() - t0) / dur);
+          spin = from + (spinTo - from) * (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
+          lift = Math.sin(Math.PI * u) * 0.08;
+          if (u >= 1) dur = 0;
+        } else spin = spinTo;
         // effet lenticulaire : l'image bascule du jour au mapping quand la carte passe d'un côté à l'autre
         const goal = pinned ? 1 : active ? Math.min(1, Math.max(0, (px - 0.5) / soft + 0.5)) : 0;
         sweep += (goal - sweep) * (still.matches ? 1 : 0.2);
@@ -69,9 +81,9 @@ const liste = cartes();
         const hover = active && !drag ? (cx - 0.5) * 2 * maxTilt : 0;
         tilt.style.transform = still.matches
           ? ''
-          : `rotateX(${((0.5 - cy) * 2 * maxTilt).toFixed(2)}deg) rotateY(${(hover + spin).toFixed(2)}deg) scale(${active ? 1.03 : 1})`;
+          : `rotateX(${((0.5 - cy) * 2 * maxTilt).toFixed(2)}deg) rotateY(${(hover + spin).toFixed(2)}deg) scale(${((active ? 1.03 : 1) + lift).toFixed(3)})`;
         const moving =
-          Math.abs(px - cx) > 0.002 || Math.abs(py - cy) > 0.002 || Math.abs(goal - sweep) > 0.002 || Math.abs(spinTo - spin) > 0.05;
+          Math.abs(px - cx) > 0.002 || Math.abs(py - cy) > 0.002 || Math.abs(goal - sweep) > 0.002 || Math.abs(spinTo - spin) > 0.05 || dur > 0;
         if (moving) raf = requestAnimationFrame(draw);
       };
       const go = () => {
@@ -92,7 +104,8 @@ const liste = cartes();
         }
       });
       card.addEventListener('pointerdown', (e) => {
-        drag = { x: e.clientX, base: spinTo };
+        dur = 0;
+        drag = { x: e.clientX, base: spin };
         moved = false;
         point(e);
         go();
@@ -104,7 +117,7 @@ const liste = cartes();
             moved = true;
             card.setPointerCapture(e.pointerId);
           }
-          if (moved) spinTo = drag.base + (dx / card.clientWidth) * 330; // presque un tour pour une largeur de carte
+          if (moved) spinTo = drag.base + (dx / card.clientWidth) * 420; // un peu plus d'un tour pour une largeur de carte
           point(e);
           go();
         } else if (e.pointerType === 'mouse') {
@@ -113,7 +126,14 @@ const liste = cartes();
         }
       });
       const release = () => {
-        if (drag && moved) spinTo = Math.round(spinTo / 360) * 360; // la carte se repose sur une face
+        if (drag && moved) {
+          // la carte se repose sur une face, en finissant son tour
+          const to = Math.round(spinTo / 360) * 360;
+          from = spin;
+          spinTo = to;
+          t0 = performance.now();
+          dur = 350 + Math.min(700, Math.abs(to - spin) * 3);
+        }
         drag = null;
         go();
       };
@@ -149,7 +169,10 @@ const liste = cartes();
         }
         pinned = !pinned;
         card.setAttribute('aria-pressed', String(pinned));
-        spinTo += 360;
+        from = spin;
+        spinTo = Math.round(spinTo / 360) * 360 + 360;
+        t0 = performance.now();
+        dur = 1300; // un tour complet, bien lisible
         go();
       });
     });
