@@ -65,6 +65,9 @@
   };
 
   /* ---------- Rendu du panier ---------- */
+  // flèche dessinée en SVG : la police n'a pas de glyphe « → »
+  var ARROW = '<svg class="arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>';
+
   var esc = function (s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -86,7 +89,7 @@
 
     var html = '';
     if (!items.length) {
-      html = '<div class="cart-empty"><p>Votre panier est vide.</p><a href="' + esc(DATA.cartUrl.replace(/panier\/$/, '')) + '#billetterie">Choisir une soirée →</a></div>';
+      html = '<div class="cart-empty"><p>Votre panier est vide.</p><a href="' + esc(DATA.cartUrl.replace(/panier\/$/, '')) + '#billetterie">Choisir une soirée ' + ARROW + '</a></div>';
     } else {
       order.forEach(function (g) {
         var parts = g.split('|');

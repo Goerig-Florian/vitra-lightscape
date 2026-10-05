@@ -38,8 +38,8 @@
   --grey-300: #cfcfc9;
 
   /* Typographie */
-  /* Futura, comme sur vitra.com. Les lettres accentuées absentes de la police fournie
-     (é, è, à, ç, œ…) viennent de la police de secours : Futura (Mac) ou Century Gothic (Windows). */
+  /* Futura, comme sur vitra.com. La police fournie n'a pas d'accents : ils sont renvoyés vers les lettres de base
+     par scripts/prepare-font.py, donc tout le texte reste en Futura (la police de secours ne sert qu'en cas d'échec). */
   --font: 'Futura Vitra', Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', Arial, sans-serif;
   --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
   --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);

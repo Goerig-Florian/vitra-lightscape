@@ -9,3 +9,5 @@ photos-sources/*.png
 apercu-statique/
 # visualisations de nuit d'origine (71 Mo), gardées en local
 photos-nuit/
+# polices d'origine fournies par l'équipe (licence ParaType), gardées en local
+polices-sources/

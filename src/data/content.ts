@@ -37,13 +37,13 @@ export const parcours = {
   nightNote: 'Les vues de nuit sont des visualisations de projet, pas des photographies d’une installation existante.',
   source: { label: 'Liste des bâtiments : vitra.com', href: 'https://www.vitra.com/fr-fr/campus/architecture' },
   carte: { label: 'Carte du Campus : vitra.com', href: 'https://www.vitra.com/fr-fr/campus' },
-  osm: { label: '© contributeurs OpenStreetMap', href: 'https://www.openstreetmap.org/copyright' },
+  osm: { label: '(c) contributeurs OpenStreetMap', href: 'https://www.openstreetmap.org/copyright' },
 };
 
 export const infos = {
   label: 'Infos pratiques',
   rows: [
-    { term: 'Lieu', value: 'Vitra Campus\nCharles-Eames-Straße 2\n79576 Weil am Rhein, Allemagne' },
+    { term: 'Lieu', value: 'Vitra Campus\nCharles-Eames-Strasse 2\n79576 Weil am Rhein, Allemagne' },
     { term: 'Horaires', value: 'En soirée, entrées échelonnées\n(calendrier provisoire)' },
     { term: 'Durée', value: 'À préciser' },
     { term: 'Accessibilité', value: 'À préciser avec le Campus' },

@@ -71,6 +71,7 @@ npm run plan     # trajet d'après OpenStreetMap (Python 3, sans dépendance)
 npm run carte    # carte et positions dans le repère du SVG Vitra
 npm run photos   # photos et liens des fiches (Python 3 + Pillow + curl)
 npm run nuit     # visualisations de nuit, depuis photos-nuit/ (Python 3 + Pillow)
+npm run police   # police Futura, depuis polices-sources/ (Python 3 + fontTools)
 ```
 
 ## Modifier le contenu
@@ -97,6 +98,7 @@ scripts/make-plan.py           trajet du parcours (OpenStreetMap)
 scripts/make-map.py            carte et positions dans le repère du SVG Vitra
 scripts/fetch-photos.py        photos et liens des fiches (vitra.com)
 scripts/prepare-night.py       visualisations de nuit (originaux dans photos-nuit/, non versionnés)
+scripts/prepare-font.py        police Futura sans accents (originaux dans polices-sources/, non versionnés)
 scripts/source/                SVG d'origine de la carte de vitra.com
 scripts/data/osm-route.json    trajet intermédiaire
 public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)

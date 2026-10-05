@@ -341,6 +341,16 @@ button {
   transform: translateY(-1px);
 }
 
+.arrow {
+  display: inline-block;
+  flex: none;
+  vertical-align: -0.2em;
+}
+
+.arrow--back {
+  transform: scaleX(-1);
+}
+
 .link-arrow {
   display: inline-flex;
   align-items: center;
