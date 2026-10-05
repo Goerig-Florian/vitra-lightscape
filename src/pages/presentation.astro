@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import { presentation } from '../data/presentation';
 import { url } from '../lib/url';
 import LightscapeGallery from '../components/LightscapeGallery.astro';
+import LightscapeBinder from '../components/LightscapeBinder.astro';
 ---
 
 <Base
@@ -51,6 +52,7 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
   </section>
 
   <LightscapeGallery />
+  <LightscapeBinder />
 
   <script>
     const root = document.querySelector<HTMLElement>('[data-pres]');

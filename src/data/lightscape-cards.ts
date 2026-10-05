@@ -83,3 +83,39 @@ export function cartes(): CarteLightscape[] {
       };
     });
 }
+
+/** Mots simples pour les enfants, par type de mise en lumière (le texte propre à un bâtiment passe avant : `textes`) */
+const enfants = {
+  facade: 'Sa façade s’illumine de grands dessins de lumière.',
+  interieur: 'Il s’allume de l’intérieur, comme une énorme lanterne.',
+  interactif: 'Approche-toi : la lumière réagit à tes pas !',
+};
+
+export interface EmplacementClasseur {
+  id: string;
+  /** Numéro dans le parcours, « 07 » */
+  n: string;
+  name: string;
+  author: string;
+  year: string;
+  text: string;
+  /** La carte existe-t-elle déjà ? (photo de jour et mapping présents) */
+  carte: boolean;
+  jour: string;
+  mapping: string;
+}
+
+/** Un emplacement par bâtiment, dans l'ordre du parcours : la carte est rangée si elle existe, sinon la pochette reste vide */
+export function classeur(): EmplacementClasseur[] {
+  return batiments.map((b, i) => ({
+    id: b.id,
+    n: String(i + 1).padStart(2, '0'),
+    name: b.name,
+    author: b.author,
+    year: b.year,
+    text: textes[b.id] ?? enfants[b.modes[0] ?? 'facade'],
+    carte: present(`${b.id}.webp`) && present(`${b.id}-mapping.png`),
+    jour: `photos/${b.id}.webp`,
+    mapping: `photos/${b.id}-mapping.png`,
+  }));
+}
