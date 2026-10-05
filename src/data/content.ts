@@ -12,7 +12,6 @@ export const nav = [
 export const hero = {
   meta: ['Vitra Campus, Weil am Rhein', 'Un parcours lumière, en soirée'],
   title: 'Vitra, sous une autre lumière.',
-  lead: 'Quand la nuit tombe, la lumière révèle ce que les architectes ont voulu dire. Un parcours nocturne à travers tout le Vitra Campus.',
   primary: 'Réserver',
   secondary: 'Découvrir le parcours',
   videoLabel: 'Vidéo d’ambiance : le Vitra Design Museum de Frank Gehry passe du jour au coucher de soleil, puis à la nuit, où la lumière dessine sa silhouette.',

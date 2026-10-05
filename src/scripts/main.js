@@ -563,6 +563,7 @@
       }
     }
     if (window.scrollY < 4 && hero) theme = 'hero';
+    header.toggleAttribute('data-scrolled', window.scrollY >= 4);
     if (header.getAttribute('data-theme') !== theme) header.setAttribute('data-theme', theme);
   };
 

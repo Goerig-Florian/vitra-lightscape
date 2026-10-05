@@ -225,13 +225,9 @@ button {
 
 /* Bouton discret : réservation depuis le premier écran */
 .btn--quiet {
-  min-height: 40px;
-  padding: 0 1rem;
   background: transparent;
   border-color: rgba(255, 255, 255, 0.4);
   color: rgba(255, 255, 255, 0.92);
-  font-size: 0.875rem;
-  font-weight: 400;
 }
 
 .btn--quiet:hover {
