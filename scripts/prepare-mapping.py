@@ -4,13 +4,13 @@ Prépare les visualisations de mapping de la landing (aperçu de fin de vidéo, 
 Usage :  python3 scripts/prepare-mapping.py     (Python 3 + Pillow + NumPy)
 
 Entrée : mapping-sources/ et photos-nuit/ (originaux fournis par l'équipe, non versionnés).
-Sortie : public/mapping/*.webp
+Sortie : public/mapping/*.webp (le nom change quand l'image change : GitHub Pages garde les fichiers 10 minutes en cache)
 
 On ne garde que trois images, pour ne pas en montrer trop : le projet se découvre sur place.
-- apercu-musee : la version mapping de la DERNIÈRE IMAGE DE LA VIDÉO d'accueil (même cadrage, 1672 x 941),
+- fin-video-mapping : la version mapping de la DERNIÈRE IMAGE DE LA VIDÉO d'accueil (même cadrage, 1672 x 941),
   qui apparaît en fondu pendant trois secondes à la fin de la vidéo.
 - soiree-musee : le Vitra Design Museum aux faisceaux de lumière blanche (bloc « Votre soirée »), redimensionné.
-- torche-base / torche-reveal : la caserne de NOTRE site (visualisation de nuit d'origine, pleine résolution
+- torche-nuit / torche-mapping : la caserne de NOTRE site (visualisation de nuit d'origine, pleine résolution
   1448 x 1086, cadrage identique à la photo de jour de vitra.com), seule, puis avec la texture « flammes » du
   mapping fourni par l'équipe projetée sur TOUS les plans de béton de la façade (toit, grand mur, dalle,
   murs bas, mur de gauche, mur de fond). Le mapping n'apparaît que dans le cercle de lumière.
@@ -53,8 +53,8 @@ ORIGINAL_NUIT = ROOT / "photos-nuit" / "vague-1" / "architecture_contemporaine_s
 
 def apercu():
     im = Image.open(SRC / "musee-fin-video.webp").convert("RGB")
-    im.save(OUT / "apercu-musee.webp", quality=80, method=6)
-    print(f"apercu-musee: {im.width}x{im.height}")
+    im.save(OUT / "fin-video-mapping.webp", quality=80, method=6)
+    print(f"fin-video-mapping: {im.width}x{im.height}")
 
 
 def soiree():
@@ -68,7 +68,7 @@ def soiree():
 def torche():
     # base : l'original de la visualisation de nuit de la caserne, en pleine résolution (1448 x 1086)
     base = Image.open(ORIGINAL_NUIT).convert("RGB")
-    base.save(OUT / "torche-base.webp", quality=82, method=6)
+    base.save(OUT / "torche-nuit.webp", quality=82, method=6)
     flames = Image.open(SRC / "caserne-flammes.webp").convert("RGB")
     b = np.asarray(base, dtype=np.float32) / 255
     light = np.zeros_like(b)
@@ -104,8 +104,8 @@ def torche():
     glow = np.clip(np.clip((light - 0.12) / 0.88, 0, 1) * 1.05 + ember, 0, 1)
     dim = b * (1 - 0.5 * zone[..., None])  # le béton s'assombrit sous la projection, le reste de la photo ne change pas
     out = 1 - (1 - dim) * (1 - glow)
-    Image.fromarray((np.clip(out, 0, 1) * 255).astype("uint8")).save(OUT / "torche-reveal.webp", quality=82, method=6)
-    print("torche-base / torche-reveal:", base.size)
+    Image.fromarray((np.clip(out, 0, 1) * 255).astype("uint8")).save(OUT / "torche-mapping.webp", quality=82, method=6)
+    print("torche-nuit / torche-mapping:", base.size)
 
 
 def main():
