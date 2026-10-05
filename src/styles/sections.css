@@ -84,11 +84,22 @@
   gap: 0.5rem;
 }
 
-.site-header[data-theme='hero'] .btn--solid,
 .site-header[data-theme='night'] .btn--solid {
   background: var(--night-text);
   border-color: var(--night-text);
   color: var(--ink);
+}
+
+/* Sur le premier écran, la réservation reste discrète : simple contour */
+.site-header[data-theme='hero'] .btn--solid {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+}
+
+.site-header[data-theme='hero'] .btn--solid:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #fff;
 }
 
 .cart-btn__count {
@@ -292,21 +303,11 @@
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.25);
 }
 
-.hero__clock {
-  font-size: clamp(3rem, 2rem + 4vw, 6rem);
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
-}
-
 .hero__lead {
-  max-width: 40ch;
-  margin-top: 1rem;
-  font-size: var(--step-1);
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.92);
+  max-width: 38ch;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .hero__actions {
@@ -1364,36 +1365,6 @@
   }
 }
 
-/* Liste repliée des étapes */
-.steps {
-  margin-top: 2.5rem;
-  border-top: 1px solid var(--night-line);
-}
-
-.steps > summary {
-  display: flex;
-  align-items: center;
-  min-height: 56px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.steps > summary::marker {
-  color: var(--amber);
-}
-
-.steps .index {
-  margin-bottom: 0.5rem;
-}
-
-@media (min-width: 900px) {
-  .steps .index {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--gutter);
-  }
-}
-
 /* Repères cliquables */
 .stop {
   cursor: pointer;
@@ -1424,72 +1395,6 @@
   fill: rgba(255, 214, 150, 0.5);
 }
 
-/* Index des bâtiments */
-.index {
-  border-top: 1px solid var(--night-line);
-}
-
-.index__item {
-  border-bottom: 1px solid var(--night-line);
-  transition: background-color 0.2s;
-}
-
-.index__item:hover,
-.index__item.is-active,
-.index__item.is-selected {
-  background: rgba(255, 180, 76, 0.08);
-}
-
-.index__btn {
-  display: grid;
-  grid-template-columns: 2.25rem 1fr auto;
-  gap: 0.25rem 0.75rem;
-  align-items: baseline;
-  width: 100%;
-  padding: 0.85rem 0.5rem 0.85rem 0;
-  background: none;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.index__btn:focus-visible {
-  outline-offset: -2px;
-}
-
-.index__n {
-  font-size: var(--step--1);
-  font-weight: 600;
-  color: var(--amber);
-  font-variant-numeric: tabular-nums;
-}
-
-.index__main {
-  display: grid;
-}
-
-.index__name {
-  font-weight: 500;
-}
-
-.index__meta {
-  font-size: var(--step--1);
-  color: var(--night-muted);
-}
-
-.index__approx {
-  font-style: italic;
-}
-
-.index__modes {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.35rem;
-}
-
 .tag {
   display: inline-flex;
   align-items: center;
@@ -1504,22 +1409,6 @@
 .tag .mode-mark {
   width: 8px;
   height: 8px;
-}
-
-.index__item[hidden] {
-  display: none;
-}
-
-@media (max-width: 480px) {
-  .index__btn {
-    grid-template-columns: 2.25rem 1fr;
-  }
-
-  .index__modes {
-    grid-column: 2;
-    justify-content: flex-start;
-    margin-top: 0.35rem;
-  }
 }
 
 .parcours__source {

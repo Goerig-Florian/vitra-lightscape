@@ -5,7 +5,7 @@
  * mode de mise en lumière). À l'entrée dans la section, le chemin lumineux
  * s'allume d'étape en étape (la fiche ne change pas toute seule). Un clic (ou Entrée) sur un repère,
  * un élément de la liste ou les flèches de la fiche fixe le choix.
- * La liste des 31 étapes reste disponible, repliée, pour le clavier et la lecture.
+ * Les repères sont des boutons : on y accède au clavier (Tab, Entrée).
  */
 import { parcours } from '../data/content';
 import { batiments, modes, type Mode } from '../data/batiments';
@@ -258,36 +258,6 @@ const firstNight = night(first.id);
       d’après <a href={parcours.osm.href} rel="noopener">{parcours.osm.label}<span class="sr-only"> (site externe)</span></a>, licence ODbL.
     </p>
     </div>
-
-    <details class="steps">
-      <summary>Liste des {batiments.length} étapes, dans l’ordre de la visite</summary>
-      <ol class="index" data-index>
-        {
-          stops.map((b, i) => (
-            <li class="index__item" data-item={String(i)} data-modes={b.modes.join(' ')}>
-              <button type="button" class="index__btn" data-item-btn={String(i)}>
-                <span class="index__n">{num(i)}</span>
-                <span class="index__main">
-                  <span class="index__name">{b.name}</span>
-                  <span class="index__meta">
-                    {credit(b)}
-                    {b.approx && <span class="index__approx"> · repère décalé</span>}
-                  </span>
-                </span>
-                <span class="index__modes">
-                  {b.modes.map((m) => (
-                    <span class={`tag tag--${m}`}>
-                      <span class={`mode-mark mode-mark--${m}`} aria-hidden="true" />
-                      {modes[m].short}
-                    </span>
-                  ))}
-                </span>
-              </button>
-            </li>
-          ))
-        }
-      </ol>
-    </details>
 
     <script type="application/json" id="fiches-data" set:html={JSON.stringify({ stops: data, credits })} />
 

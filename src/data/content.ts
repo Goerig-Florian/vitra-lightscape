@@ -15,8 +15,6 @@ export const hero = {
   lead: 'Quand la nuit tombe, la lumière révèle ce que les architectes ont voulu dire. Un parcours nocturne à travers tout le Vitra Campus.',
   primary: 'Réserver',
   secondary: 'Découvrir le parcours',
-  clockFrom: 18 * 60, // 18:00, début de la vidéo
-  clockTo: 21 * 60 + 30, // 21:30, fin de la vidéo
   videoLabel: 'Vidéo d’ambiance : le Vitra Design Museum de Frank Gehry passe du jour au coucher de soleil, puis à la nuit, où la lumière dessine sa silhouette.',
 };
 

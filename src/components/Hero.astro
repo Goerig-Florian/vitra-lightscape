@@ -1,7 +1,7 @@
 ---
 /**
  * Premier écran : vidéo de fond du Vitra Design Museum, du jour à la nuit.
- * L'horloge suit la vidéo (18:00 → 21:30). À la nuit, une vague de lumière
+ * À la nuit, une vague de lumière
  * douce balaie le musée, découpée sur sa silhouette (calée sur la dernière image).
  * Animations réduites : pas de lecture automatique, image de nuit fixe.
  */
@@ -10,10 +10,9 @@ import { museeSilhouette } from '../data/batiments';
 import { url } from '../lib/url';
 
 const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
-const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 ---
 
-<section class="hero" id="top" data-theme="hero" data-hero data-from={String(hero.clockFrom)} data-to={String(hero.clockTo)} aria-labelledby="hero-title">
+<section class="hero" id="top" data-theme="hero" data-hero aria-labelledby="hero-title">
   <div class="hero__media">
     <video
       class="hero__video"
@@ -53,10 +52,9 @@ const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${Str
     <div class="hero__bottom">
       <h1 class="hero__title" id="hero-title">{hero.title}</h1>
       <div class="hero__side">
-        <p class="hero__clock" aria-hidden="true"><span data-hero-clock>{fmt(hero.clockFrom)}</span></p>
         <p class="hero__lead">{hero.lead}</p>
         <div class="hero__actions">
-          <a class="btn btn--light" href="#billetterie">{hero.primary}</a>
+          <a class="btn btn--quiet" href="#billetterie">{hero.primary}</a>
           <a class="btn btn--ghost" href="#parcours"><span class="spark" aria-hidden="true"></span>{hero.secondary}</a>
         </div>
       </div>
@@ -69,10 +67,6 @@ const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${Str
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-pause"><path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor" /></svg>
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-play"><path d="M8 5l11 7-11 7z" fill="currentColor" /></svg>
       <span data-video-label>Mettre la vidéo en pause</span>
-    </button>
-    <button type="button" class="hero__ctrl" data-video-replay>
-      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2.05-4.95M5 4v4h4" stroke="currentColor" stroke-width="1.8" fill="none" /></svg>
-      <span>Revoir la tombée de la nuit</span>
     </button>
   </div>
 </section>

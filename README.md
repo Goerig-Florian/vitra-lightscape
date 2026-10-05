@@ -26,7 +26,6 @@ npm run dev      # http://localhost:4321
 ## Déroulé de la page
 
 1. **Vidéo de fond** : le Vitra Design Museum passe du jour au coucher de soleil, puis à la nuit.
-   - L'horloge suit la vidéo, de 18:00 à 21:30.
    - À la nuit, une vague de lumière douce balaie le musée.
    - Boutons pause et revoir.
 2. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
@@ -34,7 +33,7 @@ npm run dev      # http://localhost:4321
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
    - La carte du Campus (vitra.com) : le chemin lumineux, en lumière froide, s'allume d'étape en étape à l'entrée dans la section.
    - Au survol d'un numéro (ou au focus clavier), son bâtiment s'éclaire sur la carte et la fiche montre ce bâtiment ; en quittant le numéro, la fiche revient à l'étape choisie, dont le bâtiment reste éclairé. Les 31 photos sont préchargées au premier survol.
-   - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Le bouton « Voir de nuit » fait passer la photo du jour à la nuit par un fondu à teinte de coucher de soleil (30 bâtiments sur 31, le Designweg n'a pas de vue de nuit). Le passage à la nuit ne se lance qu'au clic ; chaque fiche s'ouvre de jour, et l'animation du chemin ne change pas la fiche toute seule. Précédent / suivant, et liste repliée des 31 étapes.
+   - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Le bouton « Voir de nuit » fait passer la photo du jour à la nuit par un fondu à teinte de coucher de soleil (30 bâtiments sur 31, le Designweg n'a pas de vue de nuit). Le passage à la nuit ne se lance qu'au clic ; chaque fiche s'ouvre de jour, et l'animation du chemin ne change pas la fiche toute seule. Précédent / suivant (flèches sur la photo).
    - Filtres façade / intérieur / interactif.
 4. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
 5. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
@@ -128,5 +127,5 @@ src/
   - la vidéo ne se lance pas toute seule : l'image de nuit s'affiche, et le bouton Lecture reste disponible ;
   - le plan du parcours s'affiche d'un coup, sans animation.
 - La vidéo a des boutons pause et revoir. L'animation du parcours a un bouton pause, reprendre et rejouer.
-- Les repères de la carte sont des boutons au clavier (Tab, Entrée). La liste repliée des étapes est la version texte de la carte : ordre de visite, auteurs, dates, modes.
+- Les repères de la carte sont des boutons au clavier (Tab, Entrée). Chaque repère porte une étiquette lisible par un lecteur d'écran (numéro, nom, auteur, année).
 - Navigation au clavier, focus visibles, panier en dialogue modal (Échap pour fermer). Les filtres du parcours sont des boutons avec état.

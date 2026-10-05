@@ -62,11 +62,8 @@
   var hero = document.querySelector('[data-hero]');
   var video = hero && hero.querySelector('[data-hero-video]');
   if (hero && video) {
-    var clock = hero.querySelector('[data-hero-clock]');
     var toggleBtn = hero.querySelector('[data-video-toggle]');
     var toggleLabel = hero.querySelector('[data-video-label]');
-    var replayBtn = hero.querySelector('[data-video-replay]');
-    var from = Number(hero.dataset.from), to = Number(hero.dataset.to);
     var NIGHT_AT = 0.8; // part de la vidéo à partir de laquelle il fait nuit
     var raf = null;
 
@@ -78,7 +75,6 @@
     var sync = function () {
       var d = video.duration || 12;
       var p = clamp(video.currentTime / d, 0, 1);
-      clock.textContent = fmt(from + (to - from) * p);
       hero.classList.toggle('is-night', p >= NIGHT_AT);
     };
 
@@ -95,7 +91,6 @@
       still.alt = '';
       video.after(still);
       video.preload = 'none';
-      clock.textContent = fmt(to);
       hero.classList.add('is-night');
     };
 
@@ -120,12 +115,6 @@
       } else {
         video.pause();
       }
-    });
-
-    replayBtn.addEventListener('click', function () {
-      hero.classList.remove('is-night');
-      video.currentTime = 0;
-      video.play().catch(function () {});
     });
 
     if (reduceMotion) {
@@ -188,7 +177,6 @@
   if (parcours && plan) {
     var q = function (sel) { return Array.prototype.slice.call(parcours.querySelectorAll(sel)); };
     var stops = q('[data-stop]');
-    var items = q('[data-item]');
     var filters = q('[data-filter]');
     var ats = stops.map(function (s) { return Number(s.dataset.at); });
     var bldgs = {}, spurs = {};
@@ -330,11 +318,9 @@
       nightOn = false; // chaque fiche s'ouvre de jour : la nuit ne se lance qu'au clic sur le bouton
       stops[selected].classList.remove('is-selected');
       (bldgs[stops[selected].dataset.id] || []).forEach(function (b) { b.classList.remove('is-selected'); });
-      items[selected].classList.remove('is-selected');
       selected = i;
       stops[i].classList.add('is-selected');
       (bldgs[stops[i].dataset.id] || []).forEach(function (b) { b.classList.add('is-selected'); });
-      items[i].classList.add('is-selected');
       render(i);
     };
 
@@ -387,23 +373,11 @@
 
     var activate = function (i, on) {
       stops[i].classList.toggle('is-active', on);
-      items[i].classList.toggle('is-active', on);
       (bldgs[stops[i].dataset.id] || []).forEach(function (b) { b.classList.toggle('is-active', on); });
       show(on ? i : current);
       if (on) preview(i); else restore();
     };
 
-    items.forEach(function (item, i) {
-      var btn = item.querySelector('[data-item-btn]');
-      item.addEventListener('mouseenter', function () { activate(i, true); });
-      item.addEventListener('mouseleave', function () { activate(i, false); });
-      btn.addEventListener('focus', function () { activate(i, true); });
-      btn.addEventListener('blur', function () { activate(i, false); });
-      btn.addEventListener('click', function () {
-        pick(i);
-        fiche.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
-      });
-    });
     stops.forEach(function (stop, i) {
       stop.addEventListener('mouseenter', function () { activate(i, true); });
       stop.addEventListener('mouseleave', function () { activate(i, false); });
@@ -431,10 +405,9 @@
         var f = btn.dataset.filter;
         filters.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
         plan.classList.toggle('is-filtered', f !== 'all');
-        items.forEach(function (item, i) {
-          var match = f === 'all' || item.dataset.modes.split(' ').indexOf(f) !== -1;
-          item.hidden = !match;
-          stops[i].classList.toggle('is-dim', !match);
+        stops.forEach(function (stop, i) {
+          var match = f === 'all' || data[i].modes.some(function (m) { return m.key === f; });
+          stop.classList.toggle('is-dim', !match);
         });
       });
     });
