@@ -1,0 +1,127 @@
+---
+import Base from '../layouts/Base.astro';
+import { presentation } from '../data/presentation';
+import { url } from '../lib/url';
+---
+
+<Base
+  title="Présentation du projet · Vitra Lightscape"
+  description="Page interne : les visuels de la campagne Vitra Lightscape reliés par un chemin de lumière."
+  home={false}
+>
+  <meta name="robots" content="noindex, nofollow" slot="head" />
+  <section class="pres" data-theme="night" aria-labelledby="pres-title">
+    <div class="container">
+      <header class="pres__intro">
+        <p class="eyebrow">{presentation.label}</p>
+        <h1 class="pres__title" id="pres-title">{presentation.title}</h1>
+        <p class="pres__lead">{presentation.text}</p>
+      </header>
+
+      <ol class="pres__path" data-pres>
+        <svg class="pres__svg" aria-hidden="true" focusable="false">
+          <path class="pres__line" data-line-base />
+          <path class="pres__line pres__line--lit" data-line-lit />
+        </svg>
+        {
+          presentation.stations.map((s, i) => (
+            <li class={`station station--${i % 2 ? 'right' : 'left'}`} data-station>
+              <span class="station__node" data-node aria-hidden="true"></span>
+              <figure class="station__frame" style={`--ratio:${s.ratio}`}>
+                {s.image ? (
+                  <img src={url(s.image)} alt={s.alt ?? ''} loading="lazy" decoding="async" />
+                ) : (
+                  <span class="station__empty">
+                    <span>{s.format}</span>
+                    <small>Visuel à venir</small>
+                  </span>
+                )}
+              </figure>
+              <div class="station__text">
+                <p class="station__n">{String(i + 1).padStart(2, '0')} · {s.label}</p>
+                <h2>{s.title}</h2>
+                <p>{s.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <script>
+    const root = document.querySelector<HTMLElement>('[data-pres]');
+    if (root) {
+      const svg = root.querySelector<SVGSVGElement>('.pres__svg')!;
+      const base = root.querySelector<SVGPathElement>('[data-line-base]')!;
+      const lit = root.querySelector<SVGPathElement>('[data-line-lit]')!;
+      const nodes = [...root.querySelectorAll<HTMLElement>('[data-node]')];
+      const stations = [...root.querySelectorAll<HTMLElement>('[data-station]')];
+      const still = matchMedia('(prefers-reduced-motion: reduce)');
+      let total = 0;
+      let ys: number[] = [];
+
+      const build = () => {
+        const box = root.getBoundingClientRect();
+        const pts = nodes.map((n) => {
+          const r = n.getBoundingClientRect();
+          return [r.left - box.left + r.width / 2, r.top - box.top + r.height / 2];
+        });
+        if (pts.length < 2) return;
+        svg.setAttribute('width', String(box.width));
+        svg.setAttribute('height', String(box.height));
+        svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+        let d = `M ${pts[0][0]} ${pts[0][1]}`;
+        for (let i = 1; i < pts.length; i++) {
+          const [x0, y0] = pts[i - 1];
+          const [x1, y1] = pts[i];
+          const m = (y1 - y0) / 2;
+          d += ` C ${x0} ${y0 + m}, ${x1} ${y1 - m}, ${x1} ${y1}`;
+        }
+        base.setAttribute('d', d);
+        lit.setAttribute('d', d);
+        total = lit.getTotalLength();
+        lit.style.strokeDasharray = `${total}`;
+        ys = pts.map((p) => p[1]);
+        update();
+      };
+
+      // longueur de tracé atteinte quand le point du chemin est à la hauteur « y » (le tracé descend toujours)
+      const lengthAt = (y: number) => {
+        let lo = 0;
+        let hi = total;
+        for (let k = 0; k < 24; k++) {
+          const mid = (lo + hi) / 2;
+          if (lit.getPointAtLength(mid).y < y) lo = mid;
+          else hi = mid;
+        }
+        return hi;
+      };
+
+      const update = () => {
+        if (!total) return;
+        const box = root.getBoundingClientRect();
+        const y = still.matches ? box.height : Math.min(box.height, Math.max(0, innerHeight * 0.6 - box.top));
+        lit.style.strokeDashoffset = String(still.matches ? 0 : total - (y >= box.height ? total : lengthAt(y)));
+        nodes.forEach((n, i) => n.classList.toggle('is-lit', still.matches || ys[i] <= y + 2));
+        stations.forEach((s, i) => s.classList.toggle('is-lit', still.matches || ys[i] <= y + 2));
+      };
+
+      let queued = false;
+      const tick = () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => {
+          queued = false;
+          update();
+        });
+      };
+      addEventListener('scroll', tick, { passive: true });
+      addEventListener('resize', build);
+      new ResizeObserver(build).observe(root);
+      root.querySelectorAll('img').forEach((im) => im.addEventListener('load', build));
+      addEventListener('load', build);
+      build();
+    }
+  </script>
+</Base>

@@ -29,6 +29,9 @@ const link = (href: string) => (home ? href : url(href));
             </li>
           ))
         }
+        <li>
+          <a href={url('presentation/')} aria-current={Astro.url.pathname.replace(/\/$/, '').endsWith('/presentation') ? 'page' : undefined}>Présentation</a>
+        </li>
       </ul>
     </nav>
 

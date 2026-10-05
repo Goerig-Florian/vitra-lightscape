@@ -39,6 +39,7 @@ const booking = JSON.stringify({
     <meta property="og:type" content="website" />
     <meta property="og:image" content={url('video/musee-affiche-nuit.jpg')} />
     <link rel="icon" href={url('vitra-lightscape-logo.svg')} type="image/svg+xml" />
+    <slot name="head" />
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
