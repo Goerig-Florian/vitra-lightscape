@@ -7,7 +7,7 @@ Entrée : mapping-sources/ (originaux fournis par l'équipe, non versionnés) et
 Sortie : public/mapping/*.webp
 
 On ne garde que deux images, pour ne pas en montrer trop : le projet se découvre sur place.
-- soiree-campus : la vue aérienne du Campus de nuit, redimensionnée.
+- soiree-musee : le Vitra Design Museum aux faisceaux de lumière blanche (bloc « Votre soirée »), redimensionné.
 - torche-reveal : la caserne de NOTRE site (visualisation de nuit, cadrage identique à la photo de jour de
   vitra.com) sur laquelle on projette la texture « flammes » du mapping fourni par l'équipe, uniquement sur
   les plans de béton de la façade. La base de la torche est la visualisation de nuit seule (sans mapping),
@@ -41,11 +41,11 @@ TEXTURES = {
 
 
 def soiree():
-    im = Image.open(SRC / "campus-vue-aerienne.webp").convert("RGB")
+    im = Image.open(SRC / "musee-faisceaux.webp").convert("RGB")
     w = min(WIDTH, im.width)
     h = round(im.height * w / im.width)
-    im.resize((w, h), Image.LANCZOS).save(OUT / "soiree-campus.webp", quality=76, method=6)
-    print(f"soiree-campus: {w}x{h}")
+    im.resize((w, h), Image.LANCZOS).save(OUT / "soiree-musee.webp", quality=76, method=6)
+    print(f"soiree-musee: {w}x{h}")
 
 
 def torche():

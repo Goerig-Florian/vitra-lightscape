@@ -45,7 +45,7 @@ export const soiree = {
   ],
   secret: 'Chaque bâtiment a sa propre écriture lumineuse. Elle se découvre sur place.',
   cta: 'Réserver ma soirée',
-  caption: 'Visualisation de projet : le Campus de nuit, vu d’en haut.',
+  caption: 'Visualisation de projet : le Vitra Design Museum, un soir de parcours.',
 };
 
 export const dusk = {

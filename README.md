@@ -40,7 +40,7 @@ Sur écran large (1024 px et plus), un **fil lumineux** vertical court sur le c�
    - Au survol d'un numéro (ou au focus clavier), son bâtiment s'éclaire sur la carte et la fiche montre ce bâtiment ; en quittant le numéro, la fiche revient à l'étape choisie, dont le bâtiment reste éclairé. Les 31 photos sont préchargées au premier survol.
    - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Le bouton « Voir de nuit » fait passer la photo du jour à la nuit par un fondu à teinte de coucher de soleil (30 bâtiments sur 31, le Designweg n'a pas de vue de nuit). Le passage à la nuit ne se lance qu'au clic ; chaque fiche s'ouvre de jour, et l'animation du chemin ne change pas la fiche toute seule. Précédent / suivant (flèches sur la photo).
    - Filtres façade / intérieur / interactif.
-5. **Votre soirée** : trois temps (arrivée au crépuscule, chemin lumineux, chaque bâtiment s'éveille), les faits (31 étapes, 2,2 km, environ 35 min, départ), et le secret comme argument : « chaque bâtiment a sa propre écriture lumineuse, elle se découvre sur place ». Vue aérienne du Campus de nuit.
+5. **Votre soirée** : trois temps (arrivée au crépuscule, chemin lumineux, chaque bâtiment s'éveille), les faits (31 étapes, 2,2 km, environ 35 min, départ), et le secret comme argument : « chaque bâtiment a sa propre écriture lumineuse, elle se découvre sur place ». Le Vitra Design Museum aux faisceaux de lumière blanche, avec les visiteurs sur le chemin lumineux.
 6. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
 7. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
 
@@ -111,7 +111,7 @@ scripts/source/                SVG d'origine de la carte de vitra.com
 scripts/data/osm-route.json    trajet intermédiaire
 public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)
 public/photos/                 photos de jour (vitra.com) et visualisations de nuit (<id>-nuit.webp)
-public/mapping/                2 images : caserne avec mapping (lampe torche), vue aérienne du Campus
+public/mapping/                2 images : caserne avec mapping (lampe torche), musée aux faisceaux (Votre soirée)
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/futura/         Futura (ParaType), 4 graisses, auto-hébergée (licence : voir CREDITS.md)
