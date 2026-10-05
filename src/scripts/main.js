@@ -65,6 +65,9 @@
     var toggleBtn = hero.querySelector('[data-video-toggle]');
     var toggleLabel = hero.querySelector('[data-video-label]');
     var NIGHT_AT = 0.8; // part de la vidéo à partir de laquelle il fait nuit
+    var SPEED = 2; // vitesse de lecture : 2 = deux fois plus vite (12 s -> 6 s)
+    video.defaultPlaybackRate = SPEED;
+    video.playbackRate = SPEED;
     var raf = null;
 
     var setPaused = function (paused) {
@@ -95,6 +98,7 @@
     };
 
     video.addEventListener('play', function () {
+      video.playbackRate = SPEED; // certains navigateurs la remettent à 1 au chargement
       teaser(false);
       setPaused(false);
       cancelAnimationFrame(raf);
