@@ -11,7 +11,8 @@
     "carte": "python3 scripts/make-map.py",
     "photos": "python3 scripts/fetch-photos.py",
     "nuit": "python3 scripts/prepare-night.py",
-    "police": "python3 scripts/prepare-font.py"
+    "police": "python3 scripts/prepare-font.py",
+    "mapping": "python3 scripts/prepare-mapping.py"
   },
   "dependencies": {
     "astro": "^5.13.0"

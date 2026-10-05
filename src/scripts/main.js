@@ -95,12 +95,20 @@
     };
 
     video.addEventListener('play', function () {
+      teaser(false);
       setPaused(false);
       cancelAnimationFrame(raf);
       loop();
     });
     video.addEventListener('pause', function () { setPaused(true); sync(); });
+    var teaserTimer = null;
+    var teaser = function (on) {
+      clearTimeout(teaserTimer);
+      hero.classList.toggle('is-teaser', on);
+      if (on) teaserTimer = setTimeout(function () { hero.classList.remove('is-teaser'); }, 3600);
+    };
     video.addEventListener('ended', function () {
+      if (!reduceMotion) teaser(true);
       setPaused(true);
       toggleLabel.textContent = 'Revoir la vidéo';
       sync();
@@ -566,6 +574,51 @@
     header.toggleAttribute('data-scrolled', window.scrollY >= 4);
     if (header.getAttribute('data-theme') !== theme) header.setAttribute('data-theme', theme);
   };
+
+  /* ---------- Lampe torche : la visualisation n'apparaît que dans le cercle de lumière ---------- */
+  var torch = document.querySelector('[data-torch]');
+  if (torch) {
+    var hint = torch.querySelector('[data-torch-hint]');
+    var touchDevice = window.matchMedia('(pointer: coarse)').matches;
+    if (touchDevice && hint) hint.textContent = 'Glissez le doigt sur la façade';
+    var tx = 0.62, ty = 0.5; // position de la torche, en part de la largeur et de la hauteur
+    var driven = false;      // vrai quand la personne la déplace elle-même
+    var lastMove = 0;
+    var inView = false;
+    var place = function () {
+      var w = torch.clientWidth, h = torch.clientHeight;
+      torch.style.setProperty('--x', (tx * w).toFixed(1) + 'px');
+      torch.style.setProperty('--y', (ty * h).toFixed(1) + 'px');
+      torch.style.setProperty('--r', (Math.max(110, w * 0.2)).toFixed(1) + 'px');
+    };
+    var moveTo = function (e) {
+      var b = torch.getBoundingClientRect();
+      tx = clamp((e.clientX - b.left) / b.width, 0, 1);
+      ty = clamp((e.clientY - b.top) / b.height, 0, 1);
+      driven = true;
+      lastMove = performance.now();
+      torch.classList.add('is-used');
+      place();
+    };
+    torch.addEventListener('pointermove', moveTo);
+    torch.addEventListener('pointerdown', moveTo);
+    place();
+    window.addEventListener('resize', place);
+    // sans action de la personne, la torche se promène doucement sur la façade
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) { inView = entries[0].isIntersecting; }, { threshold: 0.2 }).observe(torch);
+      var wander = function (t) {
+        if (inView && (!driven || t - lastMove > 2500)) {
+          driven = false;
+          tx = 0.5 + 0.34 * Math.sin(t / 2300);
+          ty = 0.48 + 0.2 * Math.sin(t / 1700 + 1.2);
+          place();
+        }
+        requestAnimationFrame(wander);
+      };
+      requestAnimationFrame(wander);
+    }
+  }
 
   /* ---------- Fil d'Ariane lumineux : la ligne descend, les points s'allument bloc après bloc ---------- */
   var rail = document.querySelector('[data-rail]');

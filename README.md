@@ -29,17 +29,20 @@ Sur écran large (1024 px et plus), un **fil lumineux** vertical court sur le c�
 
 1. **Vidéo de fond** : le Vitra Design Museum passe du jour au coucher de soleil, puis à la nuit.
    - À la nuit, une vague de lumière douce balaie le musée.
+   - À la fin de la vidéo, **un aperçu de trois secondes** : une lumière blanche se pose sur la façade du musée, puis s'éteint (un seul bâtiment, mention « visualisation de projet »).
    - Bouton lecture / pause (« Revoir la vidéo » à la fin).
    - Deux boutons, Réserver et Découvrir le parcours, alignés à droite ; au survol (ou au focus clavier), une lumière blanche, comme un néon, fait le tour de leur cadre. Pas d'animation avec « animations réduites ».
 2. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
-3. **Le parcours** (nuit) : page d'accueil du parcours.
+3. **La lumière** : la promesse en une phrase et trois verbes (elle souligne, elle s'allume du dedans, elle répond à vos pas), sans montrer le projet. Un seul exemple, en « lampe torche » : une façade calme, et la visualisation n'apparaît que dans le cercle de lumière que l'on déplace (souris ou doigt). Sans action, la torche se promène seule.
+4. **Le parcours** (nuit) : page d'accueil du parcours.
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.
    - La carte du Campus (vitra.com) : le chemin lumineux, en lumière froide, s'allume d'étape en étape à l'entrée dans la section.
    - Au survol d'un numéro (ou au focus clavier), son bâtiment s'éclaire sur la carte et la fiche montre ce bâtiment ; en quittant le numéro, la fiche revient à l'étape choisie, dont le bâtiment reste éclairé. Les 31 photos sont préchargées au premier survol.
    - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Le bouton « Voir de nuit » fait passer la photo du jour à la nuit par un fondu à teinte de coucher de soleil (30 bâtiments sur 31, le Designweg n'a pas de vue de nuit). Le passage à la nuit ne se lance qu'au clic ; chaque fiche s'ouvre de jour, et l'animation du chemin ne change pas la fiche toute seule. Précédent / suivant (flèches sur la photo).
    - Filtres façade / intérieur / interactif.
-4. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
-5. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
+5. **Votre soirée** : trois temps (arrivée au crépuscule, chemin lumineux, chaque bâtiment s'éveille), les faits (31 étapes, 2,2 km, environ 35 min, départ), et le secret comme argument : « chaque bâtiment a sa propre écriture lumineuse, elle se découvre sur place ». Vue aérienne du Campus de nuit.
+6. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
+7. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
 
 ## Le parcours : ordre et sources
 
@@ -75,6 +78,7 @@ npm run carte    # carte et positions dans le repère du SVG Vitra
 npm run photos   # photos et liens des fiches (Python 3 + Pillow + curl)
 npm run nuit     # visualisations de nuit, depuis photos-nuit/ (Python 3 + Pillow)
 npm run police   # police Futura, depuis polices-sources/ (Python 3 + fontTools)
+npm run mapping  # visualisations de mapping de la landing, depuis mapping-sources/ (Python 3 + Pillow)
 ```
 
 ## Modifier le contenu
@@ -102,14 +106,16 @@ scripts/make-map.py            carte et positions dans le repère du SVG Vitra
 scripts/fetch-photos.py        photos et liens des fiches (vitra.com)
 scripts/prepare-night.py       visualisations de nuit (originaux dans photos-nuit/, non versionnés)
 scripts/prepare-font.py        police Futura sans accents (originaux dans polices-sources/, non versionnés)
+scripts/prepare-mapping.py     visualisations de mapping de la landing (originaux dans mapping-sources/, non versionnés)
 scripts/source/                SVG d'origine de la carte de vitra.com
 scripts/data/osm-route.json    trajet intermédiaire
 public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)
 public/photos/                 photos de jour (vitra.com) et visualisations de nuit (<id>-nuit.webp)
+public/mapping/                4 visualisations de mapping : aperçu de la vidéo, lampe torche (2), vue aérienne
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
   assets/fonts/futura/         Futura (ParaType), 4 graisses, auto-hébergée (licence : voir CREDITS.md)
-  components/                  Header, Hero, Dusk, Parcours,
+  components/                  Header, Hero, Dusk, Lumiere, Parcours, Soiree, Rail,
                                Billetterie, Infos, Footer, CartDrawer, Logo
   data/                        contenus, bâtiments, carte.json, fiches.json, billetterie
   layouts/Base.astro

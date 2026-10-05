@@ -11,3 +11,5 @@ apercu-statique/
 photos-nuit/
 # polices d'origine fournies par l'équipe (licence ParaType), gardées en local
 polices-sources/
+# visualisations de mapping d'origine fournies par l'équipe, gardées en local
+mapping-sources/

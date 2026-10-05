@@ -1,0 +1,38 @@
+---
+/**
+ * « La lumière » : ce que l'on vient vivre, en une phrase et trois verbes, sans montrer le projet.
+ * Un seul exemple, sous forme de lampe torche : on passe la lumière sur une façade calme et la
+ * visualisation de mapping n'apparaît que dans le cercle (souris ou doigt). Le reste se découvre sur place.
+ */
+import { lumiere } from '../data/content';
+import { url } from '../lib/url';
+---
+
+<section class="section lumiere" id="lumiere" data-theme="night" aria-labelledby="lumiere-title">
+  <div class="container lumiere__grid">
+    <div class="lumiere__text">
+      <p class="eyebrow">{lumiere.label}</p>
+      <h2 class="lumiere__title reveal" id="lumiere-title">{lumiere.title}</h2>
+      <p class="lumiere__lead reveal">{lumiere.text}</p>
+      <ul class="lumiere__list">
+        {
+          lumiere.items.map((it, i) => (
+            <li class="lumiere__item reveal">
+              <span class="lumiere__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{it.title}</h3>
+              <p>{it.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <figure class="torch reveal" data-torch role="img" aria-label={lumiere.torch.label}>
+      <img class="torch__base" src={url('mapping/torche-base.webp')} alt="" width="1400" height="1050" loading="lazy" decoding="async" />
+      <img class="torch__lit" src={url('mapping/torche-reveal.webp')} alt="" width="1400" height="1050" loading="lazy" decoding="async" />
+      <span class="torch__glow" aria-hidden="true"></span>
+      <span class="torch__hint" data-torch-hint aria-hidden="true">{lumiere.torch.hint}</span>
+      <figcaption>{lumiere.torch.note}</figcaption>
+    </figure>
+  </div>
+</section>

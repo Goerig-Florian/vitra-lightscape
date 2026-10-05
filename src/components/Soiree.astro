@@ -1,0 +1,49 @@
+---
+/**
+ * « Votre soirée » : juste avant la billetterie, des faits (parcours, marche, départ) et trois temps.
+ * Le secret devient un argument : chaque bâtiment a sa propre écriture lumineuse, à découvrir sur place.
+ */
+import { soiree } from '../data/content';
+import { url } from '../lib/url';
+import plan from '../data/carte.json';
+
+const km = (plan.length / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+const minutes = Math.round(plan.length / (4000 / 60) / 5) * 5; // marche à 4 km/h, arrondie à 5 min
+---
+
+<section class="section soiree" id="soiree" data-theme="night" aria-labelledby="soiree-title">
+  <div class="container soiree__grid">
+    <figure class="soiree__photo reveal">
+      <img src={url('mapping/soiree-campus.webp')} alt="Le Vitra Campus de nuit, vu d’en haut : un chemin lumineux relie les bâtiments éclairés." width="1400" height="1050" loading="lazy" decoding="async" />
+      <figcaption>{soiree.caption}</figcaption>
+    </figure>
+
+    <div class="soiree__text">
+      <p class="eyebrow">{soiree.label}</p>
+      <h2 class="soiree__title reveal" id="soiree-title">{soiree.title}</h2>
+
+      <ol class="soiree__steps">
+        {
+          soiree.steps.map((s, i) => (
+            <li class="soiree__step reveal">
+              <span class="soiree__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <dl class="soiree__facts reveal">
+        <div><dt>Parcours</dt><dd>{plan.stops.length} étapes · {km} km</dd></div>
+        <div><dt>Marche</dt><dd>≈ {minutes} min</dd></div>
+        <div><dt>Départ</dt><dd>Parking visiteurs</dd></div>
+      </dl>
+
+      <p class="soiree__secret reveal">{soiree.secret}</p>
+      <a class="btn btn--light" href="#billetterie">{soiree.cta}</a>
+    </div>
+  </div>
+</section>

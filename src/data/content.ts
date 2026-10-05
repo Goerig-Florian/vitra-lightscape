@@ -14,7 +14,38 @@ export const hero = {
   title: 'Vitra, sous une autre lumière.',
   primary: 'Réserver',
   secondary: 'Découvrir le parcours',
+  teaserNote: 'Un aperçu de la soirée · visualisation de projet',
   videoLabel: 'Vidéo d’ambiance : le Vitra Design Museum de Frank Gehry passe du jour au coucher de soleil, puis à la nuit, où la lumière dessine sa silhouette.',
+};
+
+export const lumiere = {
+  label: 'La lumière',
+  title: 'La nuit, la lumière dessine ce que les architectes ont voulu dire.',
+  text: 'Des images de lumière se posent sur les façades du Campus et révèlent les lignes, les volumes et les matières de chaque bâtiment.',
+  items: [
+    { title: 'Elle souligne', text: 'Sur les façades, la lumière trace les lignes et les volumes.' },
+    { title: 'Elle s’allume du dedans', text: 'Les vitrages, les toiles et les ouvertures deviennent des lanternes.' },
+    { title: 'Elle répond à vos pas', text: 'Ailleurs, on s’approche, on marche, on touche : le bâtiment réagit.' },
+  ],
+  torch: {
+    hint: 'Passez la lumière sur la façade',
+    hintTouch: 'Glissez le doigt sur la façade',
+    label: 'Aperçu : une façade du Campus s’illumine sous un faisceau de lumière, là où l’on passe la souris ou le doigt.',
+    note: 'Visualisation de projet. Un seul exemple : le reste se découvre sur place.',
+  },
+};
+
+export const soiree = {
+  label: 'Votre soirée',
+  title: 'Une boucle à pied, du crépuscule à la nuit.',
+  steps: [
+    { title: 'Vous arrivez au crépuscule', text: 'Départ du parking visiteurs, entrée par la VitraHaus.' },
+    { title: 'Un chemin lumineux vous guide', text: 'Il relie 31 bâtiments et oeuvres, d’un pas tranquille.' },
+    { title: 'Chaque bâtiment s’éveille', text: 'Sa propre écriture de lumière, à découvrir sur place.' },
+  ],
+  secret: 'Chaque bâtiment a sa propre écriture lumineuse. Elle se découvre sur place.',
+  cta: 'Réserver ma soirée',
+  caption: 'Visualisation de projet : le Campus de nuit, vu d’en haut.',
 };
 
 export const dusk = {

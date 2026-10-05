@@ -2415,3 +2415,268 @@
     transition: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Aperçu de la soirée à la fin de la vidéo d'accueil : trois secondes, un seul bâtiment
+   -------------------------------------------------------------------------- */
+
+.hero__teaser {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  pointer-events: none;
+}
+
+.hero.is-teaser .hero__teaser {
+  opacity: 0.92;
+}
+
+.hero__teaser-note {
+  position: absolute;
+  z-index: 3;
+  left: max(var(--margin), calc((100vw - var(--max)) / 2 + var(--margin)));
+  bottom: 1.35rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  transition: opacity 0.8s;
+}
+
+.hero.is-teaser .hero__teaser-note {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   La lumière : la promesse, trois verbes, et la lampe torche
+   -------------------------------------------------------------------------- */
+
+.lumiere,
+.soiree {
+  background: var(--night);
+  color: var(--night-text);
+}
+
+.lumiere__grid,
+.soiree__grid {
+  display: grid;
+  gap: 3rem var(--gutter);
+  align-items: center;
+}
+
+.lumiere__title,
+.soiree__title {
+  max-width: 18ch;
+  font-size: var(--step-3);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.lumiere__lead {
+  max-width: 44ch;
+  margin-top: 1.5rem;
+  font-size: var(--step-1);
+  color: var(--night-muted);
+}
+
+.lumiere__list {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.lumiere__item {
+  padding-top: 1rem;
+  border-top: 1px solid var(--night-line);
+}
+
+.lumiere__n,
+.soiree__n {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.lumiere__item h3,
+.soiree__step h3 {
+  margin-top: 0.4rem;
+  font-size: var(--step-1);
+  font-weight: 500;
+}
+
+.lumiere__item p,
+.soiree__step p {
+  margin-top: 0.35rem;
+  color: var(--night-muted);
+}
+
+.torch {
+  position: relative;
+  --x: 62%;
+  --y: 50%;
+  --r: 150px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #0d1120;
+  border: 1px solid var(--night-line);
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+
+.torch img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* façade calme, très sombre : on devine à peine le bâtiment */
+.torch__base {
+  filter: brightness(0.3) saturate(0.55);
+}
+
+/* la visualisation n'existe que dans le cercle de la torche */
+.torch__lit {
+  -webkit-mask-image: radial-gradient(circle var(--r) at var(--x) var(--y), #000 0%, #000 52%, transparent 100%);
+  mask-image: radial-gradient(circle var(--r) at var(--x) var(--y), #000 0%, #000 52%, transparent 100%);
+}
+
+.torch__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle calc(var(--r) * 1.2) at var(--x) var(--y), rgba(255, 190, 120, 0.16), transparent 70%);
+  mix-blend-mode: screen;
+}
+
+.torch__hint {
+  position: absolute;
+  left: 1rem;
+  bottom: 3.1rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(8, 8, 14, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 0.8125rem;
+  color: #fff;
+  pointer-events: none;
+  transition: opacity 0.6s;
+}
+
+.torch.is-used .torch__hint {
+  opacity: 0;
+}
+
+.torch figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(0deg, rgba(8, 8, 14, 0.85), rgba(8, 8, 14, 0));
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .lumiere__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lumiere__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+
+  .lumiere__list {
+    grid-template-columns: 1fr;
+  }
+
+  .soiree__grid {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Votre soirée : juste avant la billetterie
+   -------------------------------------------------------------------------- */
+
+.soiree {
+  border-top: 1px solid var(--night-line);
+}
+
+.soiree__photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--night-line);
+}
+
+.soiree__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.soiree__photo figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(0deg, rgba(8, 8, 14, 0.85), rgba(8, 8, 14, 0));
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.soiree__steps {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.soiree__step {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--night-line);
+}
+
+.soiree__step h3 {
+  margin-top: 0;
+}
+
+.soiree__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin-top: 2rem;
+  padding-block: 1rem;
+  border-block: 1px solid var(--night-line);
+}
+
+.soiree__facts dt {
+  font-size: var(--step--1);
+  color: var(--night-muted);
+}
+
+.soiree__facts dd {
+  margin-top: 0.2rem;
+  font-weight: 500;
+}
+
+.soiree__secret {
+  max-width: 34ch;
+  margin-block: 1.75rem;
+  font-size: var(--step-1);
+  line-height: 1.35;
+}

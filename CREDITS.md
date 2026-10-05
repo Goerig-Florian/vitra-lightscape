@@ -38,6 +38,14 @@
 - Ce sont des **visualisations de projet**, pas des photographies d'une installation existante : le site le dit sous la carte et dans l'étiquette de la photo.
 - 30 bâtiments sur 31 en ont une. Le **Vitra Designweg** n'a pas de vue de nuit. L'image « showroom Vitra Circle » livrée dans la vague 3 ne correspond à aucune étape et n'est pas utilisée.
 
+## Visualisations de mapping de la landing
+
+- **Quatre images** (`public/mapping/`) : visualisations de projet fournies par l'équipe, redimensionnées par `scripts/prepare-mapping.py` (originaux dans `mapping-sources/`, non versionnés).
+  - Musée aux faisceaux blancs : aperçu de trois secondes à la fin de la vidéo d'accueil.
+  - Caserne, deux versions au même cadrage (faisceaux blancs, flammes) : effet « lampe torche ».
+  - Vue aérienne du Campus de nuit : bloc « Votre soirée ».
+- Ce sont des **visualisations de projet**, pas des photographies d'une installation existante : le site le dit à chaque endroit. Les autres visualisations livrées (tour-toboggan, halle en briques, intérieur, halle SANAA) ne sont volontairement pas publiées : le projet se découvre sur place.
+
 ## Données provisoires
 
 Les dates, horaires et tarifs de `src/data/billetterie.ts` sont des **propositions** pour l'appel d'offres. Le site les signale comme provisoires.

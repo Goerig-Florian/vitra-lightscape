@@ -42,6 +42,7 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
         <rect class="hero__band" x="-420" width="420" height="941" fill="url(#hero-band)" />
       </g>
     </svg>
+    <img class="hero__teaser" src={url('mapping/apercu-musee.webp')} alt="" aria-hidden="true" decoding="async" />
     <div class="hero__scrim" aria-hidden="true"></div>
   </div>
 
@@ -59,6 +60,8 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
       </div>
     </div>
   </div>
+
+  <p class="hero__teaser-note" aria-hidden="true">{hero.teaserNote}</p>
 
   <div class="hero__controls">
     <p class="hero__note">Vidéo d’ambiance, simulation</p>
