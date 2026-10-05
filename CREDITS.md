@@ -40,7 +40,7 @@
 
 ## Visualisations de mapping de la landing
 
-- **Aperçu de fin de vidéo** : faisceaux de lumière dessinés en SVG (`Hero.astro`) sur la dernière image de la vidéo d'accueil, découpés sur la silhouette du musée. Aucune image externe.
+- **Aperçu de fin de vidéo** (`public/mapping/apercu-musee.webp`) : version mapping de la dernière image de la vidéo d'accueil, fournie par l'équipe, au même cadrage que la vidéo (1672 x 941). Elle apparaît en fondu pendant trois secondes.
 - **Lampe torche** (`public/mapping/torche-reveal.webp`) : la **visualisation de nuit de la caserne de notre site** (`public/photos/caserne-nuit.webp`, même cadrage que la photo de jour de vitra.com) sur laquelle on projette, uniquement sur les plans de béton de la façade, la texture « flammes » d'une visualisation de mapping fournie par l'équipe. Composition faite par `scripts/prepare-mapping.py` (originaux dans `mapping-sources/`, non versionnés). La base de la torche est la visualisation de nuit seule, sans mapping.
 - **Musée aux faisceaux de lumière blanche** (`public/mapping/soiree-musee.webp`) : visualisation de projet fournie par l'équipe, bloc « Votre soirée ».
 - Ce sont des **visualisations de projet**, pas des photographies d'une installation existante : le site le dit à chaque endroit. Les autres visualisations livrées ne sont volontairement pas publiées : le projet se découvre sur place.

@@ -2420,54 +2420,20 @@
    Aperçu de la soirée à la fin de la vidéo d'accueil : trois secondes, un seul bâtiment
    -------------------------------------------------------------------------- */
 
-/* faisceaux sur la façade du musée : ils partent de quelques foyers, la nuit se creuse autour, puis tout s'éteint */
-.hero__rays line {
-  stroke: #dbe7ff;
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+/* aperçu de fin de vidéo : la version mapping de la dernière image, même cadrage, en fondu */
+.hero__teaser {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   opacity: 0;
-  transition: opacity 0.9s ease;
+  transition: opacity 1.4s ease;
+  pointer-events: none;
 }
 
-.hero__rays .hero__foyer {
-  opacity: 0;
-  transition: opacity 0.9s ease;
-}
-
-.hero__rays .hero__dim {
-  fill: #040916;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.hero__rays .hero__veil {
-  fill: #b9ceff;
-  opacity: 0;
-  mix-blend-mode: screen;
-  transition: opacity 1.2s ease 0.3s;
-}
-
-.hero.is-teaser .hero__rays .hero__veil {
-  opacity: 0.2;
-}
-
-.hero__rays line {
-  mix-blend-mode: screen;
-}
-
-.hero.is-teaser .hero__rays .hero__dim {
-  opacity: 0.38;
-}
-
-.hero.is-teaser .hero__rays .hero__foyer {
+.hero.is-teaser .hero__teaser {
   opacity: 1;
-}
-
-.hero.is-teaser .hero__rays line {
-  opacity: var(--o);
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1.5s ease-out calc(var(--d) * 1s), opacity 0.4s ease calc(var(--d) * 1s);
 }
 
 .hero__teaser-note {
@@ -2485,11 +2451,6 @@
   opacity: 1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero__rays {
-    display: none;
-  }
-}
 
 /* --------------------------------------------------------------------------
    La lumière : la promesse, trois verbes, et la lampe torche

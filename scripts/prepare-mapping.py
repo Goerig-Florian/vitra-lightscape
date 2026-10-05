@@ -1,12 +1,14 @@
 """
-Prépare les visualisations de mapping de la landing (effet « lampe torche », bloc « Votre soirée »).
+Prépare les visualisations de mapping de la landing (aperçu de fin de vidéo, « lampe torche », bloc « Votre soirée »).
 
 Usage :  python3 scripts/prepare-mapping.py     (Python 3 + Pillow + NumPy)
 
 Entrée : mapping-sources/ (originaux fournis par l'équipe, non versionnés) et public/photos/caserne-nuit.webp.
 Sortie : public/mapping/*.webp
 
-On ne garde que deux images, pour ne pas en montrer trop : le projet se découvre sur place.
+On ne garde que trois images, pour ne pas en montrer trop : le projet se découvre sur place.
+- apercu-musee : la version mapping de la DERNIÈRE IMAGE DE LA VIDÉO d'accueil (même cadrage, 1672 x 941),
+  qui apparaît en fondu pendant trois secondes à la fin de la vidéo.
 - soiree-musee : le Vitra Design Museum aux faisceaux de lumière blanche (bloc « Votre soirée »), redimensionné.
 - torche-reveal : la caserne de NOTRE site (visualisation de nuit, cadrage identique à la photo de jour de
   vitra.com) sur laquelle on projette la texture « flammes » du mapping fourni par l'équipe, uniquement sur
@@ -38,6 +40,12 @@ TEXTURES = {
     "dalle": (950, 520, 1200, 770),
     "bas": (900, 480, 1290, 640),
 }
+
+
+def apercu():
+    im = Image.open(SRC / "musee-fin-video.webp").convert("RGB")
+    im.save(OUT / "apercu-musee.webp", quality=80, method=6)
+    print(f"apercu-musee: {im.width}x{im.height}")
 
 
 def soiree():
@@ -78,6 +86,7 @@ def torche():
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
+    apercu()
     soiree()
     torche()
 
