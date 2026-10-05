@@ -2,7 +2,7 @@
 
 Proposition pour l'appel d'offres du Vitra Campus (projet étudiant BUT MMI) : un parcours nocturne, avec des mappings lumineux qui révèlent l'intention des architectes, et un chemin de lumière qui guide la visite.
 
-Site statique en **Astro + CSS**. Le JavaScript sert aux interactions : passage jour → nuit, chemin lumineux, billetterie et panier.
+Site statique en **Astro + CSS**, en Futura comme vitra.com. Le JavaScript sert aux interactions : passage jour → nuit, chemin lumineux, billetterie et panier.
 
 ## En ligne
 
@@ -103,7 +103,7 @@ public/campus-map.svg          fond de carte (calque de dessin du SVG Vitra)
 public/photos/                 photos de jour (vitra.com) et visualisations de nuit (<id>-nuit.webp)
 src/
   assets/logo/                 logo SVG original (tracés inchangés)
-  assets/fonts/                Inter (SIL Open Font License), auto-hébergée
+  assets/fonts/futura/         Futura (ParaType), 4 graisses, auto-hébergée (licence : voir CREDITS.md)
   components/                  Header, Hero, Dusk, Parcours,
                                Billetterie, Infos, Footer, CartDrawer, Logo
   data/                        contenus, bâtiments, carte.json, fiches.json, billetterie

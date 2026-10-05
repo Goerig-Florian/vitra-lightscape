@@ -297,9 +297,9 @@
 .hero__title {
   max-width: 11ch;
   font-size: var(--step-4);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 0.95;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.25);
 }
 
@@ -491,15 +491,15 @@
   font-size: clamp(4rem, 2rem + 11vw, 12rem);
   font-weight: 300;
   line-height: 1;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .dusk__line {
   display: grid;
   font-size: var(--step-2);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .dusk__line > span {
@@ -686,9 +686,9 @@
 .parcours__title {
   max-width: 14ch;
   font-size: var(--step-3);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.05;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
 }
 
 .parcours__text {
@@ -1186,7 +1186,7 @@
   font-size: var(--step-3);
   font-weight: 300;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--light);
   font-variant-numeric: tabular-nums;
 }
@@ -1441,9 +1441,9 @@
 
 .billetterie__title {
   font-size: var(--step-4);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 0.95;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
 }
 
 .booking {
@@ -2036,9 +2036,9 @@
 .checkout__title {
   margin: 1rem 0;
   font-size: var(--step-4);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 0.95;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
 }
 
 .checkout__grid {

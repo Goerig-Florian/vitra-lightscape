@@ -38,7 +38,9 @@
   --grey-300: #cfcfc9;
 
   /* Typographie */
-  --font: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  /* Futura, comme sur vitra.com. Les lettres accentuées absentes de la police fournie
+     (é, è, à, ç, œ…) viennent de la police de secours : Futura (Mac) ou Century Gothic (Windows). */
+  --font: 'Futura Vitra', Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', Arial, sans-serif;
   --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
   --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
   --step-1: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);

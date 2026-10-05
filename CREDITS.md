@@ -44,4 +44,7 @@ Les dates, horaires et tarifs de `src/data/billetterie.ts` sont des **propositio
 
 ## Police
 
-Inter, de Rasmus Andersson, sous SIL Open Font License : `src/assets/fonts/Inter-OFL.txt`.
+- **Futura** (ParaType, graisses Light, Book, Medium et Heavy de « Futura Cyrillic »), fournie par l'équipe, dans `src/assets/fonts/futura/`. C'est la famille de vitra.com (`vitraFuturaV2`, quatre graisses : 300, 400, 500, 600).
+- **Licence** : police commerciale (EULA ParaType, https://www.paratype.com/eula). Les fichiers n'autorisent pas l'intégration web (réglage « aperçu et impression »). Usage limité à cette maquette fictive ; une licence web est à acquérir avant tout usage réel.
+- **Accents** : cette version ne contient que l'ASCII et le cyrillique. Les lettres accentuées (é, è, à, ç, œ…) et les guillemets « » s'affichent avec la police de secours (Futura sur Mac, Century Gothic sous Windows). Remplacer par la Futura PT complète règle ce point (un seul fichier à changer : `base.css`).
+- **Hiérarchie** (relevée sur les feuilles de style de vitra.com) : grands titres en Regular 400, titres de bloc et libellés en Medium 500, emphases en Heavy 600, petites étiquettes en majuscules espacées ; Light 300 réservé aux grands chiffres.
