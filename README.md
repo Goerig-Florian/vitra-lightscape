@@ -28,7 +28,7 @@ npm run dev      # http://localhost:4321
 1. **Vidéo de fond** : le Vitra Design Museum passe du jour au coucher de soleil, puis à la nuit.
    - À la nuit, une vague de lumière douce balaie le musée.
    - Bouton lecture / pause (« Revoir la vidéo » à la fin).
-   - Deux boutons, Réserver et Découvrir le parcours, alignés à droite ; au chargement une lumière blanche, comme un néon, fait deux fois le tour de leur cadre puis s'éteint (fixe avec « animations réduites »).
+   - Deux boutons, Réserver et Découvrir le parcours, alignés à droite ; au survol (ou au focus clavier), une lumière blanche, comme un néon, fait le tour de leur cadre. Pas d'animation avec « animations réduites ».
 2. **Le soleil se couche** : le ciel passe du corail au bleu nuit au défilement, l'horloge avance, le logo s'allume.
 3. **Le parcours** (nuit) : page d'accueil du parcours.
    - Chiffres clés : 31 étapes, 2,2 km, environ 35 min de marche (estimation à 4 km/h, hors arrêts), départ du parking visiteurs.

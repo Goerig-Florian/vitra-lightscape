@@ -2237,7 +2237,7 @@
   }
 }
 
-/* Néon blanc : une lumière fait deux fois le tour du cadre des boutons du premier écran, puis s'éteint */
+/* Néon blanc : au survol (ou au focus clavier) d'un bouton du premier écran, une lumière blanche fait le tour de son cadre */
 @property --neon-a {
   syntax: '<angle>';
   inherits: false;
@@ -2246,11 +2246,7 @@
 
 .btn--neon {
   position: relative;
-  --neon-delay: 0.8s;
-}
-
-.hero__actions .btn--neon:nth-child(2) {
-  --neon-delay: 1.05s;
+  transition: box-shadow 0.3s, background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .btn--neon::before {
@@ -2266,18 +2262,21 @@
   filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 9px rgba(255, 255, 255, 0.85));
   opacity: 0;
   pointer-events: none;
+  transition: opacity 0.3s;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .btn--neon::before {
+  .btn--neon:hover::before,
+  .btn--neon:focus-visible::before {
+    opacity: 1;
     animation:
-      neon-run 1.8s linear var(--neon-delay) 2,
-      neon-on 0.5s steps(1, end) var(--neon-delay) forwards,
-      neon-off 0.9s ease calc(var(--neon-delay) + 3.6s) forwards;
+      neon-run 1.8s linear infinite,
+      neon-on 0.45s steps(1, end);
   }
 
-  .btn--neon {
-    animation: neon-glow 4.8s ease-out var(--neon-delay) both;
+  .btn--neon:hover,
+  .btn--neon:focus-visible {
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.28), inset 0 0 10px rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -2294,15 +2293,4 @@
   48% { opacity: 1; }
   60% { opacity: 0.55; }
   100% { opacity: 1; }
-}
-
-@keyframes neon-off {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
-@keyframes neon-glow {
-  0% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
-  12%, 78% { box-shadow: 0 0 16px rgba(255, 255, 255, 0.28), inset 0 0 10px rgba(255, 255, 255, 0.1); }
-  100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
 }
