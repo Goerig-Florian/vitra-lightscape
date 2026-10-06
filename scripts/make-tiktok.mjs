@@ -1,9 +1,10 @@
 /**
- * Monte la vidéo TikTok à partir d'une vidéo de départ (paysage) : 1080 x 1920, le plan est centré sur un fond flouté de la même image ;
- * à 7 s, fondu au noir, puis le logo Vitra Lightscape et les dates de l'événement apparaissent en fondu.
+ * Monte la vidéo TikTok à partir d'une vidéo de départ (paysage) : plein écran vertical 1080 x 1920 (recadrage 9:16 qui suit l'action plan par plan,
+ * voir CADRAGES) ; à la coupe (7 s), fondu au noir, puis le logo Vitra Lightscape et les dates de l'événement apparaissent en fondu.
+ * Le son d'origine est conservé jusqu'au bout, y compris sous le logo et les dates (fondu de sortie sur la dernière seconde).
  *
  *   node scripts/make-tiktok.mjs "<video-source.mp4>" "<chemin-de-ffmpeg>" [secondes-de-coupe=7]
- * Sorties : exports/tiktok/tiktok-1080x1920.mp4 et public/reel/tiktok-720x1280.mp4 (+ affiche).
+ * Sorties : exports/tiktok/tiktok-1080x1920.mp4 et public/reel/tiktok-v2-720x1280.mp4 (+ affiche).
  * La carte finale (logo + dates) est dessinée par Chrome avec la police Futura du site (aucune image externe).
  */
 import { spawn, spawnSync } from 'node:child_process';
@@ -17,6 +18,8 @@ if (!src) throw new Error('Il faut la vidéo source en premier argument');
 const CUT = Number(cutArg); // fin du plan conservé
 const FADE = 0.7; // durée du fondu au noir (finit à CUT + 0,3)
 const CARD = 2.8; // durée de la carte finale
+// cadrage 9:16 : position horizontale du centre du recadrage (0 = bord gauche, 1 = bord droit), par plan : [début du plan en s, centre]
+const CADRAGES = [[0, 0.4], [2.5, 0.62], [4.5, 0.5], [6, 0.52]];
 const out = resolve('exports', 'tiktok');
 mkdirSync(out, { recursive: true });
 
@@ -68,21 +71,20 @@ await sleep(300);
 rmSync(profil, { recursive: true, force: true });
 
 // ---------- montage ----------
+// expression ffmpeg du centre de recadrage selon le temps (une valeur par plan)
+const cx = CADRAGES.reduceRight((acc, [t, c], i) => (i === CADRAGES.length - 1 ? `${c}` : `if(lt(t\,${CADRAGES[i + 1][0]})\,${c}\,${acc})`), '');
 const T = CUT + 0.3; // fin de la partie vidéo (le fondu au noir se termine ici)
 const total = T + CARD;
 const filter = [
-  // fond : la même image, agrandie et floutée ; plan : pleine largeur au centre
-  `[0:v]trim=0:${T},setpts=PTS-STARTPTS,fps=30,split=2[a][b]`,
-  `[a]scale=-2:1920,crop=1080:1920,boxblur=40:6,eq=brightness=-0.12[bg]`,
-  `[b]scale=1080:-2[fg]`,
-  `[bg][fg]overlay=(W-w)/2:(H-h)/2,fade=t=out:st=${CUT - 0.4}:d=${FADE + 0.4},format=yuv420p[va]`,
+  // plein écran vertical : fenêtre 9:16 prélevée dans l'image paysage (hauteur entière), puis agrandie à 1080 x 1920
+  `[0:v]trim=0:${T},setpts=PTS-STARTPTS,fps=30,crop=w=ih*9/16:h=ih:x='min(iw-ow\,max(0\,${cx}*iw-ow/2))':y=0,scale=1080:1920:flags=lanczos,fade=t=out:st=${CUT - 0.4}:d=${FADE + 0.4},format=yuv420p[va]`,
   // carte finale : noir + logo et dates en fondu
   `color=c=black:s=1080x1920:r=30:d=${CARD}[k]`,
   `[1:v]format=rgba,loop=loop=-1:size=1:start=0,trim=duration=${CARD},setpts=PTS-STARTPTS,fade=t=in:st=0.3:d=1.0:alpha=1[lg]`,
   `[k][lg]overlay=0:0,format=yuv420p[vb]`,
   `[va][vb]concat=n=2:v=1:a=0[v]`,
-  // son : celui de la vidéo jusqu'au fondu, puis silence
-  `[0:a]atrim=0:${T},asetpts=PTS-STARTPTS,afade=t=out:st=${CUT - 0.5}:d=0.8,apad=whole_dur=${total}[aud]`,
+  // son : celui de la vidéo, conservé jusqu'au bout
+  `[0:a]asetpts=PTS-STARTPTS,afade=t=out:st=${total - 1.2}:d=1.2,apad=whole_dur=${total}[aud]`,
 ].join(';');
 const run = (args) => {
   const r = spawnSync(FFMPEG, args, { stdio: 'inherit' });
@@ -91,7 +93,7 @@ const run = (args) => {
 const full = join(out, 'tiktok-1080x1920.mp4');
 run(['-y', '-v', 'error', '-i', src, '-loop', '1', '-framerate', '30', '-i', card, '-filter_complex', filter, '-map', '[v]', '-map', '[aud]', '-t', String(total), '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', full]);
 mkdirSync('public/reel', { recursive: true });
-run(['-y', '-v', 'error', '-i', full, '-vf', 'scale=720:1280:flags=lanczos', '-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', 'public/reel/tiktok-720x1280.mp4']);
-run(['-y', '-v', 'error', '-ss', '3', '-i', 'public/reel/tiktok-720x1280.mp4', '-frames:v', '1', '-q:v', '5', 'public/reel/tiktok-poster.jpg']);
+run(['-y', '-v', 'error', '-i', full, '-vf', 'scale=720:1280:flags=lanczos', '-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', 'public/reel/tiktok-v2-720x1280.mp4']);
+run(['-y', '-v', 'error', '-ss', '3', '-i', 'public/reel/tiktok-v2-720x1280.mp4', '-frames:v', '1', '-q:v', '5', 'public/reel/tiktok-v2-poster.jpg']);
 rmSync(page, { force: true });
-console.log('écrit', full, 'et public/reel/tiktok-720x1280.mp4', `(durée ${total.toFixed(1)} s)`);
+console.log('écrit', full, 'et public/reel/tiktok-v2-720x1280.mp4', `(durée ${total.toFixed(1)} s)`);
