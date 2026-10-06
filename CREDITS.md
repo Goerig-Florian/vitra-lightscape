@@ -92,3 +92,7 @@ Le clip du booster (`public/reel/promo-tcg-wide-1280x720.mp4`, créé avec `/pro
 - Images des dispositifs et planches d'ambiance (`public/presentation/dispositif-*.webp`, `moodboard-*.webp`, `slide-concept.webp`) : visuels de projet réalisés par l'équipe ; certaines planches d'ambiance rassemblent des images d'inspiration d'autres événements lumineux : ce sont des références, pas des réalisations du projet.
 - Affiches « Juste explorer / ressentir / partager » (`affiche-*-v2.webp`) : versions avec QR code et dates du 3 septembre au 3 octobre 2027.
 - Musique du premier Reel : début du morceau « Midnight City » (M83), fourni par l'équipe pour cet exercice non commercial, **sans autorisation de l'auteur** ; à remplacer pour tout usage réel. Le trailer du Reel n° 2 est la version « bonnes dates » montée par l'équipe.
+
+## Influenceurs (dernière slide de la présentation)
+
+Les trois comptes (@onfaitquoi.maman, @lerichti, @girlinbasel), leurs villes, cibles et rôles viennent du dossier de communication de l'équipe (« Stratégie de communication », ligne éditoriale). Aucune photo de ces personnes n'est utilisée (monogrammes uniquement). Le rôle du compte @onfaitquoi.maman est reformulé à partir de sa cible (familles) : la ligne du PDF y répétait celle de @lerichti.

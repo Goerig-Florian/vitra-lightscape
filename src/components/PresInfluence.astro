@@ -1,0 +1,109 @@
+---
+/**
+ * Dernière slide de la présentation : les influenceurs relais de la campagne.
+ * Source : dossier de communication de l'équipe (PDF « Stratégie de communication », page « Ligne éditoriale »).
+ * Pas de photos de profil : seulement le nom de compte et un monogramme, pour ne pas utiliser l'image de personnes réelles sans leur accord.
+ */
+const relais = [
+  { compte: '@onfaitquoi.maman', nom: 'Pauline', lieu: 'Alsace / Mulhouse', cible: 'Familles', role: 'Relayer l’événement auprès des familles de la région', mono: 'P' },
+  { compte: '@lerichti', nom: 'Philipp Heer', lieu: 'Bâle', cible: 'Art, design, architecture', role: 'Donner une image premium et artistique', mono: 'PH' },
+  { compte: '@girlinbasel', nom: 'Magdalena Getreuer', lieu: 'Bâle', cible: 'Culture, sorties, grand public', role: 'Toucher les non-initiés et le public local', mono: 'MG' },
+];
+---
+
+<section class="sl sl--relay" data-theme="night" aria-labelledby="sl-relay">
+  <div class="container sl__inner">
+    <p class="eyebrow">Les relais</p>
+    <h2 class="sl__title reveal" id="sl-relay">Trois voix pour trois publics.</h2>
+    <p class="sl__lead reveal">Des influenceurs locaux et transfrontaliers, choisis pour parler à chaque public de Vitra Lightscape.</p>
+    <ul class="relay">
+      {
+        relais.map((r) => (
+          <li class="relay__card reveal">
+            <span class="relay__mono" aria-hidden="true">{r.mono}</span>
+            <p class="relay__handle">{r.compte}</p>
+            <p class="relay__name">{r.nom} · {r.lieu}</p>
+            <dl class="relay__facts">
+              <div><dt>Cible</dt><dd>{r.cible}</dd></div>
+              <div><dt>Rôle</dt><dd>{r.role}</dd></div>
+            </dl>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="sl__promise reveal">Ensemble, ils montrent que Vitra Lightscape est à la fois artistique, accessible et grand public.</p>
+  </div>
+</section>
+
+<style is:global>
+  .relay {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin: clamp(2rem, 5vw, 3.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .relay__card {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+    border: 1px solid rgba(220, 239, 255, 0.25);
+    border-radius: 16px;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+    box-shadow: 0 0 22px rgba(90, 169, 255, 0.1);
+  }
+
+  .relay__mono {
+    display: grid;
+    place-items: center;
+    width: 3.4em;
+    height: 3.4em;
+    margin-bottom: 0.6rem;
+    border-radius: 50%;
+    border: 1.5px solid #dcefff;
+    box-shadow: 0 0 10px rgba(90, 169, 255, 0.55), inset 0 0 10px rgba(90, 169, 255, 0.25);
+    font-size: var(--step-1);
+    font-weight: 500;
+  }
+
+  .relay__handle {
+    margin: 0;
+    font-size: var(--step-2);
+    font-weight: 400;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+
+  .relay__name {
+    margin: 0;
+    color: var(--amber);
+  }
+
+  .relay__facts {
+    display: grid;
+    gap: 0.9rem;
+    margin: 1rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(220, 239, 255, 0.25);
+  }
+
+  .relay__facts dt {
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--night-muted);
+  }
+
+  .relay__facts dd {
+    margin: 0.2rem 0 0;
+  }
+
+  @media (max-width: 900px) {
+    .relay {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
