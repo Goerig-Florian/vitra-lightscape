@@ -52,3 +52,10 @@ export const posters = [
   { src: 'presentation/affiche-partager.webp', title: 'Juste partager', sub: 'La lumière qui rassemble', alt: 'Affiche « Juste PARTAGER, la lumière qui rassemble » : des silhouettes de visiteurs devant une lumière jaune et bleue. Vitra Lightscape, 17 et 18 septembre 2027.' },
   { src: 'presentation/affiche-explorer.webp', title: 'Juste explorer', sub: 'Le parcours qui se révèle', alt: 'Affiche « Juste EXPLORER, le parcours qui se révèle » : une silhouette en haut d’un grand escalier éclairé de lumière orange et bleue, reflété dans l’eau. Vitra Lightscape, 17 et 18 septembre 2027.' },
 ];
+
+/** Les affiches en situation (mises en scène) : abribus, tram, couloir. `w` et `h` : dimensions du fichier. */
+export const situations = [
+  { src: 'presentation/situation-abribus.webp', w: 2000, h: 1780, title: 'Abribus', sub: 'L’affiche dans la rue', alt: 'Abribus en ville : l’affiche Vitra Lightscape « Suivez le chemin, découvrez le parcours lumineux » montre un bâtiment illuminé au bord d’un étang et un chemin de lumière.' },
+  { src: 'presentation/situation-tram.webp', w: 2000, h: 1126, title: 'Tramway', sub: 'Habillage du tram, de nuit', alt: 'Tramway de nuit habillé aux couleurs de Vitra Lightscape : « Suivez le chemin vers une expérience unique », avec un bâtiment aux projections vertes et bleues et un trait de lumière bleu qui suit la carrosserie.' },
+  { src: 'presentation/situation-couloir.webp', w: 2000, h: 1125, title: 'Couloir de gare', sub: 'Une campagne en cinq affiches', alt: 'Couloir de gare avec cinq affiches lumineuses qui se lisent en suivant le chemin : « Suivez le parcours lumineux », puis le logo Vitra Lightscape et « Vivez une expérience unique ».' },
+];

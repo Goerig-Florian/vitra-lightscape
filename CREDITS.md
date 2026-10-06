@@ -71,3 +71,4 @@ Les courtes notes sur l'architecture des 10 bâtiments (page de présentation, `
 ## Affiches (page de présentation)
 
 Les trois affiches « Juste ressentir / partager / explorer » (`public/presentation/affiche-*.webp`, 905 x 1280) ont été réalisées par l'équipe. Elles utilisent le logo Vitra Lightscape et la police Futura du projet.
+Les trois mises en situation (abribus, tramway, couloir de gare, `public/presentation/situation-*.webp`) sont des visuels de présentation fournis par l'équipe : des maquettes d'affichage, pas des installations existantes.
