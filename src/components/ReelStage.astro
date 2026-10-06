@@ -1,19 +1,20 @@
 ---
 /**
  * La scène du teaser : 1080 x 1920 (9:16), fond noir. Aucune animation CSS : tout est piloté par une horloge
- * (reel.astro) qui écrit des variables (--e, --gx, --gy, --bx, --bo, --fd) pour qu'on puisse aussi se placer à
+ * (reel.astro) qui écrit des variables (--ca, --na, --bx, --bo, --fd...) pour qu'on puisse aussi se placer à
  * n'importe quel instant (export image par image, curseur de la page).
- * Logos : le SVG original du projet, tel quel. Le « vitra. » seul est le logo classique ; la barre et « Lightscape »
- * s'y ajoutent pour le logo Vitra Lightscape (mêmes tracés, mêmes proportions).
+ * Logos : le SVG original du projet, tel quel. Le « vitra. » seul est le logo classique ; avec la barre et « Lightscape »
+ * c'est le logo Vitra Lightscape (mêmes tracés, mêmes proportions).
+ * Mapping : uniquement des formes de lumière (flammes), sans bâtiment, découpées DANS les lettres du logo.
  */
 import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
 import { url } from '../lib/url';
 
 interface Props {
-  /** Visuel de mapping, chemin dans public/ */
+  /** Texture de mapping, chemin dans public/ (voir scripts/prepare-reel-mapping.py) */
   mapping?: string;
 }
-const { mapping = 'photos/design-museum-mapping.png' } = Astro.props;
+const { mapping = 'reel/mapping-flammes.webp' } = Astro.props;
 
 // sans modifier le fichier source : on repère le texte « Lightscape » (1er tracé) et la barre (rect) par une classe
 const svg = logoSvg
@@ -22,10 +23,11 @@ const svg = logoSvg
   .replace('<rect ', '<rect class="rs-ls" ');
 ---
 
-<div class="rs" data-rs style={`--map:url(${url(mapping)})`}>
-  <div class="rs__lock" data-rs-lock set:html={svg} />
-  <div class="rs__map" aria-hidden="true"></div>
+<div class="rs" data-rs style={`--map:url(${url(mapping)});--logo:url(${url('vitra-lightscape-logo.svg')})`}>
+  <div class="rs__lock rs__lock--classic" data-rs-lock set:html={svg} />
   <div class="rs__lit" aria-hidden="true"><div class="rs__lock rs__lock--lit" set:html={svg} /></div>
+  <div class="rs__lock rs__lock--full" set:html={svg} />
+  <div class="rs__fill" aria-hidden="true"></div>
   <div class="rs__halo" aria-hidden="true"></div>
   <div class="rs__flare" aria-hidden="true"></div>
   <div class="rs__fade" aria-hidden="true"></div>
@@ -33,11 +35,14 @@ const svg = logoSvg
 
 <style is:global>
   .rs {
-    --e: 0; /* 0 = logo classique, 1 = logo Lightscape (transformation) */
+    --ca: 1; /* opacité du logo classique */
+    --na: 0; /* opacité du logo Lightscape */
     --gx: 0px;
     --gy: 0px;
     --bx: -400px; /* position du balayage (x, en pixels de la scène) */
     --bo: 0; /* intensité du balayage */
+    --mx: 50%; /* dérive du mapping dans les lettres */
+    --my: 0%;
     --fd: 0; /* fondu final vers le noir */
     position: relative;
     width: 1080px;
@@ -56,7 +61,6 @@ const svg = logoSvg
     top: 801px;
     width: 640px;
     height: 255px;
-    transform: translate(var(--gx), var(--gy));
   }
 
   .rs__lock svg {
@@ -65,53 +69,63 @@ const svg = logoSvg
     height: 100%;
   }
 
-  /* la barre et « Lightscape » apparaissent en place ; le « vitra. » ne bouge pas, ne change pas d'opacité */
-  .rs [data-rs-lock] .rs-ls {
-    opacity: var(--e);
+  /* logo classique : le « vitra. » seul, centré (même fichier, sans la barre ni « Lightscape ») */
+  .rs__lock--classic {
+    opacity: var(--ca);
+    transform: translate(var(--gx), var(--gy));
   }
 
-  /* éclat du logo là où passe la lumière */
+  .rs__lock--classic .rs-ls {
+    display: none;
+  }
+
+  .rs__lock--full {
+    opacity: var(--na);
+  }
+
+  /* le mapping est incrusté dans les lettres : la texture est découpée dans la forme du logo, uniquement dans la zone du balayage */
+  .rs__fill {
+    position: absolute;
+    left: 220px;
+    top: 801px;
+    width: 640px;
+    height: 255px;
+    opacity: var(--bo);
+    background: var(--map) var(--mx) var(--my) / 125% auto no-repeat;
+    filter: brightness(1.35) saturate(1.2) contrast(1.05);
+    -webkit-mask-image: var(--logo), linear-gradient(90deg, transparent calc(var(--bx) - 370px), #000 calc(var(--bx) - 338px), #000 calc(var(--bx) - 180px), transparent calc(var(--bx) - 20px));
+    -webkit-mask-size: 100% 100%, 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-composite: source-in;
+    mask-image: var(--logo), linear-gradient(90deg, transparent calc(var(--bx) - 370px), #000 calc(var(--bx) - 338px), #000 calc(var(--bx) - 180px), transparent calc(var(--bx) - 20px));
+    mask-size: 100% 100%, 100% 100%;
+    mask-repeat: no-repeat;
+    mask-composite: intersect;
+  }
+
+  /* lueur chaude autour des lettres, là où passe la lumière */
   .rs__lit {
     position: absolute;
     inset: 0;
     opacity: var(--bo);
-    -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 170px), #000 calc(var(--bx) - 20px), #000 calc(var(--bx) + 20px), transparent calc(var(--bx) + 230px));
-    mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 170px), #000 calc(var(--bx) - 20px), #000 calc(var(--bx) + 20px), transparent calc(var(--bx) + 230px));
+    -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 200px), #000 calc(var(--bx) - 30px), #000 calc(var(--bx) + 30px), transparent calc(var(--bx) + 260px));
+    mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 200px), #000 calc(var(--bx) - 30px), #000 calc(var(--bx) + 30px), transparent calc(var(--bx) + 260px));
   }
 
   .rs__lock--lit {
-    transform: none;
-    filter: drop-shadow(0 0 10px rgba(255, 238, 205, 0.85)) drop-shadow(0 0 34px rgba(255, 214, 160, 0.45));
-  }
-
-  /* le mapping : une fenêtre étroite qui suit le balayage ; il disparaît aussitôt la lumière passée */
-  .rs__map {
-    position: absolute;
-    left: 0;
-    top: 525px;
-    width: 1080px;
-    height: 810px;
-    background: var(--map) center / cover no-repeat;
-    filter: saturate(1.12) contrast(1.06) brightness(1.1);
-    opacity: var(--bo);
-    -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 140px), #000 calc(var(--bx) - 112px), #000 calc(var(--bx) + 56px), transparent calc(var(--bx) + 176px)),
-      linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 140px), #000 calc(var(--bx) - 112px), #000 calc(var(--bx) + 56px), transparent calc(var(--bx) + 176px)),
-      linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
-    mask-composite: intersect;
+    filter: drop-shadow(0 0 8px rgba(255, 170, 90, 0.9)) drop-shadow(0 0 30px rgba(255, 120, 40, 0.5));
   }
 
   /* halo très léger devant le masque */
   .rs__halo {
     position: absolute;
-    top: 465px;
-    left: -260px;
-    width: 520px;
-    height: 930px;
+    top: 585px;
+    left: -250px;
+    width: 500px;
+    height: 690px;
     transform: translateX(var(--bx));
-    opacity: calc(var(--bo) * 0.8);
-    background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(255, 236, 205, 0.3), rgba(255, 214, 160, 0.1) 45%, transparent 72%);
+    opacity: calc(var(--bo) * 0.7);
+    background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(255, 196, 140, 0.26), rgba(255, 150, 80, 0.08) 45%, transparent 72%);
     mix-blend-mode: screen;
   }
 
@@ -123,8 +137,8 @@ const svg = logoSvg
     width: 760px;
     height: 4px;
     transform: translateX(var(--bx));
-    opacity: calc(var(--bo) * 0.7);
-    background: linear-gradient(90deg, transparent, rgba(255, 244, 226, 0.95) 50%, transparent);
+    opacity: calc(var(--bo) * 0.55);
+    background: linear-gradient(90deg, transparent, rgba(255, 232, 205, 0.95) 50%, transparent);
     filter: blur(1.4px);
     mix-blend-mode: screen;
   }

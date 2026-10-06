@@ -63,7 +63,7 @@ Les courtes notes sur l'architecture des 10 bâtiments (page de présentation, `
 ## Reel teaser (page interne /reel/)
 
 - Logos : le SVG original du projet (`src/assets/logo/vitra-lightscape.svg`), sans aucune modification des tracés. Le « vitra. » seul sert de logo classique ; la barre et « Lightscape » s'y ajoutent.
-- Mapping : `public/photos/design-museum-mapping.png`, visualisation de projet fournie par l'équipe (révélée quelques fractions de seconde seulement).
+- Mapping : `public/reel/mapping-flammes.webp`, uniquement les formes de lumière (flammes) prises sur le grand mur de la visualisation de la caserne fournie par l'équipe, sans bâtiment (`scripts/prepare-reel-mapping.py`). Il n'existe que dans les lettres du logo, dans la zone du balayage.
 - Mockup Instagram : interface dessinée en code, compte @vitra de démonstration, **chiffres (mentions J'aime, commentaires, partages) fictifs**. Mockup destiné à la présentation de l'appel d'offres, pas à une publication. L'avatar est composé avec le logo « vitra. » du projet (pas d'avatar officiel dans le dépôt).
 - Export : `node scripts/export-reel.mjs` produit les deux mp4 (1080 x 1920 et 720 x 1280, 30 i/s, 6 s) dans `public/reel/`.
 
