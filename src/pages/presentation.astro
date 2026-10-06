@@ -72,6 +72,10 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
                             <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} style={r.cadrage ? `object-position:${r.cadrage}` : undefined} aria-label={r.label + ' : ' + r.sub}>
                               <source src={url(r.video)} type="video/mp4" />
                             </video>
+                            <button type="button" class="reel-play" data-play aria-label="Lancer la lecture">
+                              <svg class="reel-play__play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5Z" fill="currentColor" /></svg>
+                              <svg class="reel-play__pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 5.5h3.4v13H7.5zM13.1 5.5h3.4v13h-3.4z" fill="currentColor" /></svg>
+                            </button>
                             <button type="button" class="reel-sound" data-sound aria-pressed="false" aria-label="Activer le son du teaser">
                               <svg class="reel-sound__off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.6L12 6v12l-4.4-3.5H4Z" fill="currentColor" /><path d="m16 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
                               <svg class="reel-sound__on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.6L12 6v12l-4.4-3.5H4Z" fill="currentColor" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
@@ -184,7 +188,7 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
   </script>
 
   <script>
-    // mockups : un clic (ou Entrée) affiche le téléphone en grand, avec la vidéo qui joue
+    // mockups : un clic (ou Entrée) affiche le téléphone en grand ; la lecture se lance avec le bouton ▶ (jamais automatiquement)
     const pbox = document.querySelector<HTMLDialogElement>('[data-phonebox]');
     const opens = [...document.querySelectorAll<HTMLElement>('[data-open-phone]')];
     if (pbox && opens.length) {
@@ -204,6 +208,20 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
         setSoundButton(b, !v.muted);
         if (!v.muted && v.paused) v.play().catch(() => undefined);
       };
+      // lecture à la demande : le bouton ▶ / ❚❚ au centre de l'écran, et un clic sur la vidéo en plein écran
+      const syncPlay = (phone: Element | null) => {
+        const v = phone?.querySelector('video');
+        if (!phone || !v) return;
+        phone.classList.toggle('is-playing', !v.paused);
+        phone.querySelector('.reel-play')?.setAttribute('aria-label', v.paused ? 'Lancer la lecture' : 'Mettre en pause');
+      };
+      const togglePlay = (el: Element) => {
+        const phone = el.closest('.phone');
+        const v = phone?.querySelector('video');
+        if (!v) return;
+        if (v.paused) v.play().catch(() => undefined);
+        else v.pause();
+      };
       const showPhone = (n: number) => {
         cur = (n + opens.length) % opens.length;
         const src = opens[cur].querySelector<HTMLElement>('.phone')!;
@@ -215,9 +233,17 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
           // une copie ne garde pas l'état « muet » : on reprend celui de la vidéo d'origine (le clic sur le téléphone autorise le son)
           v.muted = src.querySelector('video')?.muted ?? true;
           setSoundButton(copy.querySelector('.reel-sound'), !v.muted);
-          v.removeAttribute('poster');
-          v.currentTime = 0;
-          v.play().catch(() => undefined);
+          // on reprend là où la vignette en était : elle se met en pause, la copie joue seulement si la vignette jouait
+          const srcV = src.querySelector('video');
+          const etaitEnLecture = !!srcV && !srcV.paused;
+          if (srcV) {
+            v.currentTime = srcV.currentTime;
+            srcV.pause();
+          }
+          v.addEventListener('play', () => syncPlay(copy));
+          v.addEventListener('pause', () => syncPlay(copy));
+          if (etaitEnLecture) v.play().catch(() => undefined);
+          syncPlay(copy);
         }
         pcap.textContent = opens[cur].closest('figure')?.querySelector('figcaption strong')?.textContent ?? '';
       };
@@ -227,12 +253,15 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
           pbox.showModal();
         };
         o.addEventListener('click', (e) => {
-          const b = (e.target as HTMLElement).closest('.reel-sound');
-          if (b) toggleSound(b);
+          const t = e.target as HTMLElement;
+          const snd = t.closest('.reel-sound');
+          const ply = t.closest('.reel-play');
+          if (snd) toggleSound(snd);
+          else if (ply) togglePlay(ply);
           else go();
         });
         o.addEventListener('keydown', (e) => {
-          if ((e.target as HTMLElement).closest('.reel-sound')) return; // Entrée sur le haut-parleur : c'est lui qui réagit
+          if ((e.target as HTMLElement).closest('.reel-sound, .reel-play')) return; // Entrée sur un bouton : c'est lui qui réagit
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             go();
@@ -253,9 +282,13 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
       pbox.querySelector('[data-phonebox-prev]')!.addEventListener('click', () => showPhone(cur - 1));
       pbox.querySelector('[data-phonebox-next]')!.addEventListener('click', () => showPhone(cur + 1));
       pbox.addEventListener('click', (e) => {
-        const b = (e.target as HTMLElement).closest('.reel-sound');
-        if (b) toggleSound(b);
-        else if (e.target === pbox || e.target === stage) closeBox();
+        const t = e.target as HTMLElement;
+        const snd = t.closest('.reel-sound');
+        const ply = t.closest('.reel-play');
+        if (snd) toggleSound(snd);
+        else if (ply) togglePlay(ply);
+        else if (t.closest('.phone video')) togglePlay(t);
+        else if (t === pbox || t === stage) closeBox();
       });
       pbox.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') showPhone(cur + 1);
@@ -265,22 +298,25 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
   </script>
 
   <script>
-    // le teaser joue dans son mockup quand il est à l'écran (jamais de lecture automatique avec « réduire les animations »)
+    // les vidéos des mockups ne démarrent jamais seules : on les lance avec le bouton ▶ ; elles se mettent en pause hors de l'écran
     const videos = [...document.querySelectorAll<HTMLVideoElement>('.reel-video')];
-    const calm = matchMedia('(prefers-reduced-motion: reduce)');
     if (videos.length) {
       const io = new IntersectionObserver(
         (entries) =>
           entries.forEach((e) => {
-            const v = e.target as HTMLVideoElement;
-            if (e.isIntersecting && !calm.matches) v.play().catch(() => undefined);
-            else v.pause();
+            if (!e.isIntersecting) (e.target as HTMLVideoElement).pause();
           }),
-        { threshold: 0.45 },
+        { threshold: 0.2 },
       );
       videos.forEach((v) => {
         io.observe(v);
-        v.addEventListener('click', () => (v.paused ? v.play().catch(() => undefined) : v.pause()));
+        const phone = v.closest('.phone');
+        const sync = () => {
+          phone?.classList.toggle('is-playing', !v.paused);
+          phone?.querySelector('.reel-play')?.setAttribute('aria-label', v.paused ? 'Lancer la lecture' : 'Mettre en pause');
+        };
+        v.addEventListener('play', sync);
+        v.addEventListener('pause', sync);
       });
     }
   </script>

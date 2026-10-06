@@ -29,7 +29,7 @@ export interface Station {
  */
 export const reels = [
   { platform: 'instagram', label: 'Reel Instagram n° 1', sub: 'Teaser : Vitra devient Vitra Lightscape', video: 'reel/teaser-14s-b-lights-720x1280.mp4', poster: 'reel/teaser-14s-b-poster.jpg' },
-  { platform: 'instagram', label: 'Reel Instagram n° 2', sub: 'Trailer : découvrir, interagir, s’immerger', video: 'reel/trailer-20s-720x1280.mp4', poster: 'reel/trailer-20s-poster.jpg', caption: ['Découvrir. Interagir. S’immerger.', 'Vivre l’architecture dans la lumière.'], tags: '#Vitra #VitraLightscape', likes: '9,4 K', comments: '187', shares: '812', cadrage: '50% 50%' },
+  { platform: 'instagram', label: 'Reel Instagram n° 2', sub: 'Trailer : découvrir, interagir, s’immerger', video: 'reel/trailer-23s-720x1280.mp4', poster: 'reel/trailer-23s-poster.jpg', caption: ['Découvrir. Interagir. S’immerger.', 'Vivre l’architecture dans la lumière.'], tags: '#Vitra #VitraLightscape', likes: '9,4 K', comments: '187', shares: '812', cadrage: '50% 50%' },
   { platform: 'tiktok', label: 'TikTok', sub: 'À venir' },
 ] as {
   platform: 'instagram' | 'tiktok';

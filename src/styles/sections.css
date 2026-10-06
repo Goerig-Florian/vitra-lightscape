@@ -4783,3 +4783,68 @@
     opacity: 0.6;
   }
 }
+
+/* bouton ▶ / ❚❚ au centre de l'écran du téléphone : les vidéos se lancent à la demande */
+.reel-play {
+  position: absolute;
+  z-index: 7;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 22cqw;
+  height: 22cqw;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.25s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reel-play svg {
+  grid-area: 1 / 1;
+  width: 52%;
+  height: 52%;
+}
+
+.reel-play__play {
+  margin-left: 6%;
+}
+
+.phone:not(.is-playing) .reel-play__pause,
+.phone.is-playing .reel-play__play {
+  display: none;
+}
+
+/* pendant la lecture, le bouton s'efface ; il revient au survol ou au clavier pour mettre en pause */
+.phone.is-playing .reel-play {
+  opacity: 0;
+}
+
+.phone.is-playing .reel-play:hover,
+.phone.is-playing .reel-play:focus-visible {
+  opacity: 1;
+}
+
+.reel-play:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.reel-video {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-play {
+    transition: none;
+  }
+}
