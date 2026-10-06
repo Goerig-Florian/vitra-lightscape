@@ -1,20 +1,25 @@
 ---
 /**
  * La scène du teaser : 1080 x 1920 (9:16). Aucune animation CSS : tout est piloté par une horloge
- * (reel.astro) qui écrit des variables (--pw, --ca, --na, --bx, --bo, --mo...) pour qu'on puisse aussi se placer à
+ * (reel.astro) qui écrit des variables (--wx, --bx, --mo...) pour qu'on puisse aussi se placer à
  * n'importe quel instant (export image par image, curseur de la page).
- * Logos : le SVG original du projet, tel quel. Le « vitra. » seul est le logo classique ; avec la barre et « Lightscape »
- * c'est le logo Vitra Lightscape (mêmes tracés, mêmes proportions).
- * Mapping : uniquement des formes de lumière (flammes), sans bâtiment, en arrière-plan, animées.
+ *
+ * Logos : le SVG original du projet, tel quel. Le « vitra. » seul est le logo classique ; la barre et « Lightscape »
+ * s'y ajoutent pour le logo Vitra Lightscape (mêmes tracés, mêmes proportions).
+ *
+ * Histoire : le « vitra. » noir sur blanc s'inverse (un balayage fait basculer le fond au noir, le logo devient blanc),
+ * puis la lumière du mapping traverse l'écran et dessine, derrière elle, la barre et « Lightscape » : le nouveau logo
+ * naît du mapping. Le mapping est généré en code (scripts/prepare-reel-mapping.py) : des filaments très fins.
  */
 import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
 import { url } from '../lib/url';
 
 interface Props {
-  /** Texture de mapping, chemin dans public/ (voir scripts/prepare-reel-mapping.py) */
-  mapping?: string;
+  /** Deux couches de mapping (chemins dans public/) */
+  mappingA?: string;
+  mappingB?: string;
 }
-const { mapping = 'reel/mapping-flammes.webp' } = Astro.props;
+const { mappingA = 'reel/mapping-fin-a.webp', mappingB = 'reel/mapping-fin-b.webp' } = Astro.props;
 
 // sans modifier le fichier source : on repère le texte « Lightscape » (1er tracé) et la barre (rect) par une classe
 const svg = logoSvg
@@ -23,13 +28,16 @@ const svg = logoSvg
   .replace('<rect ', '<rect class="rs-ls" ');
 ---
 
-<div class="rs" data-rs style={`--map:url(${url(mapping)})`}>
-  <div class="rs__bg rs__bg--a" aria-hidden="true"></div>
-  <div class="rs__bg rs__bg--b" aria-hidden="true"></div>
+<div class="rs" data-rs style={`--mapa:url(${url(mappingA)});--mapb:url(${url(mappingB)})`}>
+  <div class="rs__maps" aria-hidden="true">
+    <div class="rs__bg rs__bg--a"></div>
+    <div class="rs__bg rs__bg--b"></div>
+  </div>
   <div class="rs__shade" aria-hidden="true"></div>
   <div class="rs__paper" aria-hidden="true"></div>
-  <div class="rs__lock rs__lock--classic" data-rs-lock set:html={svg} />
-  <div class="rs__lock rs__lock--full" set:html={svg} />
+  <div class="rs__lock rs__lock--dark" data-rs-lock set:html={svg} />
+  <div class="rs__lock rs__lock--word" set:html={svg} />
+  <div class="rs__lock rs__lock--extra" set:html={svg} />
   <div class="rs__halo" aria-hidden="true"></div>
   <div class="rs__flare" aria-hidden="true"></div>
   <div class="rs__fade" aria-hidden="true"></div>
@@ -37,18 +45,19 @@ const svg = logoSvg
 
 <style is:global>
   .rs {
-    --pw: 1; /* opacité du fond blanc du début */
-    --ca: 1; /* opacité du logo classique (noir) */
-    --na: 0; /* opacité du logo Lightscape (blanc) */
+    --wx: -80px; /* bord du balayage blanc → noir (x) */
+    --cd: 1; /* « vitra. » en inversion (noir sur blanc, blanc sur noir) */
+    --cw: 0; /* « vitra. » blanc, une fois le fond noir */
     --gx: 0px;
     --gy: 0px;
-    --bx: -400px; /* position de la lumière qui découvre le mapping (x, en pixels de la scène) */
+    --bx: -400px; /* position de la lumière du mapping (x) */
     --bo: 0; /* intensité de la lumière */
-    --mo: 0; /* opacité du mapping d'arrière-plan */
-    --ax: 50%;
-    --ay: 50%;
-    --bxp: 50%;
-    --byp: 50%;
+    --mo: 0; /* opacité du mapping */
+    --ax: 0px;
+    --ay: 0px;
+    --bxp: 0px;
+    --byp: 0px;
+    --sc: 1;
     --fd: 0; /* fondu final vers le noir */
     position: relative;
     width: 1080px;
@@ -60,44 +69,54 @@ const svg = logoSvg
     font-size: 0;
   }
 
-  /* mapping d'arrière-plan : deux couches de la même texture qui dérivent en sens contraire, fondues en « écran » */
-  .rs__bg {
+  /* mapping : deux couches de filaments qui dérivent en sens contraire, se mélangent en « écran »,
+     et ne sont découvertes que derrière la lumière qui traverse l'écran */
+  .rs__maps {
     position: absolute;
-    inset: -8%;
-    opacity: calc(var(--mo) * 0.72);
-    background: var(--map) no-repeat;
-    filter: blur(6px) saturate(1.15) brightness(0.95);
+    inset: 0;
+    overflow: hidden;
+    isolation: isolate;
+    opacity: calc(var(--mo) * 0.85);
     -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--bx) - 360px), transparent calc(var(--bx) + 40px));
     mask-image: linear-gradient(90deg, #000 calc(var(--bx) - 360px), transparent calc(var(--bx) + 40px));
   }
 
+  .rs__bg {
+    position: absolute;
+    left: -108px;
+    top: -192px;
+    width: 1296px;
+    height: 2304px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
   .rs__bg--a {
-    background-size: auto 150%;
-    background-position: var(--ax) var(--ay);
+    background-image: var(--mapa);
+    transform: translate(var(--ax), var(--ay)) scale(var(--sc));
   }
 
   .rs__bg--b {
-    background-size: auto 125%;
-    background-position: var(--bxp) var(--byp);
+    background-image: var(--mapb);
     mix-blend-mode: screen;
-    opacity: calc(var(--mo) * 0.4);
-    transform: scaleX(-1);
+    transform: translate(var(--bxp), var(--byp)) scale(calc(2 - var(--sc)));
   }
 
-  /* ombre douce derrière le logo pour qu'il reste parfaitement lisible */
+  /* ombre douce derrière le logo pour qu'il reste parfaitement lisible sur les filaments */
   .rs__shade {
     position: absolute;
     inset: 0;
-    opacity: var(--na);
-    background: radial-gradient(ellipse 62% 17% at 50% 48.5%, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.35) 55%, transparent 100%);
+    opacity: calc(var(--mo) * 0.85);
+    background: radial-gradient(ellipse 66% 15% at 50% 48.5%, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3) 60%, transparent 100%);
   }
 
-  /* fond blanc du début : il passe au noir, le logo noir disparaît dedans */
+  /* fond blanc du début : un balayage de gauche à droite le fait passer au noir */
   .rs__paper {
     position: absolute;
     inset: 0;
     background: #fff;
-    opacity: var(--pw);
+    -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--wx) - 14px), #000 calc(var(--wx) + 14px));
+    mask-image: linear-gradient(90deg, transparent calc(var(--wx) - 14px), #000 calc(var(--wx) + 14px));
   }
 
   /* le logo : 640 px de large, centré dans la zone de sécurité (centre x 540, y 930) */
@@ -107,6 +126,7 @@ const svg = logoSvg
     top: 801px;
     width: 640px;
     height: 255px;
+    transform: translate(var(--gx), var(--gy));
   }
 
   .rs__lock svg {
@@ -115,22 +135,35 @@ const svg = logoSvg
     height: 100%;
   }
 
-  /* logo classique : le « vitra. » seul, centré, en noir (même fichier, sans la barre ni « Lightscape ») */
-  .rs__lock--classic {
-    color: #000;
-    opacity: var(--ca);
-    transform: translate(var(--gx), var(--gy));
-  }
-
-  .rs__lock--classic .rs-ls {
+  /* « vitra. » seul (même fichier, sans la barre ni « Lightscape »), centré */
+  .rs__lock--dark .rs-ls,
+  .rs__lock--word .rs-ls {
     display: none;
   }
 
-  .rs__lock--full {
-    opacity: var(--na);
+  /* blanc en mode « différence » : noir sur le fond blanc, blanc sur le fond noir, sans état gris au passage du balayage */
+  .rs__lock--dark {
+    color: #fff;
+    mix-blend-mode: difference;
+    opacity: var(--cd);
   }
 
-  /* halo très léger au bord de la lumière qui découvre le mapping */
+  .rs__lock--word {
+    opacity: var(--cw);
+  }
+
+  /* la barre et « Lightscape » : dessinés par la lumière du mapping, derrière son passage */
+  .rs__lock--extra svg > :not(.rs-ls) {
+    display: none;
+  }
+
+  .rs__lock--extra {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--bx) - 300px - var(--gx)), transparent calc(var(--bx) - 140px - var(--gx)));
+    mask-image: linear-gradient(90deg, #000 calc(var(--bx) - 300px - var(--gx)), transparent calc(var(--bx) - 140px - var(--gx)));
+    filter: drop-shadow(0 0 10px rgba(255, 200, 140, 0.55));
+  }
+
+  /* halo très léger au bord de la lumière */
   .rs__halo {
     position: absolute;
     top: 0;
@@ -139,7 +172,7 @@ const svg = logoSvg
     height: 1920px;
     transform: translateX(var(--bx));
     opacity: calc(var(--bo) * 0.6);
-    background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(255, 196, 140, 0.32), rgba(255, 150, 80, 0.08) 45%, transparent 72%);
+    background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(190, 215, 255, 0.28), rgba(120, 150, 255, 0.08) 45%, transparent 72%);
     mix-blend-mode: screen;
   }
 
@@ -152,7 +185,7 @@ const svg = logoSvg
     height: 4px;
     transform: translateX(var(--bx));
     opacity: calc(var(--bo) * 0.55);
-    background: linear-gradient(90deg, transparent, rgba(255, 232, 205, 0.95) 50%, transparent);
+    background: linear-gradient(90deg, transparent, rgba(235, 240, 255, 0.95) 50%, transparent);
     filter: blur(1.4px);
     mix-blend-mode: screen;
   }

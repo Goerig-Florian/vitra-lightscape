@@ -11,12 +11,12 @@ import { url } from '../lib/url';
 
 const timings = [
   { t: '0:00', text: 'Presque silence, un souffle d’air très léger : fond blanc, logo Vitra noir fixe.' },
-  { t: '1:06 – 2:00', text: 'Le fond passe du blanc au noir, le logo noir s’y fond : une nappe grave descend vers le silence.' },
-  { t: '2:00 – 2:15', text: 'Écran totalement noir.' },
-  { t: '2:15 – 3:03', text: 'Apparition en fondu du logo Vitra Lightscape : montée subtile, très douce, qui s’ouvre.' },
-  { t: '3:03 – 4:15', text: 'Whoosh synchronisé avec la lumière qui traverse l’écran et découvre le mapping en arrière-plan : entrée à 3:03, pic au centre de l’écran (3:20), sortie à droite vers 4:15.' },
-  { t: '4:15', text: 'Petit impact doux : le mapping couvre tout l’arrière-plan.' },
-  { t: '5:00 – 6:00', text: 'Le mapping se retire, la nappe grave retombe, queue de réverbération et léger fondu vers le noir.' },
+  { t: '1:06 – 2:03', text: 'Le balayage blanc → noir : un whoosh grave et doux accompagne le bord qui traverse l’écran de gauche à droite, le logo s’inverse (noir → blanc).' },
+  { t: '2:03 – 2:18', text: 'Écran noir, logo blanc : une respiration, presque silence, une nappe grave très basse.' },
+  { t: '2:18 – 4:12', text: 'Whoosh brillant synchronisé avec la lumière qui découvre les filaments du mapping : entrée à 2:18, pic au centre du logo (3:12).' },
+  { t: '3:06 – 3:24', text: 'La barre puis « Lightscape » se dessinent derrière la lumière : un scintillement fin, très discret, qui s’accroche au passage.' },
+  { t: '4:12', text: 'Petit impact doux : le logo Vitra Lightscape est complet, le mapping couvre l’écran.' },
+  { t: '5:00 – 6:00', text: 'Le mapping se retire, la nappe retombe, queue de réverbération et léger fondu vers le noir.' },
 ];
 ---
 
@@ -71,7 +71,7 @@ const timings = [
 
     <script>
       // ----- chronologie (secondes) -----
-      const T = { still: 1.2, off: 2.0, on: 2.5, shown: 3.1, sweepStart: 3.1, sweepEnd: 4.5, mapOut: 5.0, mapEnd: 5.7, fadeStart: 5.7, end: 6 };
+      const T = { still: 1.2, off: 2.1, mapStart: 2.6, mapEnd: 4.4, mapOut: 5.0, mapGone: 5.7, fadeStart: 5.7, end: 6 };
       const DURATION = T.end;
       const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
       const inOut = (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
@@ -102,33 +102,35 @@ const timings = [
 
       const render = (t: number) => {
         t = clamp(t, 0, DURATION);
-        // 1) logo Vitra noir sur fond blanc ; 2) le fond devient noir, le logo noir s'y fond ; 3) un instant de noir complet
-        const pw = 1 - sine((t - T.still) / (T.off - T.still));
-        const ca = t < T.off + 0.15 ? 1 : 0;
-        // 4) le nouveau logo apparaît en fondu dans le noir
-        const na = sine((t - T.on) / (T.shown - T.on));
-        // 5) une lumière traverse l'écran et découvre un mapping dynamique en arrière-plan, puis il se retire
-        const u = clamp((t - T.sweepStart) / (T.sweepEnd - T.sweepStart));
+        // 1) « vitra. » noir sur fond blanc ; 2) un balayage fait passer le fond au noir : le logo s'inverse (noir → blanc)
+        const wipe = inOut(clamp((t - T.still) / (T.off - T.still)));
+        const wx = -60 + wipe * (1080 + 120);
+        const cd = t < T.off + 0.05 ? 1 : 0; // l'inversion cède la place au logo blanc une fois le fond tout noir (invisible)
+        // 3) la lumière du mapping traverse l'écran ; derrière elle naissent la barre et « Lightscape »
+        const u = clamp((t - T.mapStart) / (T.mapEnd - T.mapStart));
         const move = 0.5 - 0.5 * Math.cos(Math.PI * Math.pow(u, 0.92));
-        const bx = -380 + move * (1080 + 380 + 420);
+        const bx = -380 + move * (1500 + 380);
         const bo = u > 0 && u < 1 ? Math.pow(Math.sin(Math.PI * u), 0.6) : 0;
-        const mo = clamp((t - T.sweepStart) / 0.5) * (1 - sine((t - T.mapOut) / (T.mapEnd - T.mapOut)));
+        const mo = clamp((t - T.mapStart) / 0.4) * (1 - sine((t - T.mapOut) / (T.mapGone - T.mapOut)));
+        // le logo se recentre en douceur pendant que la barre et « Lightscape » se dessinent
+        const g = inOut(clamp((t - T.mapStart - 0.25) / 1.3));
         const fd = sine((t - T.fadeStart) / (T.end - T.fadeStart)) * 0.9;
         stages.forEach((s) => {
           const set = (k: string, v: string) => s.style.setProperty(k, v);
-          set('--pw', pw.toFixed(4));
-          set('--ca', ca.toFixed(4));
-          set('--na', na.toFixed(4));
-          set('--gx', `${glide.x.toFixed(2)}px`);
-          set('--gy', `${glide.y.toFixed(2)}px`);
+          set('--wx', `${wx.toFixed(1)}px`);
+          set('--cd', String(cd));
+          set('--cw', String(1 - cd));
+          set('--gx', `${((1 - g) * glide.x).toFixed(2)}px`);
+          set('--gy', `${((1 - g) * glide.y).toFixed(2)}px`);
           set('--bx', `${bx.toFixed(1)}px`);
           set('--bo', bo.toFixed(4));
           set('--mo', mo.toFixed(4));
-          // le mapping coule : deux couches qui dérivent lentement en sens contraire
-          set('--ax', `${(50 + 42 * Math.sin(t * 0.9)).toFixed(1)}%`);
-          set('--ay', `${(50 + 46 * Math.sin(t * 1.3 + 1)).toFixed(1)}%`);
-          set('--bxp', `${(50 + 40 * Math.cos(t * 1.1 + 2)).toFixed(1)}%`);
-          set('--byp', `${(50 + 48 * Math.sin(t * 0.8 + 4)).toFixed(1)}%`);
+          // le mapping coule : deux couches de filaments qui dérivent lentement en sens contraire
+          set('--ax', `${(70 * Math.sin(t * 0.9)).toFixed(1)}px`);
+          set('--ay', `${(90 * Math.sin(t * 1.1 + 1)).toFixed(1)}px`);
+          set('--bxp', `${(-80 * Math.cos(t * 0.8 + 2)).toFixed(1)}px`);
+          set('--byp', `${(-70 * Math.sin(t * 1.3 + 4)).toFixed(1)}px`);
+          set('--sc', (1 + 0.025 * Math.sin(t * 1.2)).toFixed(4));
           set('--fd', fd.toFixed(4));
         });
         const time = document.querySelector<HTMLElement>('[data-time]');
@@ -217,9 +219,13 @@ const timings = [
       // ----- démarrage (les images doivent être décodées avant le premier plan, utile pour l'export) -----
       const ready = (async () => {
         await document.fonts?.ready;
-        const img = new Image();
-        img.src = getComputedStyle(stages[0]).getPropertyValue('--map').replace(/^url\(["']?|["']?\)$/g, '');
-        await img.decode().catch(() => undefined);
+        await Promise.all(
+          ['--mapa', '--mapb'].map((v) => {
+            const img = new Image();
+            img.src = getComputedStyle(stages[0]).getPropertyValue(v).trim().replace(/^url\(["']?|["']?\)$/g, '');
+            return img.decode().catch(() => undefined);
+          }),
+        );
         measure();
       })();
       (window as unknown as { __reel: unknown }).__reel = { ready, seek, duration: DURATION };
