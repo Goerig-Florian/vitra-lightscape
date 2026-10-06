@@ -78,3 +78,9 @@ Les trois mises en situation (abribus, tramway, couloir de gare, `public/present
 ## Clip promo TCG (page interne /promo-tcg/)
 
 Clip vertical de 10,5 s (booster → cartes → carte collector → book → insertion). Il réutilise les cartes, le book, la couverture illustrée et le logo du site ; le **booster est dessiné en code** pour le clip (aucune image externe, aucun élément d'une marque existante). Le rendu en mp4 se fait avec `scripts/export-promo.mjs` (sortie dans `exports/promo-tcg/`, non versionnée). Une vidéo d'exemple fournie par l'équipe a inspiré les mouvements (cartes sorties de dos puis retournées) ; aucun de ses éléments graphiques n'est repris.
+
+## Pages de presse (page de présentation)
+
+`public/presentation/presse-dna.webp` et `presse-alsace.webp` : deux **maquettes de pages de journaux** (DNA et L'Alsace) réalisées par l'équipe pour illustrer la couverture presse. Ce sont des mises en scène : les articles, citations et témoignages sont fictifs, et les titres de presse ne sont pas affiliés au projet. Les originaux (`public/photos/journaux*.png`) restent en local.
+
+Le clip du booster (`public/reel/promo-tcg-720x1280.mp4`, créé avec `/promo-tcg/`) est présenté dans un mockup de téléphone dans la station « La carte à gagner » ; ses chiffres de réseau sont fictifs.

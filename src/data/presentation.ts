@@ -45,6 +45,8 @@ export const reels = [
   shares?: string;
   /** cadrage de la vidéo dans l'écran du téléphone (object-position) */
   cadrage?: string;
+  /** ajustement de la vidéo dans l'écran : « cover » (remplit) ou « contain » (entière, avec des bandes) */
+  ajuste?: 'cover' | 'contain';
 }[];
 
 export const presentation = {
@@ -54,7 +56,7 @@ export const presentation = {
   stations: [
     { id: 'affiche', label: 'Affiche', title: 'L’affiche', text: 'Le premier signal dans la rue : une façade qui s’allume, une promesse en une image.', ratio: '3 / 4', format: 'Affiche · portrait', posters: true },
     { id: 'reels', label: 'Reels', title: 'Les reels', text: 'Quelques secondes de nuit qui tombe, pour donner envie de venir voir en vrai.', ratio: '9 / 16', format: 'Reel · 9:16', reels: true },
-    { id: 'carte', label: 'Carte à gagner', title: 'La carte à gagner', text: 'Un objet à glisser dans la poche : on la reçoit, on la découvre, on tente sa chance.', ratio: '16 / 10', format: 'Carte · paysage' },
+    { id: 'carte', label: 'Carte à gagner', title: 'La carte à gagner', text: 'Un objet à glisser dans la poche : on la reçoit, on la découvre, on tente sa chance.', ratio: '16 / 10', format: 'Carte · paysage', reels: true },
     { id: 'magazine', label: 'Magazine', title: 'Le magazine', text: 'Le temps long : le récit du Campus, de son architecture et de la lumière qui la révèle.', ratio: '4 / 3', format: 'Magazine · double page' },
     { id: 'site', label: 'Site web', title: 'Le site', text: 'L’arrivée du chemin : le parcours, la soirée et la billetterie, tout au même endroit.', ratio: '16 / 10', format: 'Site · écran' },
   ] as Station[],
@@ -72,4 +74,27 @@ export const situations = [
   { src: 'presentation/situation-abribus.webp', w: 2000, h: 1780, title: 'Abribus', sub: 'L’affiche dans la rue', alt: 'Abribus en ville : l’affiche Vitra Lightscape « Suivez le chemin, découvrez le parcours lumineux » montre un bâtiment illuminé au bord d’un étang et un chemin de lumière.' },
   { src: 'presentation/situation-tram.webp', w: 2000, h: 1126, title: 'Tramway', sub: 'Habillage du tram, de nuit', alt: 'Tramway de nuit habillé aux couleurs de Vitra Lightscape : « Suivez le chemin vers une expérience unique », avec un bâtiment aux projections vertes et bleues et un trait de lumière bleu qui suit la carrosserie.' },
   { src: 'presentation/situation-couloir.webp', w: 2000, h: 1125, title: 'Couloir de gare', sub: 'Une campagne en cinq affiches', alt: 'Couloir de gare avec cinq affiches lumineuses qui se lisent en suivant le chemin : « Suivez le parcours lumineux », puis le logo Vitra Lightscape et « Vivez une expérience unique ».' },
+];
+
+/** Le clip du booster (station « Carte à gagner ») : un seul mockup. Il se lance avec le bouton ▶ (jamais automatiquement). */
+export const reelsCarte = [
+  {
+    platform: 'instagram',
+    label: 'Clip : ouverture d’un booster',
+    sub: 'Une carte entre dans le book de collection',
+    video: 'reel/promo-tcg-720x1280.mp4',
+    poster: 'reel/promo-tcg-poster.jpg',
+    caption: ['Ouvre le booster. Trouve ta carte.', 'Complète la collection.'],
+    tags: '#Vitra #VitraLightscape #CollectThemAll',
+    likes: '6,1 K',
+    comments: '142',
+    shares: '530',
+    ajuste: 'contain',
+  },
+] as typeof reels;
+
+/** Les pages de presse (mises en scène) : DNA et L'Alsace. Même plein écran que les affiches. */
+export const presse = [
+  { src: 'presentation/presse-dna.webp', w: 1055, h: 1491, title: 'Les Dernières Nouvelles d’Alsace', sub: 'Une du 16 septembre : le Campus change de visage', alt: 'Une de journal, DNA, mardi 16 septembre 2025 : « À Weil am Rhein, le Vitra Campus s’apprête à changer de visage à la nuit tombée », avec une photo des visiteurs sur le chemin éclairé, les infos pratiques et des cartes collector tenues à la main.' },
+  { src: 'presentation/presse-alsace.webp', w: 1055, h: 1491, title: 'L’Alsace', sub: 'Une balade lumineuse en famille', alt: 'Page du journal L’Alsace : « Une balade lumineuse en famille pour redécouvrir le Vitra Campus », avec une famille qui marche vers le VitraHaus de nuit, quatre cartes collector et un encadré pratique.' },
 ];

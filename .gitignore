@@ -22,3 +22,7 @@ public/*.zip
 
 # copie de travail de la vidéo de l equipe (17 Mo, 1080 p) : seule la version web trailer-20s-720x1280.mp4 est publiée
 public/reel/vitra-lightscape-teaser-6s.mp4
+
+# originaux des pages de presse (2,8 Mo chacun) : seules les versions web de public/presentation/ sont publiées
+public/photos/journaux.png
+public/photos/journaux2.png

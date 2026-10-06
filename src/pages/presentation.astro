@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { presentation, reels, posters, situations } from '../data/presentation';
+import { presentation, reels, reelsCarte, posters, situations, presse } from '../data/presentation';
 import ReelPhone from '../components/ReelPhone.astro';
 import { url } from '../lib/url';
 import LightscapeGallery from '../components/LightscapeGallery.astro';
@@ -60,16 +60,31 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
                       </figure>
                     ))}
                   </div>
+
+                  <p class="posters-block__label">Dans la presse</p>
+                  <div class="posters-row posters-row--presse">
+                    {presse.map((p, m) => (
+                      <figure class="posters-row__item">
+                        <button type="button" class="poster" data-poster={posters.length + situations.length + m} aria-label={`${p.title} : afficher la page en plein écran`}>
+                          <img src={url(p.src)} alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" />
+                          <span class="poster__zoom" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                          </span>
+                        </button>
+                        <figcaption><strong>{p.title}</strong><span>{p.sub}</span></figcaption>
+                      </figure>
+                    ))}
+                  </div>
                 </div>
               ) : s.reels ? (
-                <div class="reels-row">
-                  {reels.map((r, n) => (
+                <div class={`reels-row${s.id === 'carte' ? ' reels-row--one' : ''}`}>
+                  {(s.id === 'carte' ? reelsCarte : reels).map((r, n) => (
                     <figure class="reels-row__item">
                       <div class="reels-row__open" role="button" tabindex="0" data-open-phone={n} aria-label={`${r.label} : afficher le mockup en plein écran`}>
                       <ReelPhone platform={r.platform} caption={r.video ? r.caption : ['Légende à venir']} tags={r.video ? r.tags : ''} likes={r.video ? r.likes : '—'} comments={r.video ? r.comments : '—'} shares={r.video ? r.shares : '—'}>
                         {r.video ? (
                           <>
-                            <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} style={r.cadrage ? `object-position:${r.cadrage}` : undefined} aria-label={r.label + ' : ' + r.sub}>
+                            <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} style={[r.cadrage ? `object-position:${r.cadrage}` : '', r.ajuste ? `object-fit:${r.ajuste}` : ''].filter(Boolean).join(';') || undefined} aria-label={r.label + ' : ' + r.sub}>
                               <source src={url(r.video)} type="video/mp4" />
                             </video>
                             <button type="button" class="reel-play" data-play aria-label="Lancer la lecture">

@@ -4848,3 +4848,19 @@
     transition: none;
   }
 }
+
+/* un seul mockup (station « Carte à gagner ») */
+.reels-row--one {
+  grid-template-columns: minmax(0, 17rem);
+}
+
+/* pages de presse : deux grandes pages côte à côte */
+.posters-row--presse {
+  grid-template-columns: repeat(2, minmax(0, 24rem));
+}
+
+@media (max-width: 760px) {
+  .posters-row--presse {
+    grid-template-columns: minmax(0, 24rem);
+  }
+}
