@@ -20,8 +20,10 @@ Usage : python scripts/make-musique.py [chemin-de-ffmpeg]
 
 Variante avec un morceau existant (ex. « Lights.mp3 », fourni par l'équipe) :
   python scripts/make-musique.py [chemin-de-ffmpeg] --lights "C:/chemin/Lights.mp3"
-Le morceau est utilisé depuis sa première seconde ; seuls les effets (whooshes, néon, impact) sont gardés, sans nappes ni notes,
-pour ne pas jurer avec lui. Son « drop » (à 8,1 s) tombe sur le troisième mapping (8,2 s). Sortie : fichiers « -lights ».
+Le morceau est utilisé depuis sa première seconde, mais SEULEMENT son intro instrumentale (avant la montée à 7,4 s, où arrivent le bruit de
+montée, le « drop » puis la voix) : on joue son vrai début jusqu'à 6,1 s, puis on boucle deux mesures (de 2,1 s à 6,1 s : le morceau est à 120 bpm,
+une mesure = 2,0 s) avec un fondu enchaîné. Seuls les effets (whooshes, néon, impact) sont ajoutés, sans nappes ni notes,
+pour ne pas jurer avec lui. Sortie : fichiers « -lights ».
 ATTENTION : ce morceau n'est pas de nous. Son utilisation publique demande l'accord de son auteur (voir CREDITS.md).
 """
 import subprocess
@@ -43,7 +45,11 @@ _ap.add_argument("--lights", default=None)
 _args = _ap.parse_args()
 FFMPEG = _args.ffmpeg
 LIGHTS = _args.lights
-DECALAGE = 0.1  # le drop du morceau (8,1 s) tombe ainsi pile sur le troisième mapping (8,2 s)
+# boucle de l'intro : on joue le morceau de 0 à BOUCLE_FIN, puis on reprend à BOUCLE_DEBUT (deux mesures à 120 bpm), jamais au-delà de 6,1 s
+BOUCLE_DEBUT = 2.1
+BOUCLE_FIN = 6.1
+FONDU_BOUCLE = 0.12  # fondu enchaîné à chaque jonction (secondes)
+NIVEAU_MORCEAU = 1.8
 SUFFIXE = "-lights" if LIGHTS else ""
 
 SR = 44100
@@ -263,11 +269,23 @@ mix = stereo * 0.82 + wet * 0.95
 if LIGHTS:
     raw = subprocess.run([FFMPEG, "-v", "error", "-i", LIGHTS, "-t", str(DUR + 1), "-ac", "2", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
     mus = np.frombuffer(raw, dtype=np.float32).reshape(-1, 2).T
-    d = int(DECALAGE * SR)
-    seg = np.zeros((2, N), dtype=np.float32)
-    n = min(N - d, mus.shape[1])
-    seg[:, d : d + n] = mus[:, :n]
-    mix = mix + seg * 0.5
+    i0, i1, xs = int(BOUCLE_DEBUT * SR), int(BOUCLE_FIN * SR), int(FONDU_BOUCLE * SR)
+    boucle = i1 - i0
+    sortie = np.zeros((2, N + boucle + 2 * xs), dtype=np.float32)
+    montee = np.sin(np.linspace(0, np.pi / 2, xs)).astype(np.float32)  # fondu enchaîné à puissance constante
+    descente = np.cos(np.linspace(0, np.pi / 2, xs)).astype(np.float32)
+    debut = mus[:, : i1 + xs].copy()
+    debut[:, -xs:] *= descente
+    sortie[:, : debut.shape[1]] += debut
+    pos = i1
+    while pos < N:
+        copie = mus[:, i0 : i1 + xs].copy()
+        copie[:, :xs] *= montee
+        copie[:, -xs:] *= descente
+        sortie[:, pos : pos + copie.shape[1]] += copie
+        pos += boucle
+    seg = sortie[:, :N]
+    mix = mix + seg * 0.5 * NIVEAU_MORCEAU
 
 # ------------------------------------------------------------------ finition : fondus, compression douce, niveau
 fade = smooth(0.0, 0.35) * (1 - smooth(13.35, 14.0))
@@ -283,7 +301,7 @@ mp3 = OUT / f"vitra-lightscape-teaser-musique{SUFFIXE}.mp3"
 subprocess.run([FFMPEG, "-y", "-v", "error", "-i", str(wav), "-c:a", "libmp3lame", "-b:a", "224k", str(mp3)], check=True)
 print("mp3", mp3)
 
-video = ROOT / "public" / "reel" / "teaser-14s-1080x1920.mp4"
+video = ROOT / "public" / "reel" / "teaser-14s-b-1080x1920.mp4"
 if video.exists():
     avec = OUT / f"teaser-14s-1080x1920-avec-son{SUFFIXE}.mp4"
     subprocess.run([FFMPEG, "-y", "-v", "error", "-i", str(video), "-i", str(wav), "-c:v", "copy", "-c:a", "aac", "-b:a", "256k", "-shortest", str(avec)], check=True)
