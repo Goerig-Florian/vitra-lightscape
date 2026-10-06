@@ -28,7 +28,7 @@ export interface Station {
  * `video` : chemin de la vidéo dans public/ (laisser vide tant que le reel n'est pas tourné : l'emplacement reste vide).
  */
 export const reels = [
-  { platform: 'instagram', label: 'Reel Instagram n° 1', sub: 'Teaser : Vitra devient Vitra Lightscape', video: 'reel/teaser-14s-son-720x1280.mp4', poster: 'reel/teaser-14s-poster.jpg' },
+  { platform: 'instagram', label: 'Reel Instagram n° 1', sub: 'Teaser : Vitra devient Vitra Lightscape', video: 'reel/teaser-14s-lights-720x1280.mp4', poster: 'reel/teaser-14s-poster.jpg' },
   { platform: 'instagram', label: 'Reel Instagram n° 2', sub: 'À venir' },
   { platform: 'tiktok', label: 'TikTok', sub: 'À venir' },
 ] as { platform: 'instagram' | 'tiktok'; label: string; sub: string; video?: string; poster?: string }[];
