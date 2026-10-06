@@ -2,27 +2,27 @@
 /**
  * Dernière slide de la présentation : les influenceurs relais de la campagne.
  * Source : dossier de communication de l'équipe (PDF « Stratégie de communication », page « Ligne éditoriale »).
- * Photo de profil et nombre d'abonnés : à renseigner ci-dessous quand l'équipe les fournit (sans photo, un monogramme s'affiche).
+ * Ces trois comptes sont des EXEMPLES de profils à solliciter (pas des partenaires confirmés). Photo de profil et nombre d'abonnés : captures fournies par l'équipe.
  */
 import { url } from '../lib/url';
 // photo : chemin dans public/ (ex. 'presentation/relais-pauline.webp') · abonnes : texte affiché (ex. '23,4 K')
 const relais = [
-  { compte: '@onfaitquoi.maman', nom: 'Pauline', lieu: 'Alsace / Mulhouse', cible: 'Familles', role: 'Relayer l’événement auprès des familles de la région', mono: 'P', photo: '', abonnes: '' },
-  { compte: '@lerichti', nom: 'Philipp Heer', lieu: 'Bâle', cible: 'Art, design, architecture', role: 'Donner une image premium et artistique', mono: 'PH', photo: '', abonnes: '' },
-  { compte: '@girlinbasel', nom: 'Magdalena Getreuer', lieu: 'Bâle', cible: 'Culture, sorties, grand public', role: 'Toucher les non-initiés et le public local', mono: 'MG', photo: '', abonnes: '' },
+  { compte: '@onfaitquoi.maman', nom: 'Pauline', lieu: 'Alsace / Mulhouse (France)', cible: 'Familles', role: 'Relayer l’événement auprès des familles de la région', mono: 'P', photo: 'presentation/exemple-onfaitquoi.webp', abonnes: '19,6 K' },
+  { compte: '@lerichti', nom: 'Philipp Heer', lieu: 'Zurich (Suisse)', cible: 'Art, design, architecture', role: 'Donner une image premium et artistique', mono: 'PH', photo: 'presentation/exemple-lerichti.webp', abonnes: '120 K' },
+  { compte: '@girlinbasel', nom: 'Magdalena Getreuer', lieu: 'Bâle (Suisse)', cible: 'Culture, sorties, grand public', role: 'Toucher les non-initiés et le public local', mono: 'MG', photo: 'presentation/exemple-girlinbasel.webp', abonnes: '64,6 K' },
 ];
 ---
 
 <section class="sl sl--relay" data-theme="night" aria-labelledby="sl-relay">
   <div class="container sl__inner">
-    <p class="eyebrow">Les relais</p>
-    <h2 class="sl__title reveal" id="sl-relay">Trois voix pour trois publics.</h2>
-    <p class="sl__lead reveal">Des influenceurs locaux et transfrontaliers, choisis pour parler à chaque public de Vitra Lightscape.</p>
+    <p class="eyebrow">Les relais · exemples de profils</p>
+    <h2 class="sl__title reveal" id="sl-relay">Le type d’influenceurs que nous visons.</h2>
+    <p class="sl__lead reveal">Trois exemples de profils, en France et en Suisse, pour montrer ce que nous cherchons : des relais locaux et transfrontaliers (France, Suisse, Allemagne) qui parlent à chaque public de Vitra Lightscape.</p>
     <ul class="relay">
       {
         relais.map((r) => (
           <li class="relay__card reveal">
-            {r.photo ? <img class="relay__photo" src={url(r.photo)} alt={`Photo de profil de ${r.nom}`} width="96" height="96" loading="lazy" decoding="async" /> : <span class="relay__mono" aria-hidden="true">{r.mono}</span>}
+            {r.photo ? <img class="relay__photo" src={url(r.photo)} alt={`Photo de profil de ${r.nom}`} width="192" height="192" loading="lazy" decoding="async" /> : <span class="relay__mono" aria-hidden="true">{r.mono}</span>}
             <p class="relay__handle">{r.compte}</p>
             <p class="relay__name">{r.nom} · {r.lieu}</p>
             {r.abonnes && <p class="relay__followers"><strong>{r.abonnes}</strong> abonnés</p>}
@@ -34,7 +34,7 @@ const relais = [
         ))
       }
     </ul>
-    <p class="sl__promise reveal">Ensemble, ils montrent que Vitra Lightscape est à la fois artistique, accessible et grand public.</p>
+    <p class="sl__promise reveal">Ensemble, ces profils montrent que Vitra Lightscape est à la fois artistique, accessible et grand public.</p>
   </div>
 </section>
 

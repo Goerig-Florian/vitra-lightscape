@@ -69,7 +69,7 @@ const moodboards = tous.filter((d) => d.titre.startsWith('Moodboard')).map((d) =
           <li class="reveal">
             <figure>
               <button type="button" class="poster" data-poster aria-label={`${d.titre} : afficher l’image en plein écran`}>
-                <img src={url(d.src)} alt={d.alt} loading="lazy" decoding="async" />
+                <img src={url(d.src)} alt={d.alt} width={d.src.includes("moodboard") ? 2000 : 1384} height={d.src.includes("moodboard") ? 1125 : 1244} loading="lazy" decoding="async" />
                 <span class="poster__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></span>
               </button>
               <figcaption><strong>{d.titre}</strong></figcaption>
@@ -86,7 +86,7 @@ const moodboards = tous.filter((d) => d.titre.startsWith('Moodboard')).map((d) =
           <li class="reveal">
             <figure>
               <button type="button" class="poster" data-poster aria-label={`Moodboard ${d.titre} : afficher l’image en plein écran`}>
-                <img src={url(d.src)} alt={d.alt} loading="lazy" decoding="async" />
+                <img src={url(d.src)} alt={d.alt} width={d.src.includes("moodboard") ? 2000 : 1384} height={d.src.includes("moodboard") ? 1125 : 1244} loading="lazy" decoding="async" />
                 <span class="poster__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></span>
               </button>
               <figcaption><strong>{d.titre}</strong></figcaption>

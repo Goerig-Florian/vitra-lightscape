@@ -350,6 +350,20 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
   </script>
 
   <script>
+    // lien d'ancre (ex. #devis) : la page change de hauteur pendant son chargement (images, polices) ; on se recale sur la cible une fois tout posé
+    const cible = () => (location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null);
+    const recaler = () => cible()?.scrollIntoView({ block: 'start' });
+    if (location.hash.length > 1) {
+      addEventListener('load', () => {
+        recaler();
+        setTimeout(recaler, 500);
+        setTimeout(recaler, 1500);
+      });
+    }
+    addEventListener('hashchange', () => setTimeout(recaler, 50));
+  </script>
+
+  <script>
     // fil de néon : une ligne droite dans la marge gauche, du tout haut de la page jusqu'à la dernière étape (aucun texte n'est traversé),
     // avec un point à chaque slide et à chaque étape ; elle s'allume au fil du défilement
     const trail = document.querySelector<HTMLElement>('[data-trail]');

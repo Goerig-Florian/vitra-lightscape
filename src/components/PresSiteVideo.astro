@@ -20,27 +20,15 @@ import { url } from '../lib/url';
     <h2 class="sl__title reveal" id="sl-devis">Devis 1 · Communication 360°.</h2>
     <p class="sl__lead reveal">Conseil, création, déploiement et pilotage de la campagne Vitra Lightscape.</p>
     <figure class="sl__pdf reveal">
-      <object class="sl__pdf-frame" data={url('devis/devis-1-communication-360.pdf') + '#view=FitH&navpanes=0'} type="application/pdf" aria-label="Devis 1 : Communication 360°, Deux Rives pour Vitra Lightscape">
-        <p>Votre navigateur n’affiche pas le PDF ici. <a href={url('devis/devis-1-communication-360.pdf')}>Ouvrir le devis 1 (PDF)</a></p>
-      </object>
-      <figcaption><a href={url('devis/devis-1-communication-360.pdf')} target="_blank" rel="noopener">Ouvrir le devis 1 dans un nouvel onglet <span aria-hidden="true">↗</span></a></figcaption>
+      <button type="button" class="poster" data-poster aria-label="Devis 1, communication 360° : afficher le devis en plein écran">
+        <img src={url('presentation/devis-1.webp')} alt="Devis DR-2026-001 de l’agence Deux Rives pour Vitra Lightscape : communication 360°, du conseil au pilotage de campagne, avec le détail des prestations et des montants hors taxes." width="1469" height="1901" loading="lazy" decoding="async" />
+        <span class="poster__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></span>
+      </button>
+      <figcaption><strong>Devis 1 · Communication 360°</strong></figcaption>
     </figure>
-    <div class="sl__more reveal">
-      <p class="sl__more-title">Les deux autres devis</p>
-      <ul class="sl__more-list">
-        <li>
-          <a href={url('devis/devis-2-achats-externes-merchandising.pdf')} target="_blank" rel="noopener">
-            <strong>Devis 2 · Achats externes et merchandising</strong>
-            <span>Média, fabrication, influence et merchandising (hors honoraires) <span aria-hidden="true">↗</span></span>
-          </a>
-        </li>
-        <li>
-          <a href={url('devis/devis-3-production-evenementielle.pdf')} target="_blank" rel="noopener">
-            <strong>Devis 3 · Production événementielle</strong>
-            <span>Enveloppe technique : mappings, projections, éclairages et installations <span aria-hidden="true">↗</span></span>
-          </a>
-        </li>
-      </ul>
+    <div class="sl__cta reveal">
+      <a class="btn btn--light" href={url('devis/devis-2-achats-externes-merchandising.pdf')} target="_blank" rel="noopener">Devis 2 · Achats externes et merchandising</a>
+      <a class="btn btn--light" href={url('devis/devis-3-production-evenementielle.pdf')} target="_blank" rel="noopener">Devis 3 · Production événementielle</a>
     </div>
   </div>
 </section>
@@ -63,73 +51,29 @@ import { url } from '../lib/url';
     max-width: 58rem;
   }
 
-  .sl__pdf-frame {
-    display: block;
+  .sl__pdf .poster {
     width: 100%;
-    aspect-ratio: 612 / 792;
-    max-height: 92vh;
-    min-height: 28rem;
-    border: 1px solid rgba(220, 239, 255, 0.22);
     border-radius: 12px;
     background: #fff;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .sl__pdf .poster img {
+    width: 100%;
+    height: auto;
   }
 
   .sl__pdf figcaption {
     margin-top: 0.9rem;
     text-align: center;
-  }
-
-  .sl__pdf figcaption a,
-  .sl__pdf-frame a {
-    color: var(--amber);
-  }
-
-  .sl__more {
-    max-width: 58rem;
-    margin: clamp(2rem, 5vw, 3rem) auto 0;
-  }
-
-  .sl__more-title {
-    margin: 0 0 1rem;
-    font-size: var(--step--1);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
     color: var(--night-muted);
   }
 
-  .sl__more-list {
-    display: grid;
+  .sl__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .sl__more-list a {
-    display: grid;
-    gap: 0.25rem;
-    padding: 1.1rem 1.4rem;
-    border: 1px solid rgba(220, 239, 255, 0.25);
-    border-radius: 14px;
-    color: inherit;
-    text-decoration: none;
-    transition: border-color 0.25s, box-shadow 0.25s;
-  }
-
-  .sl__more-list a:hover,
-  .sl__more-list a:focus-visible {
-    border-color: #dcefff;
-    box-shadow: 0 0 18px rgba(90, 169, 255, 0.4);
-  }
-
-  .sl__more-list strong {
-    font-weight: 500;
-    font-size: var(--step-1);
-  }
-
-  .sl__more-list span {
-    color: var(--night-muted);
+    margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
   }
 
   .sl--devis {

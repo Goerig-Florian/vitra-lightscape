@@ -95,7 +95,7 @@ Le clip du booster (`public/reel/promo-tcg-wide-1280x720.mp4`, créé avec `/pro
 
 ## Influenceurs (dernière slide de la présentation)
 
-Les trois comptes (@onfaitquoi.maman, @lerichti, @girlinbasel), leurs villes, cibles et rôles viennent du dossier de communication de l'équipe (« Stratégie de communication », ligne éditoriale). Aucune photo de ces personnes n'est utilisée (monogrammes uniquement). Le rôle du compte @onfaitquoi.maman est reformulé à partir de sa cible (familles) : la ligne du PDF y répétait celle de @lerichti.
+Les trois comptes (@onfaitquoi.maman, @lerichti, @girlinbasel), leurs villes, cibles et rôles viennent du dossier de communication de l'équipe (« Stratégie de communication », ligne éditoriale). Ces trois comptes ne sont pas des partenaires : ce sont des **exemples de profils** à solliciter. Leurs photos de profil et leurs nombres d'abonnés viennent de captures de profils publics fournies par l'équipe (octobre 2026) ; à retirer ou à faire valider avant toute diffusion publique. Le rôle du compte @onfaitquoi.maman est reformulé à partir de sa cible (familles).
 
 ## Vidéo « Vitra by Night »
 
