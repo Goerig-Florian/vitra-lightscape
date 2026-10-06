@@ -14,6 +14,37 @@ import { url } from '../lib/url';
   </div>
 </section>
 
+<section class="sl sl--devis" id="devis" data-theme="night" aria-labelledby="sl-devis">
+  <div class="container sl__inner">
+    <p class="eyebrow">Devis stratégie de communication</p>
+    <h2 class="sl__title reveal" id="sl-devis">Devis 1 · Communication 360°.</h2>
+    <p class="sl__lead reveal">Conseil, création, déploiement et pilotage de la campagne Vitra Lightscape.</p>
+    <figure class="sl__pdf reveal">
+      <object class="sl__pdf-frame" data={url('devis/devis-1-communication-360.pdf') + '#view=FitH&navpanes=0'} type="application/pdf" aria-label="Devis 1 : Communication 360°, Deux Rives pour Vitra Lightscape">
+        <p>Votre navigateur n’affiche pas le PDF ici. <a href={url('devis/devis-1-communication-360.pdf')}>Ouvrir le devis 1 (PDF)</a></p>
+      </object>
+      <figcaption><a href={url('devis/devis-1-communication-360.pdf')} target="_blank" rel="noopener">Ouvrir le devis 1 dans un nouvel onglet <span aria-hidden="true">↗</span></a></figcaption>
+    </figure>
+    <div class="sl__more reveal">
+      <p class="sl__more-title">Les deux autres devis</p>
+      <ul class="sl__more-list">
+        <li>
+          <a href={url('devis/devis-2-achats-externes-merchandising.pdf')} target="_blank" rel="noopener">
+            <strong>Devis 2 · Achats externes et merchandising</strong>
+            <span>Média, fabrication, influence et merchandising (hors honoraires) <span aria-hidden="true">↗</span></span>
+          </a>
+        </li>
+        <li>
+          <a href={url('devis/devis-3-production-evenementielle.pdf')} target="_blank" rel="noopener">
+            <strong>Devis 3 · Production événementielle</strong>
+            <span>Enveloppe technique : mappings, projections, éclairages et installations <span aria-hidden="true">↗</span></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <section class="sl sl--video" id="video" data-theme="night" aria-labelledby="sl-video">
   <div class="container sl__inner">
     <p class="eyebrow">La vidéo</p>
@@ -27,6 +58,84 @@ import { url } from '../lib/url';
 </section>
 
 <style is:global>
+  .sl__pdf {
+    margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
+    max-width: 58rem;
+  }
+
+  .sl__pdf-frame {
+    display: block;
+    width: 100%;
+    aspect-ratio: 612 / 792;
+    max-height: 92vh;
+    min-height: 28rem;
+    border: 1px solid rgba(220, 239, 255, 0.22);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .sl__pdf figcaption {
+    margin-top: 0.9rem;
+    text-align: center;
+  }
+
+  .sl__pdf figcaption a,
+  .sl__pdf-frame a {
+    color: var(--amber);
+  }
+
+  .sl__more {
+    max-width: 58rem;
+    margin: clamp(2rem, 5vw, 3rem) auto 0;
+  }
+
+  .sl__more-title {
+    margin: 0 0 1rem;
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--night-muted);
+  }
+
+  .sl__more-list {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sl__more-list a {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.1rem 1.4rem;
+    border: 1px solid rgba(220, 239, 255, 0.25);
+    border-radius: 14px;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .sl__more-list a:hover,
+  .sl__more-list a:focus-visible {
+    border-color: #dcefff;
+    box-shadow: 0 0 18px rgba(90, 169, 255, 0.4);
+  }
+
+  .sl__more-list strong {
+    font-weight: 500;
+    font-size: var(--step-1);
+  }
+
+  .sl__more-list span {
+    color: var(--night-muted);
+  }
+
+  .sl--devis {
+    scroll-margin-top: 4rem;
+  }
+
   .sl__film {
     margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
   }

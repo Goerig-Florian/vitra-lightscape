@@ -100,3 +100,7 @@ Les trois comptes (@onfaitquoi.maman, @lerichti, @girlinbasel), leurs villes, ci
 ## Vidéo « Vitra by Night »
 
 `public/reel/vitra-by-night-960p.mp4` : version web (1280 x 960, 13,5 Mo) de la vidéo montée par l'équipe (original de 330 Mo conservé en local, non publié). Elle est présentée en fin de page de présentation, avec un lien « Vidéo » dans le header.
+
+## Devis (page de présentation et pied de page)
+
+`public/devis/` : les trois devis de l'agence Deux Rives pour Vitra Lightscape, émis le 06/10/2026 : DR-2026-001 (communication 360°, affiché dans la présentation), DR-2026-002 (achats externes et merchandising) et DR-2026-003 (production événementielle), ces deux derniers liés depuis la présentation et le pied de page. Documents de l'équipe, montants fictifs dans le cadre de l'exercice.

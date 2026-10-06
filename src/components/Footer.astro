@@ -20,6 +20,8 @@ const link = (href: string) => (home ? href : url(href));
         <ul class="site-footer__nav">
           {nav.map((n) => <li><a href={link(n.href)}>{n.label}</a></li>)}
           <li><a href={url('panier/')}>Panier</a></li>
+          <li><a href={url('devis/devis-2-achats-externes-merchandising.pdf')} target="_blank" rel="noopener">Devis 2 · Achats externes</a></li>
+          <li><a href={url('devis/devis-3-production-evenementielle.pdf')} target="_blank" rel="noopener">Devis 3 · Production événementielle</a></li>
         </ul>
       </nav>
     </div>
