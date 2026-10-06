@@ -1,5 +1,5 @@
 /**
- * Exporte le teaser du Reel en mp4 (1080 x 1920 et 720 x 1280, 30 i/s, 6 s) à partir de la page /reel/?clean.
+ * Exporte le teaser du Reel en mp4 (1080 x 1920 et 720 x 1280, 30 i/s) à partir de la page /reel/?clean.
  * La page est pilotée image par image (window.__reel.seek) : le rendu est exactement celui de la page.
  *
  * Prérequis : le site tourne (npm run dev, port 4321 par défaut), Chrome et ffmpeg installés.
@@ -18,7 +18,7 @@ const CHROME = [
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
 ].find(existsSync);
 const FPS = 30;
-const SECONDS = 6;
+let SECONDS = 6;
 const PORT = 9333;
 const out = join('public', 'reel');
 const frames = join(tmpdir(), 'vitra-reel-frames');
@@ -28,7 +28,9 @@ rmSync(frames, { recursive: true, force: true });
 mkdirSync(frames, { recursive: true });
 mkdirSync(out, { recursive: true });
 
-const chrome = spawn(CHROME, [`--remote-debugging-port=${PORT}`, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--force-device-scale-factor=1', `--user-data-dir=${join(tmpdir(), 'vitra-reel-profile')}`, 'about:blank'], { stdio: 'ignore' });
+// profil Chrome neuf à chaque lancement : jamais de CSS ou d'images périmés en cache
+const profil = join(tmpdir(), `vitra-profil-${Date.now()}`);
+const chrome = spawn(CHROME, [`--remote-debugging-port=${PORT}`, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--force-device-scale-factor=1', `--user-data-dir=${profil}`, 'about:blank'], { stdio: 'ignore' });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let tab;
@@ -69,7 +71,8 @@ for (let i = 0; i < 80; i++) {
   await sleep(250);
 }
 
-const total = FPS * SECONDS;
+SECONDS = (await send('Runtime.evaluate', { expression: 'window.__reel.duration', returnByValue: true })).result.value;
+const total = Math.round(FPS * SECONDS);
 for (let f = 0; f < total; f++) {
   await send('Runtime.evaluate', { expression: `window.__reel.seek(${f / FPS})` });
   const shot = await send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: 1080, height: 1920, scale: 1 } });
@@ -88,3 +91,4 @@ const encode = (size, name) => {
 encode(null, 'vitra-lightscape-teaser-1080x1920.mp4');
 encode('720:1280', 'vitra-lightscape-teaser-720x1280.mp4');
 rmSync(frames, { recursive: true, force: true });
+rmSync(profil, { recursive: true, force: true });

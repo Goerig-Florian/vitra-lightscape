@@ -11,12 +11,14 @@ import { url } from '../lib/url';
 
 const timings = [
   { t: '0:00', text: 'Presque silence, un souffle d’air très léger : fond blanc, logo Vitra noir fixe.' },
-  { t: '1:06 – 2:03', text: 'Le balayage blanc → noir : un whoosh grave et doux accompagne le bord qui traverse l’écran de gauche à droite, le logo s’inverse (noir → blanc).' },
+  { t: '1:06 – 2:03', text: 'Le trait de néon balaie l’écran : un whoosh grave et doux, avec un bourdonnement électrique fin (le néon), pendant que le fond et le logo s’inversent.' },
   { t: '2:03 – 2:18', text: 'Écran noir, logo blanc : une respiration, presque silence, une nappe grave très basse.' },
-  { t: '2:18 – 4:12', text: 'Whoosh brillant synchronisé avec la lumière qui découvre les filaments du mapping : entrée à 2:18, pic au centre du logo (3:12).' },
-  { t: '3:06 – 3:24', text: 'La barre puis « Lightscape » se dessinent derrière la lumière : un scintillement fin, très discret, qui s’accroche au passage.' },
-  { t: '4:12', text: 'Petit impact doux : le logo Vitra Lightscape est complet, le mapping couvre l’écran.' },
-  { t: '5:00 – 6:00', text: 'Le mapping se retire, la nappe retombe, queue de réverbération et léger fondu vers le noir.' },
+  { t: '2:18 – 4:12', text: 'Whoosh brillant synchronisé avec la lumière qui découvre le premier mapping. La barre et « Lightscape » se dessinent derrière elle (3:00 – 3:24) : scintillement fin, et le néon se rallume (petit « clic » électrique).' },
+  { t: '4:12', text: 'Petit impact doux : le logo Vitra Lightscape est complet, le premier mapping couvre l’écran.' },
+  { t: '5:18 – 7:00', text: 'Deuxième mapping (les ondes) : un whoosh plus aérien, notes très douces, comme des gouttes d’eau dans une salle.' },
+  { t: '8:06 – 9:12', text: 'Troisième mapping (les faisceaux) : un whoosh lumineux qui monte, brillance dans les aigus.' },
+  { t: '10:24 – 12:06', text: 'Quatrième mapping (la trame de points) : un whoosh rythmé, légers pulsations qui suivent l’ondulation.' },
+  { t: '12:18 – 14:00', text: 'Les mappings se retirent, la nappe retombe, le logo reste seul : queue de réverbération et léger fondu vers le noir.' },
 ];
 ---
 
@@ -55,13 +57,13 @@ const timings = [
 
       <aside class="reel__side" data-side>
         <label class="reel__scrub">Instant <output data-time>0:00</output>
-          <input type="range" min="0" max="6" step="0.01" value="0" data-scrub aria-label="Instant de la vidéo, en secondes" />
+          <input type="range" min="0" max="14" step="0.01" value="0" data-scrub aria-label="Instant de la vidéo, en secondes" />
         </label>
         <h2>Repères pour le son (Premiere)</h2>
         <ol class="reel__marks">
           {timings.map((m) => <li><b>{m.t}</b><span>{m.text}</span></li>)}
         </ol>
-        <p class="reel__note">Les temps sont en secondes : image, à 30 images par seconde (3:03 = 3,1 s). Durée totale 6 s.</p>
+        <p class="reel__note">Les temps sont en secondes : image, à 30 images par seconde (3:03 = 3,1 s ; 10:00 = 10 s). Durée totale 14 s.</p>
         <p class="reel__links">
           <a href={url('reel/vitra-lightscape-teaser-1080x1920.mp4')} download>Vidéo 1080 × 1920 (mp4)</a>
           <a href={url('reel/vitra-lightscape-teaser-720x1280.mp4')} download>Vidéo 720 × 1280 (mp4)</a>
@@ -71,7 +73,17 @@ const timings = [
 
     <script>
       // ----- chronologie (secondes) -----
-      const T = { still: 1.2, off: 2.1, mapStart: 2.6, mapEnd: 4.4, mapOut: 5.0, mapGone: 5.7, fadeStart: 5.7, end: 6 };
+      // 0 - 1,2 : « vitra. » noir sur blanc · 1,2 - 2,1 : un trait de néon balaie l'écran, le fond et le logo s'inversent
+      // 2,1 - 2,6 : noir · 2,6 - 4,4 : la lumière du mapping 1 dessine la barre et « Lightscape » (le néon s'y rallume)
+      // puis trois autres mappings, chacun découvert par une nouvelle lumière, puis le logo reste seul.
+      const T = { still: 1.2, off: 2.1, logo: 2.6, fadeStart: 13.7, end: 14 };
+      const SCENES = [
+        { start: 2.6, dur: 1.8 }, // filaments (bleu / orange)
+        { start: 5.6, dur: 1.4 }, // ondes
+        { start: 8.2, dur: 1.4 }, // faisceaux
+        { start: 10.8, dur: 1.4 }, // trame de points
+      ];
+      const MAP_OUT = [12.6, 13.4];
       const DURATION = T.end;
       const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
       const inOut = (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
@@ -85,9 +97,8 @@ const timings = [
       const stages = [...document.querySelectorAll<HTMLElement>('[data-rs]')];
       const wraps = [...document.querySelectorAll<HTMLElement>('[data-wrap]')];
 
-      // centrage : le « vitra. » seul est centré, puis le logo complet glisse au centre pendant la transformation
+      // le « vitra. » seul est centré (x 520, y 930) ; le logo complet s'en déduit et ne bouge plus
       const locks = stages.map((s) => s.querySelector<HTMLElement>('[data-rs-lock]')!);
-      let glide = { x: 0, y: 0 };
       const measure = () => {
         const svg = locks[0].querySelector('svg')!;
         const els = [...svg.querySelectorAll<SVGGraphicsElement>('path:not(.rs-ls), circle')];
@@ -96,48 +107,82 @@ const timings = [
           const b = el.getBBox();
           x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height);
         });
-        const k = 640 / 346;
-        glide = { x: (173 - (x0 + x1) / 2) * k, y: (69 - (y0 + y1) / 2) * k };
+        const k = 500 / 346;
+        stages.forEach((s) => {
+          s.style.setProperty('--lx', `${(520 - ((x0 + x1) / 2) * k).toFixed(1)}px`);
+          s.style.setProperty('--ly', `${(930 - ((y0 + y1) / 2) * k).toFixed(1)}px`);
+        });
+      };
+
+      const front = (t: number, sc: { start: number; dur: number }) => {
+        const u = clamp((t - sc.start) / sc.dur);
+        return { u, x: -380 + (0.5 - 0.5 * Math.cos(Math.PI * Math.pow(u, 0.92))) * 1880 };
       };
 
       const render = (t: number) => {
         t = clamp(t, 0, DURATION);
-        // 1) « vitra. » noir sur fond blanc ; 2) un balayage fait passer le fond au noir : le logo s'inverse (noir → blanc)
-        const wipe = inOut(clamp((t - T.still) / (T.off - T.still)));
-        const wx = -60 + wipe * (1080 + 120);
+        // 1) « vitra. » noir sur fond blanc ; 2) le néon balaie l'écran : le fond passe au noir, le logo s'inverse (noir → blanc)
+        const wp = clamp((t - T.still) / (T.off - T.still));
+        const wx = -60 + inOut(wp) * (1080 + 120);
+        const nw = wp > 0 && wp < 1 ? Math.pow(Math.sin(Math.PI * Math.min(1, wp * 1.05)), 0.5) : 0;
         const cd = t < T.off + 0.05 ? 1 : 0; // l'inversion cède la place au logo blanc une fois le fond tout noir (invisible)
-        // 3) la lumière du mapping traverse l'écran ; derrière elle naissent la barre et « Lightscape »
-        const u = clamp((t - T.mapStart) / (T.mapEnd - T.mapStart));
-        const move = 0.5 - 0.5 * Math.cos(Math.PI * Math.pow(u, 0.92));
-        const bx = -380 + move * (1500 + 380);
-        const bo = u > 0 && u < 1 ? Math.pow(Math.sin(Math.PI * u), 0.6) : 0;
-        const mo = clamp((t - T.mapStart) / 0.4) * (1 - sine((t - T.mapOut) / (T.mapGone - T.mapOut)));
-        // le logo se recentre en douceur pendant que la barre et « Lightscape » se dessinent
-        const g = inOut(clamp((t - T.mapStart - 0.25) / 1.3));
+        // 3) les mappings, un à un ; chacun est découvert par une lumière et remplace le précédent derrière son passage
+        const fr = SCENES.map((sc) => front(t, sc));
+        let bo = 0;
+        let bx = fr[0].x;
+        fr.forEach((f, i) => {
+          const e = f.u > 0 && f.u < 1 ? Math.pow(Math.sin(Math.PI * f.u), 0.6) : 0;
+          if (e > bo) {
+            bo = e;
+            bx = f.x;
+          }
+          if (i === fr.length - 1) bx = e > 0 ? bx : fr[i].x;
+        });
+        const mo = clamp((t - SCENES[0].start) / 0.4) * (1 - sine((t - MAP_OUT[0]) / (MAP_OUT[1] - MAP_OUT[0])));
+        // le néon de la barre s'allume quand la lumière la dessine, puis reste en veille
+        const draw = clamp((t - 3.0) / 1.0);
+        const ng = t < SCENES[0].start ? 0 : 0.25 + 0.75 * Math.sin(Math.PI * clamp((t - 3.0) / 1.5)) ** 2;
         const fd = sine((t - T.fadeStart) / (T.end - T.fadeStart)) * 0.9;
+        void draw;
         stages.forEach((s) => {
           const set = (k: string, v: string) => s.style.setProperty(k, v);
           set('--wx', `${wx.toFixed(1)}px`);
+          set('--nw', nw.toFixed(4));
           set('--cd', String(cd));
           set('--cw', String(1 - cd));
-          set('--gx', `${((1 - g) * glide.x).toFixed(2)}px`);
-          set('--gy', `${((1 - g) * glide.y).toFixed(2)}px`);
+          set('--lf', `${fr[0].x.toFixed(1)}px`);
+          set('--ng', ng.toFixed(4));
           set('--bx', `${bx.toFixed(1)}px`);
           set('--bo', bo.toFixed(4));
           set('--mo', mo.toFixed(4));
-          // le mapping coule : deux couches de filaments qui dérivent lentement en sens contraire
+          fr.forEach((f, i) => {
+            set(`--in${i}`, `${f.x.toFixed(1)}px`);
+            set(`--out${i}`, i + 1 < fr.length ? `${fr[i + 1].x.toFixed(1)}px` : '-3000px');
+          });
+          // chaque mapping coule : dérive lente, légère rotation ou respiration
           set('--ax', `${(70 * Math.sin(t * 0.9)).toFixed(1)}px`);
           set('--ay', `${(90 * Math.sin(t * 1.1 + 1)).toFixed(1)}px`);
           set('--bxp', `${(-80 * Math.cos(t * 0.8 + 2)).toFixed(1)}px`);
           set('--byp', `${(-70 * Math.sin(t * 1.3 + 4)).toFixed(1)}px`);
           set('--sc', (1 + 0.025 * Math.sin(t * 1.2)).toFixed(4));
+          set('--cx', `${(40 * Math.sin(t * 0.7)).toFixed(1)}px`);
+          set('--cy', `${(60 * Math.cos(t * 0.6)).toFixed(1)}px`);
+          set('--cs', (1.04 + 0.05 * Math.sin(t * 1.5)).toFixed(4));
+          set('--cr', `${(2.2 * Math.sin(t * 0.5)).toFixed(2)}deg`);
+          set('--dx', `${(50 * Math.cos(t * 0.8)).toFixed(1)}px`);
+          set('--dy', `${(40 * Math.sin(t * 0.7)).toFixed(1)}px`);
+          set('--ds', (1.03 + 0.03 * Math.sin(t * 1.1)).toFixed(4));
+          set('--dr', `${(4 * Math.sin(t * 0.45 + 1)).toFixed(2)}deg`);
+          set('--ex', `${(70 * Math.sin(t * 0.8)).toFixed(1)}px`);
+          set('--ey', `${(-95 * Math.sin(t * 0.55 + 2)).toFixed(1)}px`);
+          set('--es', (1.04 + 0.03 * Math.sin(t * 1.3)).toFixed(4));
           set('--fd', fd.toFixed(4));
         });
         const time = document.querySelector<HTMLElement>('[data-time]');
         const scrub = document.querySelector<HTMLInputElement>('[data-scrub]');
         const sec = Math.floor(t);
-        const fr = Math.floor((t - sec) * 30);
-        if (time) time.textContent = `${sec}:${String(fr).padStart(2, '0')}`;
+        const img = Math.floor((t - sec) * 30);
+        if (time) time.textContent = `${sec}:${String(img).padStart(2, '0')}`;
         if (scrub && document.activeElement !== scrub) scrub.value = String(t);
       };
 
@@ -220,7 +265,7 @@ const timings = [
       const ready = (async () => {
         await document.fonts?.ready;
         await Promise.all(
-          ['--mapa', '--mapb'].map((v) => {
+          ['--mapa', '--mapb', '--mapc', '--mapd', '--mape'].map((v) => {
             const img = new Image();
             img.src = getComputedStyle(stages[0]).getPropertyValue(v).trim().replace(/^url\(["']?|["']?\)$/g, '');
             return img.decode().catch(() => undefined);

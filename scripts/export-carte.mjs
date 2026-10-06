@@ -19,7 +19,9 @@ if (!CHROME) throw new Error('Chrome ou Edge introuvable');
 rmSync(frames, { recursive: true, force: true });
 mkdirSync(frames, { recursive: true });
 
-const chrome = spawn(CHROME, ['--remote-debugging-port=9555', '--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', `--user-data-dir=${join(tmpdir(), 'vitra-carte-profile')}`, 'about:blank'], { stdio: 'ignore' });
+// profil Chrome neuf à chaque lancement : jamais de CSS ou d'images périmés en cache
+const profil = join(tmpdir(), `vitra-profil-${Date.now()}`);
+const chrome = spawn(CHROME, ['--remote-debugging-port=9555', '--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', `--user-data-dir=${profil}`, 'about:blank'], { stdio: 'ignore' });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let tab;
 for (let i = 0; i < 40 && !tab; i++) {
@@ -59,3 +61,4 @@ const encode = (size, name) => {
 encode(null, 'carte-rotation-1080x1920.mp4');
 encode('720:1280', 'carte-rotation-720x1280.mp4');
 rmSync(frames, { recursive: true, force: true });
+rmSync(profil, { recursive: true, force: true });

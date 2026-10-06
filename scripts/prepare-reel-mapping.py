@@ -3,7 +3,10 @@ Génère le mapping d'arrière-plan du Reel : des milliers de filaments lumineux
 Aucune image externe : tout est calculé ici (graine fixe, résultat identique à chaque exécution).
   - mapping-fin-a.webp : filaments bleus, cyan et violets
   - mapping-fin-b.webp : filaments orange, ambre et dorés
-Les deux couches dérivent en sens contraire dans la page /reel/ et se mélangent en « écran ».
+  - mapping-ondes.webp : des anneaux très fins qui se croisent (violet, bleu, rose)
+  - mapping-faisceaux.webp : des faisceaux lumineux qui rayonnent depuis trois foyers (blanc, doré, bleu)
+  - mapping-trame.webp : une trame de points qui ondule (cyan, magenta, orange)
+Les deux premières couches dérivent en sens contraire dans la page /reel/ et se mélangent en « écran » ; les trois autres viennent ensuite.
 Sortie : public/reel/. Usage : python scripts/prepare-reel-mapping.py
 """
 from pathlib import Path
@@ -83,10 +86,86 @@ def texture(seed, stops, lignes, longueur):
     return Image.fromarray(res)
 
 
+def pal(stops, t):
+    """Palette vectorisée : t est un tableau entre 0 et 1."""
+    stops = np.asarray(stops, dtype=np.float32)
+    x = np.clip(t, 0, 1) * (len(stops) - 1)
+    i = np.minimum(x.astype(int), len(stops) - 2)
+    f = (x - i)[..., None]
+    return stops[i] * (1 - f) + stops[i + 1] * f
+
+
+def grille():
+    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
+    return x, y
+
+
+def ondes(seed=5):
+    rng = np.random.default_rng(seed)
+    x, y = grille()
+    acc = np.zeros((H, W, 3), np.float32)
+    for i in range(5):
+        cx, cy = rng.uniform(0, W), rng.uniform(0, H)
+        lam = rng.uniform(30, 46)
+        r = np.hypot(x - cx, y - cy)
+        ring = (0.5 + 0.5 * np.cos(2 * np.pi * r / lam + rng.uniform(0, 6))) ** 26
+        fall = np.exp(-r / rng.uniform(500, 900))
+        t = 0.5 + 0.5 * np.sin(x * 0.0021 + y * 0.0016 + i * 1.3)
+        acc += (ring * fall)[..., None] * pal(VIOLET, t)
+    acc = np.clip(acc * 1.5, 0, 255)
+    img = Image.fromarray(acc.astype(np.uint8))
+    lueur = np.asarray(img.filter(ImageFilter.GaussianBlur(3))).astype(np.float32)
+    return Image.fromarray(np.clip(acc * 1.1 + lueur * 0.8, 0, 255).astype(np.uint8))
+
+
+def faisceaux(seed=11):
+    rng = np.random.default_rng(seed)
+    x, y = grille()
+    acc = np.zeros((H, W, 3), np.float32)
+    foyers = [(W * 0.3, H * 0.28), (W * 0.72, H * 0.5), (W * 0.35, H * 0.78)]
+    for i, (cx, cy) in enumerate(foyers):
+        dx, dy = x - cx, y - cy
+        r = np.hypot(dx, dy) + 1
+        th = np.arctan2(dy, dx)
+        bruit = 1.4 * np.sin(r * 0.004 + i) + 0.7 * np.sin(th * 3 + i)
+        gros = (0.5 + 0.5 * np.cos(64 * th + bruit)) ** 60
+        fin = (0.5 + 0.5 * np.cos(190 * th + 1.7 * bruit + 2)) ** 90 * 0.7
+        fall = 1.0 / (1.0 + (r / 420.0) ** 1.4)
+        t = np.clip(0.15 + r / 1500.0 + 0.2 * np.sin(th * 2), 0, 1)
+        acc += ((gros + fin) * fall)[..., None] * pal(BLANC, t)
+        acc += (np.exp(-r / 22.0) * 2.0)[..., None] * np.array([255, 245, 220], np.float32)
+    acc = np.clip(acc * 1.3, 0, 255)
+    img = Image.fromarray(acc.astype(np.uint8))
+    lueur = np.asarray(img.filter(ImageFilter.GaussianBlur(3))).astype(np.float32)
+    return Image.fromarray(np.clip(acc + lueur * 0.8, 0, 255).astype(np.uint8))
+
+
+def trame(pas=24.0):
+    x, y = grille()
+    fx = (x % pas) - pas / 2
+    fy = (y % pas) - pas / 2
+    d = np.hypot(fx, fy)
+    champ_ = 0.5 + 0.5 * np.sin(x * 0.0105 + y * 0.0068 + 2.2 * np.sin(y * 0.0042) + 1.6 * np.sin(x * 0.0031))
+    rayon = 0.8 + 9.0 * champ_ ** 1.6
+    pts = np.clip((rayon + 0.9 - d) / 1.8, 0, 1)
+    t = 0.5 + 0.5 * np.sin(x * 0.0017 - y * 0.0011 + 4.0 * champ_)
+    col = pal(TRAME, t)
+    acc = (pts * (0.35 + 0.65 * champ_))[..., None] * col
+    img = Image.fromarray(np.clip(acc, 0, 255).astype(np.uint8))
+    lueur = np.asarray(img.filter(ImageFilter.GaussianBlur(4))).astype(np.float32)
+    return Image.fromarray(np.clip(acc * 1.05 + lueur * 0.7, 0, 255).astype(np.uint8))
+
+
 BLEU = [(20, 50, 255), (40, 130, 255), (70, 210, 255), (130, 100, 255), (60, 170, 255)]
 ORANGE = [(255, 95, 20), (255, 150, 40), (255, 205, 80), (255, 70, 110), (255, 175, 60)]
+VIOLET = [(110, 60, 255), (190, 70, 255), (70, 150, 255), (255, 80, 190), (90, 200, 255)]
+BLANC = [(255, 255, 255), (255, 225, 160), (160, 195, 255)]
+TRAME = [(60, 220, 255), (90, 120, 255), (255, 80, 200), (255, 150, 50), (60, 220, 255)]
 
 if __name__ == "__main__":
     texture(7, BLEU, 1500, 300).save(OUT / "mapping-fin-a.webp", quality=88, method=6)
     texture(23, ORANGE, 1300, 300).save(OUT / "mapping-fin-b.webp", quality=88, method=6)
+    ondes().save(OUT / "mapping-ondes.webp", quality=88, method=6)
+    faisceaux().save(OUT / "mapping-faisceaux.webp", quality=88, method=6)
+    trame().save(OUT / "mapping-trame.webp", quality=88, method=6)
     print("ok")

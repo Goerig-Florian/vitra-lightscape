@@ -63,9 +63,9 @@ Les courtes notes sur l'architecture des 10 bâtiments (page de présentation, `
 ## Reel teaser (page interne /reel/)
 
 - Logos : le SVG original du projet (`src/assets/logo/vitra-lightscape.svg`), sans aucune modification des tracés. Le « vitra. » seul sert de logo classique ; la barre et « Lightscape » s'y ajoutent.
-- Mapping : `public/reel/mapping-fin-a.webp` et `mapping-fin-b.webp`, **générés en code** (`scripts/prepare-reel-mapping.py`, graine fixe) : des milliers de filaments lumineux très fins qui suivent un champ de courants, aucune image externe. Deux couches dérivent en sens contraire derrière le logo ; une lumière qui traverse l'écran les découvre et dessine la barre et « Lightscape ».
+- Mapping : cinq textures **générées en code** (`scripts/prepare-reel-mapping.py`, graine fixe, aucune image externe) dans `public/reel/` : des filaments très fins (bleus et orange), des anneaux qui se croisent (violet), des faisceaux qui rayonnent (blanc, doré) et une trame de points qui ondule (cyan, magenta, orange). Quatre mappings se relaient derrière le logo, chacun découvert par une lumière qui traverse l'écran ; le premier dessine la barre et « Lightscape ».
 - Mockup Instagram : interface dessinée en code, compte @vitra de démonstration, **chiffres (mentions J'aime, commentaires, partages) fictifs**. Mockup destiné à la présentation de l'appel d'offres, pas à une publication. L'avatar est composé avec le logo « vitra. » du projet (pas d'avatar officiel dans le dépôt).
-- Export : `node scripts/export-reel.mjs` produit les deux mp4 (1080 x 1920 et 720 x 1280, 30 i/s, 6 s) dans `public/reel/`.
+- Export : `node scripts/export-reel.mjs` produit les deux mp4 (1080 x 1920 et 720 x 1280, 30 i/s, 14 s) dans `public/reel/`.
 - Cadres de téléphone (Instagram et TikTok) : dessinés en code, d'après le style d'un Samsung Galaxy S26 (cadre plat, poinçon central, boutons latéraux). Ce sont des **illustrations inspirées**, pas des visuels officiels Samsung, Instagram ou TikTok. Aucun logo de ces marques n'est utilisé.
 
 ## Affiches (page de présentation)
