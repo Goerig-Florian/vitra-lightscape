@@ -180,30 +180,40 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
 
       type Etat = { x: number; y: number; s: number; rot: number; op: number; blur: number; rx: number; ry: number; m: number; f: number; z: number };
 
-      function carteA(t: number): Etat {
+      // Les trois cartes sortent ensemble, en éventail, et restent dans le cadre. Les deux cartes latérales se retournent à leur place
+      // (on voit leur face), puis glissent DERRIÈRE la carte du centre et s'effacent pendant que le booster tombe.
+      function lateral(t: number, side: -1 | 1, t0: number, flipAt: number, z: number): Etat {
         const p = pack(t);
-        const base = packPoint(p, 540, 1060);
-        const rise = outC(clamp((t - 1.75) / 0.45));
-        const slide = inOut(clamp((t - 2.2) / 0.5));
-        return { x: base.x - 1000 * slide, y: base.y - 380 * rise - 140 * slide, s: p.s * (1 - 0.04 * slide), rot: -13 * slide + p.rot, op: 1, blur: 5 * Math.sin(Math.PI * clamp((t - 2.2) / 0.5)), rx: 0, ry: 180 * (1 - sm(t, 2.2, 2.62)) + 10 * slide, m: 0.15, f: Math.max(0.15 * slide, 0.14 * Math.sin(Math.PI * clamp((t - 2.2) / 0.42))), z: 7 };
+        const b = packPoint(p, 540, 1060);
+        const rise = outC(clamp((t - t0) / 0.6));
+        const ouvre = sm(t, t0 + 0.45, t0 + 1.1);
+        let x = b.x + side * 112 * ouvre;
+        let y = b.y - 430 * rise + 8 * ouvre;
+        let rot = side * 8 * ouvre + p.rot;
+        let s2 = p.s;
+        const retourne = sm(t, flipAt, flipAt + 0.45);
+        const ry = 180 * (1 - retourne) - side * 6 * ouvre;
+        const c = carteC(t);
+        const u = sm(t, 3.15, 3.75);
+        x = lerp(x, c.x - side * 18, u);
+        y = lerp(y, c.y + 14, u);
+        rot = lerp(rot, 0, u);
+        s2 = lerp(s2, c.s * 0.94, u);
+        const op = 1 - sm(t, 3.7, 4.25);
+        return { x, y, s: s2, rot, op, blur: 0, rx: 0, ry, m: 0.15, f: 0.14 * Math.sin(Math.PI * clamp((t - flipAt) / 0.45)), z };
       }
-      function carteB(t: number): Etat {
-        const p = pack(t);
-        const base = packPoint(p, 540, 1060);
-        const rise = outC(clamp((t - 2.05) / 0.4));
-        const slide = inOut(clamp((t - 2.5) / 0.5));
-        return { x: base.x + 1000 * slide, y: base.y - 380 * rise - 140 * slide, s: p.s * (1 - 0.04 * slide), rot: 13 * slide + p.rot, op: 1, blur: 5 * Math.sin(Math.PI * clamp((t - 2.5) / 0.5)), rx: 0, ry: 180 * (1 - sm(t, 2.5, 2.92)) - 10 * slide, m: 0.15, f: Math.max(0.15 * slide, 0.14 * Math.sin(Math.PI * clamp((t - 2.5) / 0.42))), z: 6 };
-      }
+      const carteA = (t: number) => lateral(t, -1, 1.75, 2.5, 5);
+      const carteB = (t: number) => lateral(t, 1, 1.85, 2.72, 6);
       function carteC(t: number): Etat {
         const p = pack(t);
         const base = packPoint(p, 540, 1060);
-        const rise = outC(clamp((t - 2.7) / 0.5));
-        const sans = { x: base.x, y: base.y - 360 * rise };
+        const rise = outC(clamp((t - 1.95) / 0.6));
+        const sans = { x: base.x, y: base.y - 470 * rise };
         let x = sans.x;
         let y = sans.y;
         let s = p.s;
         let rot = p.rot;
-        let z = 5;
+        let z = 7;
         let m = 0;
         let f = 0.1 * sm(t, 3.0, 3.4) * (1 - sm(t, 3.8, 4.4));
         let rx = 0;
@@ -211,15 +221,15 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
         // au repos (3,2 - 3,75) : le booster tombe derrière ; micro-pause. Puis la carte vient au centre, plus grande.
         const pMid = pack(3.2);
         const b3 = packPoint(pMid, 540, 1060);
-        const reste = { x: b3.x, y: b3.y - 360 };
+        const reste = { x: b3.x, y: b3.y - 470 };
         if (t >= 3.2) {
           x = reste.x;
           y = reste.y;
           s = pMid.s;
-          rot = pMid.rot * (1 - sm(t, 3.2, 3.75));
+          rot = pMid.rot * (1 - sm(t, 3.2, 3.7));
         }
-        const centre = inOut(clamp((t - 3.75) / 0.75));
-        if (t >= 3.75) {
+        const centre = inOut(clamp((t - 3.7) / 0.8));
+        if (t >= 3.7) {
           x = lerp(reste.x, 540, centre);
           y = lerp(reste.y, 960, centre);
           s = lerp(pMid.s, 1.36, centre);
@@ -229,9 +239,9 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
         const w = clamp((t - 4.3) / 1.6);
         const env = Math.sin(Math.PI * w) ** 0.6;
         // la carte attend de dos (micro-pause), puis se retourne en venant au centre : l'emblème devient le bâtiment
-        const flip = sm(t, 3.8, 4.45);
+        const flip = sm(t, 3.7, 4.4);
         ry = 180 * (1 - flip) + 26 * Math.sin(2 * Math.PI * w) * (t >= 4.3 && t <= 5.9 ? 1 : 0);
-        f = Math.max(f, 0.16 * Math.sin(Math.PI * clamp((t - 3.8) / 0.65)));
+        f = Math.max(f, 0.16 * Math.sin(Math.PI * clamp((t - 3.7) / 0.7)));
         rx = 6 * Math.sin(2 * Math.PI * w + 1.2) * (t >= 4.3 && t <= 5.9 ? 1 : 0);
         m = sm(t, 4.6, 5.4);
         f = Math.max(f, 0.2 * env);
@@ -309,7 +319,7 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
         setCard(cA, carteA(t), t);
         setCard(cB, carteB(t), t);
         setCard(cC, carteC(t), t);
-        for (const c of [cA, cB]) c.el.style.display = t > 3.2 ? 'none' : '';
+        for (const c of [cA, cB]) c.el.style.display = t > 4.3 ? 'none' : '';
 
         // ---- halo derrière la carte collector
         const hv = sm(t, 3.9, 4.6) * (1 - sm(t, 5.6, 6.5));
