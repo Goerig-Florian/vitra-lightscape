@@ -41,6 +41,8 @@ const timings = [
       <div class="reel__tools">
         <button type="button" data-replay>Rejouer</button>
         <label><input type="checkbox" data-loop checked /> Boucle</label>
+        <button type="button" data-sound-toggle aria-pressed="false">Son : coupé</button>
+        <audio data-audio preload="auto" src={url('reel/teaser-14s-musique.mp3')}></audio>
       </div>
     </header>
 
@@ -67,6 +69,8 @@ const timings = [
         <p class="reel__links">
           <a href={url('reel/teaser-14s-1080x1920.mp4')} download>Vidéo 1080 × 1920 (mp4)</a>
           <a href={url('reel/teaser-14s-720x1280.mp4')} download>Vidéo 720 × 1280 (mp4)</a>
+          <a href={url('reel/teaser-14s-son-720x1280.mp4')} download>Vidéo 720 × 1280 avec la musique (mp4)</a>
+          <a href={url('reel/teaser-14s-musique.mp3')} download>Musique seule (mp3, 14 s)</a>
         </p>
       </aside>
     </main>
@@ -219,14 +223,25 @@ const timings = [
       let playing = false;
       let raf = 0;
       let at = 0;
+      // la musique (14 s) suit l'animation : elle démarre et redémarre avec elle, et se tait quand on déplace le curseur
+      const audio = document.querySelector<HTMLAudioElement>('[data-audio]')!;
+      const soundBtn = document.querySelector<HTMLButtonElement>('[data-sound-toggle]')!;
+      let soundOn = false;
+      const syncAudio = (from: number) => {
+        if (!soundOn || clean) return;
+        audio.currentTime = Math.min(from, DURATION - 0.05);
+        audio.play().catch(() => undefined);
+      };
       const frame = (now: number) => {
         at = (now - t0) / 1000;
         if (at >= DURATION + 1.2) {
           if (loop.checked && !clean) {
             t0 = now;
             at = 0;
+            syncAudio(0);
           } else {
             playing = false;
+            audio.pause();
             render(DURATION);
             return;
           }
@@ -238,13 +253,23 @@ const timings = [
         cancelAnimationFrame(raf);
         playing = true;
         t0 = performance.now() - from * 1000;
+        audio.pause();
+        syncAudio(from);
         raf = requestAnimationFrame(frame);
       };
       const seek = (t: number) => {
         cancelAnimationFrame(raf);
         playing = false;
+        audio.pause();
         render(t);
       };
+      soundBtn.addEventListener('click', () => {
+        soundOn = !soundOn;
+        soundBtn.setAttribute('aria-pressed', String(soundOn));
+        soundBtn.textContent = soundOn ? 'Son : activé' : 'Son : coupé';
+        if (soundOn && playing) syncAudio(Math.min(at, DURATION));
+        else audio.pause();
+      });
 
       // ----- vues -----
       const panels = [...document.querySelectorAll<HTMLElement>('[data-panel]')];

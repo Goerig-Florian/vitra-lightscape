@@ -68,9 +68,15 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
                       <div class="reels-row__open" role="button" tabindex="0" data-open-phone={n} aria-label={`${r.label} : afficher le mockup en plein écran`}>
                       <ReelPhone platform={r.platform} caption={r.video ? undefined : ['Légende à venir']} tags={r.video ? undefined : ''} likes={r.video ? undefined : '—'} comments={r.video ? undefined : '—'} shares={r.video ? undefined : '—'}>
                         {r.video ? (
-                          <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} aria-label="Teaser Vitra Lightscape : le logo Vitra s’éteint, le logo Vitra Lightscape apparaît et une lumière y révèle un mapping.">
-                            <source src={url(r.video)} type="video/mp4" />
-                          </video>
+                          <>
+                            <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} aria-label="Teaser Vitra Lightscape : le logo Vitra s’éteint, le logo Vitra Lightscape apparaît et une lumière y révèle un mapping.">
+                              <source src={url(r.video)} type="video/mp4" />
+                            </video>
+                            <button type="button" class="reel-sound" data-sound aria-pressed="false" aria-label="Activer le son du teaser">
+                              <svg class="reel-sound__off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.6L12 6v12l-4.4-3.5H4Z" fill="currentColor" /><path d="m16 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                              <svg class="reel-sound__on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.6L12 6v12l-4.4-3.5H4Z" fill="currentColor" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                            </button>
+                          </>
                         ) : (
                           <div class="phone__ph">
                             <span>{r.label}</span>
@@ -185,6 +191,19 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
       const stage = pbox.querySelector<HTMLElement>('[data-phonebox-stage]')!;
       const pcap = pbox.querySelector<HTMLElement>('[data-phonebox-cap]')!;
       let cur = 0;
+      // bouton haut-parleur : le son est coupé par défaut (les navigateurs interdisent le son automatique)
+      const setSoundButton = (b: Element | null, on: boolean) => {
+        if (!b) return;
+        b.setAttribute('aria-pressed', String(on));
+        b.setAttribute('aria-label', on ? 'Couper le son du teaser' : 'Activer le son du teaser');
+      };
+      const toggleSound = (b: Element) => {
+        const v = b.closest('.phone')?.querySelector('video');
+        if (!v) return;
+        v.muted = !v.muted;
+        setSoundButton(b, !v.muted);
+        if (!v.muted && v.paused) v.play().catch(() => undefined);
+      };
       const showPhone = (n: number) => {
         cur = (n + opens.length) % opens.length;
         const src = opens[cur].querySelector<HTMLElement>('.phone')!;
@@ -193,7 +212,9 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
         stage.replaceChildren(copy);
         const v = copy.querySelector('video');
         if (v) {
-          v.muted = true; // une copie ne garde pas l'état « muet » : sans lui, le navigateur refuse de lancer la lecture
+          // une copie ne garde pas l'état « muet » : on reprend celui de la vidéo d'origine (le clic sur le téléphone autorise le son)
+          v.muted = src.querySelector('video')?.muted ?? true;
+          setSoundButton(copy.querySelector('.reel-sound'), !v.muted);
           v.removeAttribute('poster');
           v.currentTime = 0;
           v.play().catch(() => undefined);
@@ -205,8 +226,13 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
           showPhone(n);
           pbox.showModal();
         };
-        o.addEventListener('click', go);
+        o.addEventListener('click', (e) => {
+          const b = (e.target as HTMLElement).closest('.reel-sound');
+          if (b) toggleSound(b);
+          else go();
+        });
         o.addEventListener('keydown', (e) => {
+          if ((e.target as HTMLElement).closest('.reel-sound')) return; // Entrée sur le haut-parleur : c'est lui qui réagit
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             go();
@@ -227,7 +253,9 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
       pbox.querySelector('[data-phonebox-prev]')!.addEventListener('click', () => showPhone(cur - 1));
       pbox.querySelector('[data-phonebox-next]')!.addEventListener('click', () => showPhone(cur + 1));
       pbox.addEventListener('click', (e) => {
-        if (e.target === pbox || e.target === stage) closeBox();
+        const b = (e.target as HTMLElement).closest('.reel-sound');
+        if (b) toggleSound(b);
+        else if (e.target === pbox || e.target === stage) closeBox();
       });
       pbox.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') showPhone(cur + 1);

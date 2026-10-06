@@ -4716,3 +4716,70 @@
     transition: none;
   }
 }
+
+/* bouton haut-parleur du teaser (dans le téléphone) : le son est coupé par défaut */
+.reel-sound {
+  position: absolute;
+  z-index: 7;
+  top: 16.5%;
+  right: 4%;
+  display: grid;
+  place-items: center;
+  width: 10cqw;
+  height: 10cqw;
+  min-width: 26px;
+  min-height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reel-sound svg {
+  grid-area: 1 / 1;
+  width: 66%;
+  height: 66%;
+}
+
+.reel-sound[aria-pressed='false'] .reel-sound__on,
+.reel-sound[aria-pressed='true'] .reel-sound__off {
+  display: none;
+}
+
+/* tant que le son est coupé, un anneau discret invite à l'activer */
+.reel-sound[aria-pressed='false']::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  animation: sound-ring 2.4s ease-out infinite;
+}
+
+@keyframes sound-ring {
+  from {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.reel-sound:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-sound[aria-pressed='false']::after {
+    animation: none;
+    opacity: 0.6;
+  }
+}

@@ -72,3 +72,4 @@ Les courtes notes sur l'architecture des 10 bâtiments (page de présentation, `
 
 Les trois affiches « Juste ressentir / partager / explorer » (`public/presentation/affiche-*.webp`, 905 x 1280) ont été réalisées par l'équipe. Elles utilisent le logo Vitra Lightscape et la police Futura du projet.
 Les trois mises en situation (abribus, tramway, couloir de gare, `public/presentation/situation-*.webp`) sont des visuels de présentation fournis par l'équipe : des maquettes d'affichage, pas des installations existantes.
+- Musique du teaser (`public/reel/teaser-14s-musique.mp3`, `teaser-14s-son-720x1280.mp4`) : **composée et synthétisée en code** (`scripts/make-musique.py`), sans échantillon ni morceau existant, donc libre de droits. Elle suit la chronologie de la vidéo (nappe grave, néon, whooshes, impact, notes cristallines).
