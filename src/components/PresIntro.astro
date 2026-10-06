@@ -1,26 +1,28 @@
 ---
 /**
- * Tout début de la présentation : le logo Deux Rives (l'agence) à côté du logo Vitra, sur un panneau papier clair
- * (le logo Deux Rives est dessiné pour un fond clair : un de ses tracés est brun très sombre).
- * Animation d'entrée : les deux logos glissent l'un vers l'autre, un filet de lumière se trace entre eux, puis un trait de néon fait le tour du panneau.
+ * Tout début de la présentation : le logo Deux Rives (l'agence), le « vitra. » et le logo Vitra Lightscape du site, séparés par des traits de néon
+ * identiques à ceux du site (cœur blanc, lueur bleue). Deux Rives est dessiné pour un fond clair : il repose sur une petite pastille papier.
+ * Animation d'entrée : les logos glissent vers le centre, les traits de néon se tracent entre eux.
  * Le « vitra. » est le même SVG que le reste du site (sans la barre ni « Lightscape »).
  */
 import deuxRives from '../assets/logo/deux-rives.svg?raw';
 import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
 
 const rives = deuxRives.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const full = logoSvg.replace('<svg', '<svg aria-hidden="true" focusable="false"');
 const vitra = logoSvg
   .replace('<svg', '<svg aria-hidden="true" focusable="false"')
   .replace('<path ', '<path class="rs-ls" ')
   .replace('<rect ', '<rect class="rs-ls" ');
 ---
 
-<header class="pi" aria-label="Deux Rives pour Vitra" data-intro>
+<header class="pi" aria-label="Deux Rives pour Vitra Lightscape" data-intro>
   <div class="pi__panel">
-    <span class="pi__neon" aria-hidden="true"></span>
-    <div class="pi__logo pi__logo--rives" set:html={rives} />
+    <div class="pi__logo pi__logo--rives"><span class="pi__tile" set:html={rives} /></div>
     <span class="pi__rule" aria-hidden="true"></span>
     <div class="pi__logo pi__logo--vitra" set:html={vitra} />
+    <span class="pi__rule" aria-hidden="true"></span>
+    <div class="pi__logo pi__logo--ls" set:html={full} />
   </div>
   <p class="pi__caption"><span class="sr-only">Deux Rives pour </span>Une proposition de communication pour le Vitra Campus</p>
 </header>
@@ -53,66 +55,72 @@ const vitra = logoSvg
   }
 
   .pi__panel {
-    position: relative;
-    isolation: isolate;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(1.25rem, 5vw, 3.5rem);
-    width: min(100%, 52rem);
-    padding: clamp(1.5rem, 4vw, 2.6rem) clamp(1.5rem, 5vw, 3.5rem);
-    border-radius: 18px;
-    background: #f5efe6;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    gap: clamp(1rem, 3.5vw, 2.5rem);
+    width: min(100%, 64rem);
+    padding: clamp(1.5rem, 4vw, 2.6rem) clamp(1rem, 4vw, 3rem);
   }
 
   .pi__logo {
     flex: 1 1 0;
     display: grid;
     align-items: center;
+    justify-items: center;
+    min-width: 0;
   }
 
   .pi__logo svg {
     display: block;
     width: 100%;
     height: auto;
-    max-height: 9.5rem;
+    max-height: 8rem;
   }
 
-  /* « vitra. » seul, en noir (le panneau est clair) */
+  .pi__tile {
+    display: block;
+    width: min(100%, 11rem);
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    background: #f5efe6;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .pi__tile svg {
+    max-height: 7rem;
+  }
+
+  /* « vitra. » seul, blanc */
   .pi__logo--vitra {
-    color: #141414;
+    color: #fff;
+  }
+
+  .pi__logo--vitra svg {
+    max-width: 10rem;
   }
 
   .pi__logo--vitra .rs-ls {
     display: none;
   }
 
-  .pi__logo--rives {
-    justify-items: end;
+  .pi__logo--ls {
+    color: #fff;
   }
 
-  .pi__logo--vitra {
-    justify-items: start;
+  .pi__logo--ls svg {
+    max-width: 14rem;
   }
 
+  /* trait de néon, identique au fil lumineux du site : cœur blanc, lueur bleue */
   .pi__rule {
     flex: none;
     align-self: stretch;
-    width: 2px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, transparent, #141414 20%, #141414 80%, transparent);
-  }
-
-  /* néon : un filet bleu qui fait le tour du panneau, comme le fil lumineux du site */
-  .pi__neon {
-    position: absolute;
-    inset: -2px;
-    z-index: -1;
-    border-radius: 20px;
-    opacity: 0;
-    background: conic-gradient(from var(--pi-a, 0deg), transparent 0 60%, #5aa9ff 80%, #dcefff 88%, transparent 100%);
-    filter: blur(0.4px);
+    width: 3px;
+    min-height: 5rem;
+    border-radius: 3px;
+    background: #f2f8ff;
+    box-shadow: 0 0 6px #fff, 0 0 14px #5aa9ff, 0 0 32px rgba(90, 169, 255, 0.8), 0 0 70px rgba(90, 169, 255, 0.45);
   }
 
   .pi__caption {
@@ -125,7 +133,6 @@ const vitra = logoSvg
     color: var(--night-muted);
   }
 
-  /* état initial (avec JavaScript) : tout est caché jusqu'à l'entrée à l'écran */
   .js .pi__logo--rives {
     opacity: 0;
     transform: translateX(-40px);
@@ -133,11 +140,17 @@ const vitra = logoSvg
 
   .js .pi__logo--vitra {
     opacity: 0;
+    transform: translateY(14px);
+  }
+
+  .js .pi__logo--ls {
+    opacity: 0;
     transform: translateX(40px);
   }
 
   .js .pi__rule {
     transform: scaleY(0);
+    opacity: 0;
   }
 
   .js .pi__caption {
@@ -149,15 +162,19 @@ const vitra = logoSvg
   }
 
   .js .pi.is-in .pi__logo--vitra {
-    animation-delay: 0.3s;
+    animation-delay: 0.35s;
+  }
+
+  .js .pi.is-in .pi__logo--ls {
+    animation-delay: 0.6s;
   }
 
   .js .pi.is-in .pi__rule {
     animation: pi-rule 0.9s cubic-bezier(0.5, 0, 0.2, 1) 0.9s forwards;
   }
 
-  .js .pi.is-in .pi__neon {
-    animation: pi-neon 2.4s ease-in-out 1.3s 1 forwards;
+  .js .pi.is-in .pi__rule + .pi__logo + .pi__rule {
+    animation-delay: 1.15s;
   }
 
   .js .pi.is-in .pi__caption {
@@ -174,6 +191,7 @@ const vitra = logoSvg
   @keyframes pi-rule {
     to {
       transform: scaleY(1);
+      opacity: 1;
     }
   }
 
@@ -183,48 +201,21 @@ const vitra = logoSvg
     }
   }
 
-  @property --pi-a {
-    syntax: '<angle>';
-    inherits: false;
-    initial-value: 0deg;
-  }
-
-  @keyframes pi-neon {
-    0% {
-      --pi-a: 0deg;
-      opacity: 0;
-    }
-
-    12% {
-      opacity: 1;
-    }
-
-    88% {
-      opacity: 1;
-    }
-
-    100% {
-      --pi-a: 360deg;
-      opacity: 0;
-    }
-  }
-
-  @media (max-width: 560px) {
+  @media (max-width: 700px) {
     .pi__panel {
       flex-direction: column;
     }
 
-    .pi__logo--rives,
-    .pi__logo--vitra {
-      justify-items: center;
+    .pi__logo {
       width: min(100%, 14rem);
+      flex: none;
     }
 
     .pi__rule {
-      width: 60%;
-      height: 2px;
       align-self: center;
-      background: linear-gradient(90deg, transparent, #141414 20%, #141414 80%, transparent);
+      width: 60%;
+      min-height: 0;
+      height: 3px;
     }
 
     .js .pi__rule {
@@ -239,6 +230,7 @@ const vitra = logoSvg
   @keyframes pi-rule-x {
     to {
       transform: scaleX(1);
+      opacity: 1;
     }
   }
 
@@ -249,10 +241,6 @@ const vitra = logoSvg
       opacity: 1;
       transform: none;
       animation: none !important;
-    }
-
-    .pi__neon {
-      display: none;
     }
   }
 </style>

@@ -14,6 +14,12 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
   home={false}
 >
   <meta name="robots" content="noindex, nofollow" slot="head" />
+  <div class="trail" data-trail>
+  <svg class="trail__svg" aria-hidden="true" focusable="false">
+    <path class="trail__line" data-trail-base />
+    <path class="trail__line trail__line--lit" data-trail-lit />
+    <g data-trail-nodes></g>
+  </svg>
   <PresIntro />
   <PresSlides />
 
@@ -26,10 +32,6 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
       </header>
 
       <ol class="pres__path" data-pres>
-        <svg class="pres__svg" aria-hidden="true" focusable="false">
-          <path class="pres__line" data-line-base />
-          <path class="pres__line pres__line--lit" data-line-lit />
-        </svg>
         {
           presentation.stations.map((s, i) => (
             <li class={`station station--${i % 2 ? 'right' : 'left'}${s.reels || s.posters || s.cards ? ' station--wide' : ''}`} data-station>
@@ -143,6 +145,7 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
       </ol>
     </div>
   </section>
+  </div>
 
   <dialog class="lightbox" data-lightbox aria-label="Affiche en plein écran">
     <img class="lightbox__img" data-lightbox-img alt="" />
@@ -343,46 +346,73 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
   </script>
 
   <script>
-    const root = document.querySelector<HTMLElement>('[data-pres]');
-    if (root) {
-      const svg = root.querySelector<SVGSVGElement>('.pres__svg')!;
-      const base = root.querySelector<SVGPathElement>('[data-line-base]')!;
-      const lit = root.querySelector<SVGPathElement>('[data-line-lit]')!;
-      const nodes = [...root.querySelectorAll<HTMLElement>('[data-node]')];
-      const stations = [...root.querySelectorAll<HTMLElement>('[data-station]')];
-      const still = matchMedia('(prefers-reduced-motion: reduce)');
-      let total = 0;
+    // fil de néon : une ligne droite dans la marge gauche, du tout haut de la page jusqu'à la dernière étape (aucun texte n'est traversé),
+    // avec un point à chaque slide et à chaque étape ; elle s'allume au fil du défilement
+    const trail = document.querySelector<HTMLElement>('[data-trail]');
+    if (trail) {
+      const svg = trail.querySelector<SVGSVGElement>('.trail__svg')!;
+      const base = trail.querySelector<SVGPathElement>('[data-trail-base]')!;
+      const lit = trail.querySelector<SVGPathElement>('[data-trail-lit]')!;
+      const g = trail.querySelector<SVGGElement>('[data-trail-nodes]')!;
+      const calm = matchMedia('(prefers-reduced-motion: reduce)');
+      const NS = 'http://www.w3.org/2000/svg';
       let ys: number[] = [];
+      let circles: SVGCircleElement[] = [];
+      let height = 0;
 
+      let pathLen = 0;
       const build = () => {
-        const box = root.getBoundingClientRect();
-        const pts = nodes.map((n) => {
-          const r = n.getBoundingClientRect();
-          return [r.left - box.left + r.width / 2, r.top - box.top + r.height / 2];
-        });
-        if (pts.length < 2) return;
+        const box = trail.getBoundingClientRect();
+        const cont = trail.querySelector('.container');
+        const cr = cont ? cont.getBoundingClientRect() : { left: box.left + 24, right: box.right - 24 };
+        const xl = Math.max(8, cr.left - box.left - 20);
+        const xr = Math.min(box.width - 8, cr.right - box.left + 20);
+        height = box.height;
         svg.setAttribute('width', String(box.width));
-        svg.setAttribute('height', String(box.height));
-        svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
-        let d = `M ${pts[0][0]} ${pts[0][1]}`;
-        for (let i = 1; i < pts.length; i++) {
-          const [x0, y0] = pts[i - 1];
-          const [x1, y1] = pts[i];
-          const m = (y1 - y0) / 2;
-          d += ` C ${x0} ${y0 + m}, ${x1} ${y1 - m}, ${x1} ${y1}`;
+        svg.setAttribute('height', String(height));
+        svg.setAttribute('viewBox', `0 0 ${box.width} ${height}`);
+        // un point par bloc (ouverture, slides, étapes) ; le fil serpente : il longe la marge gauche, puis droite, puis gauche…
+        // et change de côté UNIQUEMENT dans l'espace vide au-dessus du bloc suivant : aucun texte n'est traversé
+        const blocks = [...trail.querySelectorAll<HTMLElement>('.pi__caption, .sl .eyebrow, .station__n')].map((a) => {
+          let holder = (a.closest('.station, .sl, .pi') as HTMLElement) ?? a;
+          // la première étape est précédée du titre de la section « La campagne » : le fil change de côté avant ce titre
+          if (holder === trail.querySelector('.station')) holder = (trail.querySelector('.pres') as HTMLElement) ?? holder;
+          return {
+            y: a.getBoundingClientRect().top - box.top + a.getBoundingClientRect().height / 2,
+            top: holder.getBoundingClientRect().top - box.top,
+          };
+        });
+        ys = blocks.map((b) => b.y);
+        const xs = blocks.map((_, i) => (i % 2 === 0 ? xl : xr));
+        let d = `M ${xs[0]} 0 V ${ys[0]}`;
+        for (let i = 1; i < blocks.length; i++) {
+          // angles droits : on descend dans la marge, on traverse à l'horizontale dans l'espace vide au-dessus du bloc suivant, puis on redescend
+          const yb = Math.max(ys[i - 1] + 20, i === 1 ? blocks[i].top + 16 : blocks[i].top - 24); // l'ouverture est suivie d'un espace très court : on traverse dans le haut de la première slide
+          d += ` V ${yb} H ${xs[i]} V ${ys[i]}`;
         }
+        const fin = (ys[ys.length - 1] ?? height) + 40;
+        d += ` V ${fin}`;
         base.setAttribute('d', d);
         lit.setAttribute('d', d);
-        total = lit.getTotalLength();
-        lit.style.strokeDasharray = `${total}`;
-        ys = pts.map((p) => p[1]);
+        pathLen = lit.getTotalLength();
+        lit.style.strokeDasharray = String(pathLen);
+        g.replaceChildren();
+        circles = ys.map((y, i) => {
+          const c = document.createElementNS(NS, 'circle');
+          c.setAttribute('cx', String(xs[i]));
+          c.setAttribute('cy', String(y));
+          c.setAttribute('r', '6');
+          c.setAttribute('class', 'trail__node');
+          g.appendChild(c);
+          return c;
+        });
         update();
       };
 
-      // longueur de tracé atteinte quand le point du chemin est à la hauteur « y » (le tracé descend toujours)
+      // longueur du tracé atteinte à la hauteur « y » (le tracé descend toujours)
       const lengthAt = (y: number) => {
         let lo = 0;
-        let hi = total;
+        let hi = pathLen;
         for (let k = 0; k < 24; k++) {
           const mid = (lo + hi) / 2;
           if (lit.getPointAtLength(mid).y < y) lo = mid;
@@ -392,12 +422,11 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
       };
 
       const update = () => {
-        if (!total) return;
-        const box = root.getBoundingClientRect();
-        const y = still.matches ? box.height : Math.min(box.height, Math.max(0, innerHeight * 0.6 - box.top));
-        lit.style.strokeDashoffset = String(still.matches ? 0 : total - (y >= box.height ? total : lengthAt(y)));
-        nodes.forEach((n, i) => n.classList.toggle('is-lit', still.matches || ys[i] <= y + 2));
-        stations.forEach((s, i) => s.classList.toggle('is-lit', still.matches || ys[i] <= y + 2));
+        if (!pathLen) return;
+        const box = trail.getBoundingClientRect();
+        const y = calm.matches ? height : Math.min(height, Math.max(0, innerHeight * 0.6 - box.top));
+        lit.style.strokeDashoffset = String(calm.matches ? 0 : pathLen - lengthAt(y));
+        circles.forEach((c, i) => c.classList.toggle('is-lit', calm.matches || ys[i] <= y + 2));
       };
 
       let queued = false;
@@ -411,8 +440,8 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
       };
       addEventListener('scroll', tick, { passive: true });
       addEventListener('resize', build);
-      new ResizeObserver(build).observe(root);
-      root.querySelectorAll('img').forEach((im) => im.addEventListener('load', build));
+      new ResizeObserver(build).observe(trail);
+      trail.querySelectorAll('img').forEach((im) => im.addEventListener('load', build));
       addEventListener('load', build);
       build();
     }

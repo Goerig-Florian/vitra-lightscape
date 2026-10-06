@@ -6,7 +6,7 @@
  */
 import { url } from '../lib/url';
 
-const dispositifs = [
+const tous = [
   { src: 'presentation/dispositif-parcours-lumineux.webp', titre: 'Parcours lumineux', texte: 'Une ligne de lumière relie les bâtiments et guide naturellement les visiteurs à travers le Campus.', alt: 'Visiteurs qui marchent sur un chemin bordé d’un filet de lumière bleue, devant des bâtiments aux façades géométriques éclairées de l’intérieur.' },
   { src: 'presentation/dispositif-mapping-immersif.webp', titre: 'Mapping immersif', texte: 'Des animations sont projetées à l’intérieur pour transformer l’espace et révéler l’architecture.', alt: 'Visiteurs dans un grand espace aux murs couverts de faisceaux lumineux bleus et dorés qui suivent les volumes du bâtiment.' },
   { src: 'presentation/dispositif-atelier-enfants.webp', titre: 'Atelier enfants', texte: 'Les enfants touchent différents éléments qui s’allument instantanément et changent de couleur.', alt: 'Des enfants et une adulte posent les mains sur des volumes lumineux au sol, entre colonnes et cubes qui s’allument.' },
@@ -17,6 +17,8 @@ const dispositifs = [
   { src: 'presentation/moodboard-interaction.webp', titre: 'Moodboard · Interaction', texte: 'Des dispositifs qui réagissent aux gestes, aux déplacements ou au toucher, et que l’on vit à plusieurs.', alt: 'Planche d’ambiance « Interaction » : ombres devant des toiles colorées, boules lumineuses, mains et bracelet, rideaux de lumière.' },
   { src: 'presentation/moodboard-immersion.webp', titre: 'Moodboard · Immersion', texte: 'La lumière suit les volumes, les lignes et les matières propres à chaque bâtiment.', alt: 'Planche d’ambiance « Immersion » : couloirs de lumière dorée, matières ambrées, façade projetée, visiteurs devant un mur de lumière.' },
 ];
+const dispositifs = tous.filter((d) => !d.titre.startsWith('Moodboard'));
+const moodboards = tous.filter((d) => d.titre.startsWith('Moodboard')).map((d) => ({ ...d, titre: d.titre.replace('Moodboard · ', '') }));
 ---
 
 <section class="sl sl--problem" data-theme="night" aria-labelledby="sl-problem">
@@ -70,7 +72,24 @@ const dispositifs = [
                 <img src={url(d.src)} alt={d.alt} loading="lazy" decoding="async" />
                 <span class="poster__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></span>
               </button>
-              <figcaption><strong>{d.titre}</strong><span>{d.texte}</span></figcaption>
+              <figcaption><strong>{d.titre}</strong></figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+
+    <h3 class="sl__sub reveal">Moodboard</h3>
+    <ul class="sl__grid sl__grid--mood">
+      {
+        moodboards.map((d) => (
+          <li class="reveal">
+            <figure>
+              <button type="button" class="poster" data-poster aria-label={`Moodboard ${d.titre} : afficher l’image en plein écran`}>
+                <img src={url(d.src)} alt={d.alt} loading="lazy" decoding="async" />
+                <span class="poster__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></span>
+              </button>
+              <figcaption><strong>{d.titre}</strong></figcaption>
             </figure>
           </li>
         ))
@@ -181,14 +200,33 @@ const dispositifs = [
     margin: 0;
   }
 
+  /* les images s'affichent entières, à leur proportion : aucune n'est recadrée */
+  .sl__grid {
+    align-items: start;
+  }
+
   .sl__grid .poster {
-    aspect-ratio: 4 / 3;
     border-radius: 14px;
   }
 
   .sl__grid .poster img {
-    height: 100%;
-    object-fit: cover;
+    width: 100%;
+    height: auto;
+  }
+
+  .sl__sub {
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    font-size: var(--step-2);
+    font-weight: 400;
+  }
+
+  .sl__grid--mood {
+    margin-top: 1.25rem;
+  }
+
+  /* la slide du concept : son fond blanc laisse légèrement transparaître la nuit */
+  .sl__concept .poster img {
+    opacity: 0.86;
   }
 
   @media (max-width: 900px) {

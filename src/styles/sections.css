@@ -5060,3 +5060,53 @@
     height: 2.4rem;
   }
 }
+
+/* fil de néon de la présentation : dans la marge gauche, de la première slide à la dernière étape */
+.trail {
+  position: relative;
+}
+
+.trail__svg {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.trail__line {
+  fill: none;
+  stroke: rgba(220, 239, 255, 0.2);
+  stroke-width: 2;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+
+.trail__line--lit {
+  stroke: #dcefff;
+  filter: drop-shadow(0 0 4px #5aa9ff) drop-shadow(0 0 10px rgba(90, 169, 255, 0.7));
+}
+
+.trail__node {
+  fill: var(--night);
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 2;
+  transition: fill 0.5s, stroke 0.5s, filter 0.5s;
+}
+
+.trail__node.is-lit {
+  fill: #dcefff;
+  stroke: #dcefff;
+  filter: drop-shadow(0 0 6px #5aa9ff) drop-shadow(0 0 14px rgba(90, 169, 255, 0.75));
+}
+
+/* l'ancien chemin au centre n'existe plus : les points des étapes sont ceux du fil */
+.pres__path .station__node {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trail__node {
+    transition: none;
+  }
+}
