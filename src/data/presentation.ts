@@ -19,6 +19,8 @@ export interface Station {
   link?: { href: string; label: string };
   /** Station des reels : trois mockups de téléphone alignés (voir `reels`) au lieu d'un cadre */
   reels?: boolean;
+  /** Station des affiches : les affiches de `posters`, cliquables pour un affichage plein écran */
+  posters?: boolean;
 }
 
 /**
@@ -36,10 +38,17 @@ export const presentation = {
   title: 'Du Campus à la campagne : un seul fil de lumière.',
   text: 'Le parcours relie des bâtiments. Notre campagne relie des visuels. Suivez le chemin, de l’affiche jusqu’au site.',
   stations: [
-    { id: 'affiche', label: 'Affiche', title: 'L’affiche', text: 'Le premier signal dans la rue : une façade qui s’allume, une promesse en une image.', ratio: '3 / 4', format: 'Affiche · portrait' },
+    { id: 'affiche', label: 'Affiche', title: 'L’affiche', text: 'Le premier signal dans la rue : une façade qui s’allume, une promesse en une image.', ratio: '3 / 4', format: 'Affiche · portrait', posters: true },
     { id: 'reels', label: 'Reels', title: 'Les reels', text: 'Quelques secondes de nuit qui tombe, pour donner envie de venir voir en vrai.', ratio: '9 / 16', format: 'Reel · 9:16', reels: true },
     { id: 'carte', label: 'Carte à gagner', title: 'La carte à gagner', text: 'Un objet à glisser dans la poche : on la reçoit, on la découvre, on tente sa chance.', ratio: '16 / 10', format: 'Carte · paysage' },
     { id: 'magazine', label: 'Magazine', title: 'Le magazine', text: 'Le temps long : le récit du Campus, de son architecture et de la lumière qui la révèle.', ratio: '4 / 3', format: 'Magazine · double page' },
     { id: 'site', label: 'Site web', title: 'Le site', text: 'L’arrivée du chemin : le parcours, la soirée et la billetterie, tout au même endroit.', ratio: '16 / 10', format: 'Site · écran' },
   ] as Station[],
 };
+
+/** Les affiches de la campagne (format A, 905 x 1280) : même mise en page, un verbe par affiche. */
+export const posters = [
+  { src: 'presentation/affiche-ressentir.webp', title: 'Juste ressentir', sub: 'L’espace qui prend vie', alt: 'Affiche « Juste RESSENTIR, l’espace qui prend vie » : des nappes de lumière bleue, orange et jaune sur fond bleu nuit. Vitra Lightscape, 17 et 18 septembre 2027.' },
+  { src: 'presentation/affiche-partager.webp', title: 'Juste partager', sub: 'La lumière qui rassemble', alt: 'Affiche « Juste PARTAGER, la lumière qui rassemble » : des silhouettes de visiteurs devant une lumière jaune et bleue. Vitra Lightscape, 17 et 18 septembre 2027.' },
+  { src: 'presentation/affiche-explorer.webp', title: 'Juste explorer', sub: 'Le parcours qui se révèle', alt: 'Affiche « Juste EXPLORER, le parcours qui se révèle » : une silhouette en haut d’un grand escalier éclairé de lumière orange et bleue, reflété dans l’eau. Vitra Lightscape, 17 et 18 septembre 2027.' },
+];

@@ -67,3 +67,7 @@ Les courtes notes sur l'architecture des 10 bâtiments (page de présentation, `
 - Mockup Instagram : interface dessinée en code, compte @vitra de démonstration, **chiffres (mentions J'aime, commentaires, partages) fictifs**. Mockup destiné à la présentation de l'appel d'offres, pas à une publication. L'avatar est composé avec le logo « vitra. » du projet (pas d'avatar officiel dans le dépôt).
 - Export : `node scripts/export-reel.mjs` produit les deux mp4 (1080 x 1920 et 720 x 1280, 30 i/s, 6 s) dans `public/reel/`.
 - Cadres de téléphone (Instagram et TikTok) : dessinés en code, d'après le style d'un Samsung Galaxy S26 (cadre plat, poinçon central, boutons latéraux). Ce sont des **illustrations inspirées**, pas des visuels officiels Samsung, Instagram ou TikTok. Aucun logo de ces marques n'est utilisé.
+
+## Affiches (page de présentation)
+
+Les trois affiches « Juste ressentir / partager / explorer » (`public/presentation/affiche-*.webp`, 905 x 1280) ont été réalisées par l'équipe. Elles utilisent le logo Vitra Lightscape et la police Futura du projet.
