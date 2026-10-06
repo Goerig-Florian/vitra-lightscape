@@ -66,10 +66,10 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
                   {reels.map((r, n) => (
                     <figure class="reels-row__item">
                       <div class="reels-row__open" role="button" tabindex="0" data-open-phone={n} aria-label={`${r.label} : afficher le mockup en plein écran`}>
-                      <ReelPhone platform={r.platform} caption={r.video ? undefined : ['Légende à venir']} tags={r.video ? undefined : ''} likes={r.video ? undefined : '—'} comments={r.video ? undefined : '—'} shares={r.video ? undefined : '—'}>
+                      <ReelPhone platform={r.platform} caption={r.video ? r.caption : ['Légende à venir']} tags={r.video ? r.tags : ''} likes={r.video ? r.likes : '—'} comments={r.video ? r.comments : '—'} shares={r.video ? r.shares : '—'}>
                         {r.video ? (
                           <>
-                            <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} aria-label="Teaser Vitra Lightscape : le logo Vitra s’éteint, le logo Vitra Lightscape apparaît et une lumière y révèle un mapping.">
+                            <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} style={r.cadrage ? `object-position:${r.cadrage}` : undefined} aria-label={r.label + ' : ' + r.sub}>
                               <source src={url(r.video)} type="video/mp4" />
                             </video>
                             <button type="button" class="reel-sound" data-sound aria-pressed="false" aria-label="Activer le son du teaser">

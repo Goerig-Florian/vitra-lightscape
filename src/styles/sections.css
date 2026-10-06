@@ -4721,8 +4721,8 @@
 .reel-sound {
   position: absolute;
   z-index: 7;
-  top: 16.5%;
-  right: 4%;
+  top: 4.3%;
+  right: 17%;
   display: grid;
   place-items: center;
   width: 10cqw;

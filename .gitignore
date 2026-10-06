@@ -19,3 +19,6 @@ exports/
 
 # archives de photos déposées par erreur dans public/ : elles seraient publiées avec le site
 public/*.zip
+
+# copie de travail de la vidéo de l equipe (17 Mo, 1080 p) : seule la version web trailer-20s-720x1280.mp4 est publiée
+public/reel/vitra-lightscape-teaser-6s.mp4
