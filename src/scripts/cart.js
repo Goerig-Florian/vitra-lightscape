@@ -7,16 +7,17 @@
   var raw = document.body.getAttribute('data-booking');
   if (!raw) return;
   var DATA = JSON.parse(raw);
-  var KEY = 'vitra-lightscape-cart-v1';
-  var ADULTS = ['plein', 'reduit'];
-  var OPTION = 'mediation';
-
+  var KEY = 'vitra-lightscape-cart-v2';
+  
   var tickets = {};
   DATA.tickets.forEach(function (t) { tickets[t.id] = t; });
   var dateLabel = {};
-  DATA.dates.forEach(function (d) { dateLabel[d.id] = d.label; });
+  var dateWeekend = {};
+  DATA.dates.forEach(function (d) { dateLabel[d.id] = d.label; dateWeekend[d.id] = d.we; });
+  /* prix d'un billet pour une soirée donnée : tarif semaine (lun-jeu) ou week-end (ven-dim) */
+  var priceOf = function (t, date) { return date && dateWeekend[date] ? t.prices.we : t.prices.sem; };
 
-  var euro = function (n) { return n === 0 ? '0 €' : n.toLocaleString('fr-FR') + ' €'; };
+  var euro = function (n) { return n === 0 ? '0 €' : n.toLocaleString('fr-FR', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' €'; };
 
   /* ---------- Stockage ---------- */
   var memory = [];
@@ -57,11 +58,11 @@
   var clampQty = function (q) { return Math.max(0, Math.min(DATA.max, q)); };
 
   var total = function (items) {
-    return items.reduce(function (s, i) { return s + tickets[i.type].price * i.qty; }, 0);
+    return items.reduce(function (s, i) { return s + priceOf(tickets[i.type], i.date) * i.qty; }, 0);
   };
 
   var count = function (items) {
-    return items.reduce(function (s, i) { return s + (i.type === OPTION ? 0 : i.qty); }, 0);
+    return items.reduce(function (s, i) { return s + i.qty; }, 0);
   };
 
   /* ---------- Rendu du panier ---------- */
@@ -102,14 +103,14 @@
             var k = esc(keyOf(i));
             html +=
               '<div class="cart-line">' +
-              '<span class="cart-line__label">' + esc(t.label) + '<small>' + esc(t.detail) + ' · ' + euro(t.price) + '</small></span>' +
+              '<span class="cart-line__label">' + esc(t.label) + '<small>' + esc(t.detail) + ' · ' + euro(priceOf(t, i.date)) + '</small></span>' +
               '<div class="stepper" role="group" aria-label="Quantité, ' + esc(t.label) + '">' +
               '<button type="button" class="stepper__btn" data-cart-step="-1" data-key="' + k + '" aria-label="Retirer un billet ' + esc(t.label) + '">−</button>' +
               '<output class="stepper__value" aria-live="polite">' + i.qty + '</output>' +
               '<button type="button" class="stepper__btn" data-cart-step="1" data-key="' + k + '" aria-label="Ajouter un billet ' + esc(t.label) + '"' + (i.qty >= DATA.max ? ' disabled' : '') + '>+</button>' +
               '</div>' +
               '<button type="button" class="cart-line__remove" data-cart-remove data-key="' + k + '">Retirer<span class="sr-only"> ' + esc(t.label) + '</span></button>' +
-              '<span class="cart-line__price">' + euro(t.price * i.qty) + '</span>' +
+              '<span class="cart-line__price">' + euro(priceOf(t, i.date) * i.qty) + '</span>' +
               '</div>';
           });
         html += '</div>';
@@ -227,17 +228,15 @@
     var hint = form.querySelector('[data-sum-hint]');
 
     var people = function () {
-      return Object.keys(qty).reduce(function (s, k) { return s + (k === OPTION ? 0 : qty[k]); }, 0);
+      return Object.keys(qty).reduce(function (s, k) { return s + qty[k] * (tickets[k].persons || 1); }, 0);
     };
-    var adults = function () { return ADULTS.reduce(function (s, k) { return s + (qty[k] || 0); }, 0); };
+    var adults = function () { return Object.keys(qty).reduce(function (s, k) { return s + (tickets[k].adult ? qty[k] : 0); }, 0); };
 
     var update = function () {
       var date = (form.querySelector('input[name="date"]:checked') || {}).value;
       var slot = (form.querySelector('input[name="slot"]:checked') || {}).value;
-      sumDate.textContent = date ? dateLabel[date] : 'À choisir';
+      sumDate.textContent = date ? dateLabel[date] + (dateWeekend[date] ? ' · tarif week-end' : ' · tarif semaine') : 'À choisir';
       sumSlot.textContent = slot || 'À choisir';
-
-      if (qty[OPTION] > people()) qty[OPTION] = people();
 
       var lines = '';
       var sum = 0;
@@ -246,10 +245,11 @@
         var minus = form.querySelector('[data-ticket="' + t.id + '"][data-step="-1"]');
         var plus = form.querySelector('[data-ticket="' + t.id + '"][data-step="1"]');
         minus.disabled = qty[t.id] === 0;
-        plus.disabled = qty[t.id] >= DATA.max || (t.id === OPTION && qty[t.id] >= people());
+        plus.disabled = qty[t.id] >= DATA.max;
         if (qty[t.id] > 0) {
-          lines += '<li><span>' + esc(t.label) + ' × ' + qty[t.id] + '</span><span>' + euro(t.price * qty[t.id]) + '</span></li>';
-          sum += t.price * qty[t.id];
+          var pu = priceOf(t, date);
+          lines += '<li><span>' + esc(t.label) + ' × ' + qty[t.id] + '</span><span>' + euro(pu * qty[t.id]) + '</span></li>';
+          sum += pu * qty[t.id];
         }
       });
       sumLines.innerHTML = lines;

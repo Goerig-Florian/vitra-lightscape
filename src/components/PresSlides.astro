@@ -1,0 +1,209 @@
+---
+/**
+ * Les « slides » de la présentation : 1) la problématique, 2) le concept (l'histoire racontée), 3) les dispositifs.
+ * Même direction artistique que le reste de la page (nuit, filets lumineux, Futura), sans cadre de diaporama.
+ * Les textes viennent du dossier de communication de l'équipe (PDF « Stratégie de communication »).
+ */
+import { url } from '../lib/url';
+
+const dispositifs = [
+  { src: 'presentation/dispositif-parcours-lumineux.webp', titre: 'Parcours lumineux', texte: 'Une ligne de lumière relie les bâtiments et guide naturellement les visiteurs à travers le Campus.', alt: 'Visiteurs qui marchent sur un chemin bordé d’un filet de lumière bleue, devant des bâtiments aux façades géométriques éclairées de l’intérieur.' },
+  { src: 'presentation/dispositif-mapping-immersif.webp', titre: 'Mapping immersif', texte: 'Des animations sont projetées à l’intérieur pour transformer l’espace et révéler l’architecture.', alt: 'Visiteurs dans un grand espace aux murs couverts de faisceaux lumineux bleus et dorés qui suivent les volumes du bâtiment.' },
+  { src: 'presentation/dispositif-atelier-enfants.webp', titre: 'Atelier enfants', texte: 'Les enfants touchent différents éléments qui s’allument instantanément et changent de couleur.', alt: 'Des enfants et une adulte posent les mains sur des volumes lumineux au sol, entre colonnes et cubes qui s’allument.' },
+  { src: 'presentation/dispositif-bracelet.webp', titre: 'Bracelet interactif', texte: 'Remis à l’entrée, il change de couleur selon les zones du parcours et peut réagir à certaines installations.', alt: 'Vue à la première personne : un poignet avec un bracelet lumineux, au-dessus d’un chemin bleu qui serpente entre les bâtiments.' },
+  { src: 'presentation/dispositif-qr-code.webp', titre: 'QR codes', texte: 'Ils donnent quelques repères sans interrompre l’expérience ni alourdir le parcours.', alt: 'Une visiteuse photographie avec son téléphone un QR code projeté sur la façade d’un bâtiment couverte de faisceaux lumineux.' },
+  { src: 'presentation/dispositif-livret-cartes.webp', titre: 'Livret et cartes à collectionner', texte: 'À chaque bâtiment, le visiteur récupère une carte pour compléter son livret fourni par le Vitra Campus.', alt: 'Le livret de collection Vitra Lightscape posé sur une table, entouré de cartes illustrées de bâtiments du Campus.' },
+  { src: 'presentation/moodboard-decouverte.webp', titre: 'Moodboard · Découverte', texte: 'Un fil lumineux relie les bâtiments et structure la visite.', alt: 'Planche d’ambiance « Découverte » : signalétique lumineuse, chemins éclairés, vue aérienne du Campus, tunnel d’arceaux de lumière.' },
+  { src: 'presentation/moodboard-interaction.webp', titre: 'Moodboard · Interaction', texte: 'Des dispositifs qui réagissent aux gestes, aux déplacements ou au toucher, et que l’on vit à plusieurs.', alt: 'Planche d’ambiance « Interaction » : ombres devant des toiles colorées, boules lumineuses, mains et bracelet, rideaux de lumière.' },
+  { src: 'presentation/moodboard-immersion.webp', titre: 'Moodboard · Immersion', texte: 'La lumière suit les volumes, les lignes et les matières propres à chaque bâtiment.', alt: 'Planche d’ambiance « Immersion » : couloirs de lumière dorée, matières ambrées, façade projetée, visiteurs devant un mur de lumière.' },
+];
+---
+
+<section class="sl sl--problem" data-theme="night" aria-labelledby="sl-problem">
+  <div class="container sl__inner">
+    <p class="eyebrow">01 · Problématique</p>
+    <h2 class="sl__big reveal" id="sl-problem">Comment donner envie à tous les publics de découvrir et vivre l’architecture de Vitra autrement&nbsp;?</h2>
+    <dl class="sl__facts">
+      <div class="reveal">
+        <dt>Contexte</dt>
+        <dd>Le Vitra Campus est fortement associé au design et à l’architecture. Pour un public non initié, il peut sembler spécialisé ou difficile d’accès.</dd>
+      </div>
+      <div class="reveal">
+        <dt>Enjeu</dt>
+        <dd>Donner une nouvelle raison de venir, sans avoir besoin de connaître le design ou l’architecture : rendre le Campus plus accessible, attractif et immersif.</dd>
+      </div>
+      <div class="reveal">
+        <dt>Objectifs</dt>
+        <dd>Attirer de nouveaux publics grâce à une expérience nocturne, faire ressentir l’architecture autrement, créer du partage et donner envie de revenir.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="sl sl--concept" data-theme="night" aria-labelledby="sl-concept">
+  <div class="container sl__inner">
+    <p class="eyebrow">02 · Le concept</p>
+    <h2 class="sl__title reveal" id="sl-concept">Découvrir, interagir, s’immerger.</h2>
+    <p class="sl__lead reveal">Vitra Lightscape propose un parcours progressif où la lumière guide d’abord le visiteur, réagit ensuite à sa présence, puis transforme sa perception de l’architecture.</p>
+    <figure class="sl__concept reveal">
+      <button type="button" class="poster" data-poster aria-label="Le concept : afficher la slide en plein écran">
+        <img src={url('presentation/slide-concept.webp')} alt="Slide du concept : découverte (une ligne de lumière mène vers un dôme), interaction (les gestes font réagir la lumière), immersion (la lumière révèle le bâtiment), chacune accompagnée de sa planche d’ambiance." width="2000" height="1125" loading="lazy" decoding="async" />
+        <span class="poster__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></span>
+      </button>
+      <figcaption><strong>Le concept</strong><span>Découverte, interaction, immersion : trois temps, une seule expérience.</span></figcaption>
+    </figure>
+    <p class="sl__promise reveal">« Vivre l’architecture plutôt que simplement la regarder. »</p>
+  </div>
+</section>
+
+<section class="sl sl--devices" data-theme="night" aria-labelledby="sl-devices">
+  <div class="container sl__inner">
+    <p class="eyebrow">03 · Les dispositifs</p>
+    <h2 class="sl__title reveal" id="sl-devices">Ce que l’on met en place sur le Campus.</h2>
+    <p class="sl__lead reveal">Un parcours lumineux, des installations qui réagissent, des repères discrets et une collection à compléter : chaque dispositif sert la même idée.</p>
+    <ul class="sl__grid">
+      {
+        dispositifs.map((d) => (
+          <li class="reveal">
+            <figure>
+              <button type="button" class="poster" data-poster aria-label={`${d.titre} : afficher l’image en plein écran`}>
+                <img src={url(d.src)} alt={d.alt} loading="lazy" decoding="async" />
+                <span class="poster__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></span>
+              </button>
+              <figcaption><strong>{d.titre}</strong><span>{d.texte}</span></figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style is:global>
+  .sl {
+    padding-block: clamp(3.5rem, 9vw, 7rem);
+    background: var(--night);
+    color: var(--night-text);
+    border-top: 1px solid var(--night-line);
+  }
+
+  .sl__big {
+    max-width: 22ch;
+    margin: 1rem 0 0;
+    font-size: clamp(2rem, 6vw, 4.2rem);
+    font-weight: 400;
+    line-height: 1.08;
+  }
+
+  .sl__title {
+    margin: 1rem 0 0;
+    font-size: var(--step-4);
+    font-weight: 400;
+    line-height: 1.08;
+  }
+
+  .sl__lead {
+    max-width: 48ch;
+    margin: 1.25rem 0 0;
+    font-size: var(--step-1);
+    color: var(--night-muted);
+  }
+
+  .sl__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin: clamp(2.5rem, 6vw, 4.5rem) 0 0;
+  }
+
+  .sl__facts > div {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(220, 239, 255, 0.35);
+  }
+
+  .sl__facts dt {
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  .sl__facts dd {
+    margin: 0.6rem 0 0;
+    color: var(--night-muted);
+  }
+
+  .sl__concept {
+    display: grid;
+    gap: 0.9rem;
+    margin: clamp(2rem, 5vw, 3.5rem) 0 0;
+  }
+
+  .sl__concept .poster {
+    width: 100%;
+    border-radius: 14px;
+  }
+
+  .sl__concept figcaption,
+  .sl__grid figcaption {
+    display: grid;
+    gap: 0.2rem;
+    font-size: var(--step--1);
+    color: var(--night-muted);
+  }
+
+  .sl__concept figcaption strong,
+  .sl__grid figcaption strong {
+    font-weight: 500;
+    color: var(--night-text);
+  }
+
+  .sl__promise {
+    margin: clamp(1.75rem, 4vw, 2.75rem) 0 0;
+    font-size: var(--step-2);
+    font-weight: 300;
+    color: var(--amber);
+  }
+
+  .sl__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+    margin: clamp(2rem, 5vw, 3.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sl__grid figure {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+  }
+
+  .sl__grid .poster {
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+  }
+
+  .sl__grid .poster img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 900px) {
+    .sl__facts {
+      grid-template-columns: 1fr;
+    }
+
+    .sl__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .sl__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

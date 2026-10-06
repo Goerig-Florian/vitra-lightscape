@@ -1,12 +1,23 @@
 ---
-import { dates, slots, tickets, notice } from '../data/billetterie';
+import { dates, slots, tickets, notice, isWeekend } from '../data/billetterie';
 
 const parse = (iso: string) => new Date(`${iso}T12:00:00`);
 const dayName = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '');
 const dayNum = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { day: 'numeric' });
 const month = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
 const full = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-const price = (n: number) => (n === 0 ? 'Gratuit' : `${n} €`);
+const euro = (n: number) => (n === 0 ? '0 €' : `${n.toLocaleString('fr-FR', { minimumFractionDigits: n % 1 ? 2 : 0 })} €`);
+
+// un bloc par mois, semaines du lundi au dimanche
+const mois = [8, 9].map((m) => {
+  const jours = dates.filter((d) => Number(d.slice(5, 7)) === m + 1);
+  const premier = new Date(`${jours[0]}T12:00:00Z`).getUTCDay();
+  return {
+    titre: new Date(`${jours[0]}T12:00:00Z`).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' }),
+    jours,
+    decalage: (premier + 6) % 7,
+  };
+});
 ---
 
 <section class="section billetterie" id="billetterie" data-theme="night" aria-labelledby="billetterie-title">
@@ -21,21 +32,27 @@ const price = (n: number) => (n === 0 ? 'Gratuit' : `${n} €`);
       <div class="booking__steps">
         <fieldset class="booking__step">
           <legend><span class="booking__n">1</span> Choisir une soirée</legend>
-          <div class="chips chips--dates">
+          <div class="cal" role="group" aria-label="Soirées du 3 septembre au 3 octobre 2027">
             {
-              dates.map((d) => (
-                <label class="chip chip--date">
-                  <input type="radio" name="date" value={d} />
-                  <span class="chip__inner">
-                    <span class="chip__day">{dayName(d)}</span>
-                    <span class="chip__num">{dayNum(d)}</span>
-                    <span class="chip__month">{month(d)}</span>
-                  </span>
-                  <span class="sr-only">{full(d)}</span>
-                </label>
+              mois.map((m) => (
+                <div class="cal__month">
+                  <p class="cal__title">{m.titre}</p>
+                  <div class="cal__grid">
+                    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((j, k) => <span class={`cal__dow${k >= 4 ? ' is-we' : ''}`} aria-hidden="true">{j}</span>)}
+                    {Array.from({ length: m.decalage }).map(() => <span class="cal__blank" aria-hidden="true" />)}
+                    {m.jours.map((d) => (
+                      <label class={`chip chip--day${isWeekend(d) ? ' is-we' : ''}`}>
+                        <input type="radio" name="date" value={d} />
+                        <span class="chip__inner">{dayNum(d)}</span>
+                        <span class="sr-only">{full(d)}{isWeekend(d) ? ', tarif week-end' : ', tarif semaine'}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               ))
             }
           </div>
+          <p class="cal__legend"><span class="cal__dot" aria-hidden="true"></span>Vendredi au dimanche : tarif week-end</p>
         </fieldset>
 
         <fieldset class="booking__step">
@@ -62,7 +79,10 @@ const price = (n: number) => (n === 0 ? 'Gratuit' : `${n} €`);
                     <span class="ticket__label" id={`t-${t.id}`}>{t.label}</span>
                     <span class="ticket__detail">{t.detail}</span>
                   </div>
-                  <span class="ticket__price">{price(t.price)}</span>
+                  <span class="ticket__price">
+                    <span>{euro(t.prices.sem)}<small>Lun–jeu</small></span>
+                    <span>{euro(t.prices.we)}<small>Ven–dim</small></span>
+                  </span>
                   <div class="stepper" role="group" aria-labelledby={`t-${t.id}`}>
                     <button type="button" class="stepper__btn" data-step="-1" data-ticket={t.id} aria-label={`Retirer un billet ${t.label}`}>−</button>
                     <output class="stepper__value" data-qty={t.id} aria-live="polite">0</output>

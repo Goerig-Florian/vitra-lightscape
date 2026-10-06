@@ -72,8 +72,8 @@ Les courtes notes sur l'architecture des 10 bâtiments (page de présentation, `
 
 Les trois affiches « Juste ressentir / partager / explorer » (`public/presentation/affiche-*.webp`, 905 x 1280) ont été réalisées par l'équipe. Elles utilisent le logo Vitra Lightscape et la police Futura du projet.
 Les trois mises en situation (abribus, tramway, couloir de gare, `public/presentation/situation-*.webp`) sont des visuels de présentation fournis par l'équipe : des maquettes d'affichage, pas des installations existantes.
-- Musique du teaser (`public/reel/teaser-14s-b-lights-musique.mp3`, `teaser-14s-b-lights-720x1280.mp4`) : l'**intro instrumentale du morceau « Lights »** (auteur non renseigné dans le fichier), fourni par l'équipe pour cet **exercice universitaire non commercial** : on joue son début jusqu'à 6,1 s puis on boucle deux mesures, pour éviter la montée, le drop et la voix. Il est utilisé **sans l'autorisation de son auteur** : à remplacer ou à faire valider pour tout usage réel. Les effets (whooshes, bourdonnement du néon, scintillements, impact) sont synthétisés en code (`scripts/make-musique.py --lights`) ; sans l'option `--lights`, le script compose une musique entièrement originale, libre de droits.
-- Trailer « Découvrir / Interagir / S'immerger » (`public/reel/trailer-23s-720x1280.mp4`) : vidéo montée par l'équipe (fichier d'origine `vitra-lightscape-teaser-6s.mp4`, 1080 x 1920, 22,7 s, avec son), présentée dans le mockup Reel Instagram n° 2. Seule la version web 720 p est publiée ; sa bande-son est celle choisie par l'équipe.
+- Musique du teaser (`public/reel/teaser-b-midnight-musique.mp3`, `teaser-14s-b-midnight-720x1280.mp4`) : l'**intro instrumentale du morceau « Lights »** (remplacée depuis par « Midnight City » pour le premier Reel) (auteur non renseigné dans le fichier), fourni par l'équipe pour cet **exercice universitaire non commercial** : on joue son début jusqu'à 6,1 s puis on boucle deux mesures, pour éviter la montée, le drop et la voix. Il est utilisé **sans l'autorisation de son auteur** : à remplacer ou à faire valider pour tout usage réel. Les effets (whooshes, bourdonnement du néon, scintillements, impact) sont synthétisés en code (`scripts/make-musique.py --lights`) ; sans l'option `--lights`, le script compose une musique entièrement originale, libre de droits.
+- Trailer « Découvrir / Interagir / S'immerger » (`public/reel/trailer-v2-720x1280.mp4`) : vidéo montée par l'équipe (fichier d'origine `vitra-lightscape-teaser-6s.mp4`, 1080 x 1920, 22,7 s, avec son), présentée dans le mockup Reel Instagram n° 2. Seule la version web 720 p est publiée ; sa bande-son est celle choisie par l'équipe.
 
 ## Clip promo TCG (page interne /promo-tcg/)
 
@@ -84,3 +84,11 @@ Clip vertical de 10,5 s (booster → cartes → carte collector → book → ins
 `public/presentation/presse-dna.webp` et `presse-alsace.webp` : deux **maquettes de pages de journaux** (DNA et L'Alsace) réalisées par l'équipe pour illustrer la couverture presse. Ce sont des mises en scène : les articles, citations et témoignages sont fictifs, et les titres de presse ne sont pas affiliés au projet. Les originaux (`public/photos/journaux*.png`) restent en local.
 
 Le clip du booster (`public/reel/promo-tcg-wide-1280x720.mp4`, créé avec `/promo-tcg/?wide`) est présenté à la suite des cartes, dans l'étape « Les cartes à gagner » de la page de présentation.
+
+## Ouverture et slides de la présentation
+
+- Logo **Deux Rives** (`src/assets/logo/deux-rives.svg`) : fourni par l'équipe, affiché à côté du logo Vitra en tout début de la page de présentation, sur un panneau papier clair.
+- Textes de la problématique, du concept et des dispositifs : repris du dossier de communication de l'équipe (« Stratégie de communication », Florian Goerig et Loréna Chevallot, MMI 3).
+- Images des dispositifs et planches d'ambiance (`public/presentation/dispositif-*.webp`, `moodboard-*.webp`, `slide-concept.webp`) : visuels de projet réalisés par l'équipe ; certaines planches d'ambiance rassemblent des images d'inspiration d'autres événements lumineux : ce sont des références, pas des réalisations du projet.
+- Affiches « Juste explorer / ressentir / partager » (`affiche-*-v2.webp`) : versions avec QR code et dates du 3 septembre au 3 octobre 2027.
+- Musique du premier Reel : début du morceau « Midnight City » (M83), fourni par l'équipe pour cet exercice non commercial, **sans autorisation de l'auteur** ; à remplacer pour tout usage réel. Le trailer du Reel n° 2 est la version « bonnes dates » montée par l'équipe.

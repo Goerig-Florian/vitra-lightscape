@@ -30,8 +30,8 @@ export interface Station {
  * `video` : chemin de la vidéo dans public/ (laisser vide tant que le reel n'est pas tourné : l'emplacement reste vide).
  */
 export const reels = [
-  { platform: 'instagram', label: 'Reel Instagram n° 1', sub: 'Teaser : Vitra devient Vitra Lightscape', video: 'reel/teaser-14s-b-lights-720x1280.mp4', poster: 'reel/teaser-14s-b-poster.jpg' },
-  { platform: 'instagram', label: 'Reel Instagram n° 2', sub: 'Trailer : découvrir, interagir, s’immerger', video: 'reel/trailer-23s-720x1280.mp4', poster: 'reel/trailer-23s-poster.jpg', caption: ['Découvrir. Interagir. S’immerger.', 'Vivre l’architecture dans la lumière.'], tags: '#Vitra #VitraLightscape', likes: '9,4 K', comments: '187', shares: '812', cadrage: '50% 50%' },
+  { platform: 'instagram', label: 'Reel Instagram n° 1', sub: 'Teaser : Vitra devient Vitra Lightscape', video: 'reel/teaser-14s-b-midnight-720x1280.mp4', poster: 'reel/teaser-14s-b-poster.jpg' },
+  { platform: 'instagram', label: 'Reel Instagram n° 2', sub: 'Trailer : découvrir, interagir, s’immerger', video: 'reel/trailer-v2-720x1280.mp4', poster: 'reel/trailer-v2-poster.jpg', caption: ['Découvrir. Interagir. S’immerger.', 'Vivre l’architecture dans la lumière.'], tags: '#Vitra #VitraLightscape', likes: '9,4 K', comments: '187', shares: '812', cadrage: '50% 50%' },
   { platform: 'tiktok', label: 'TikTok', sub: 'À venir' },
 ] as {
   platform: 'instagram' | 'tiktok';
@@ -53,7 +53,7 @@ export const reels = [
 
 export const presentation = {
   label: 'Présentation du projet',
-  title: 'Du Campus à la campagne : un seul fil de lumière.',
+  title: 'La campagne : un seul fil de lumière.',
   text: 'Le parcours relie des bâtiments. Notre campagne relie des visuels. Suivez le chemin, de l’affiche jusqu’aux cartes.',
   stations: [
     { id: 'affiche', label: 'Affiche', title: 'L’affiche', text: 'Le premier signal dans la rue : une façade qui s’allume, une promesse en une image.', ratio: '3 / 4', format: 'Affiche · portrait', posters: true },
@@ -62,11 +62,11 @@ export const presentation = {
   ] as Station[],
 };
 
-/** Les affiches de la campagne (format A, 905 x 1280) : même mise en page, un verbe par affiche. */
+/** Les affiches de la campagne (format A, 1413 x 2000) : même mise en page, un verbe par affiche. */
 export const posters = [
-  { src: 'presentation/affiche-ressentir.webp', title: 'Juste ressentir', sub: 'L’espace qui prend vie', alt: 'Affiche « Juste RESSENTIR, l’espace qui prend vie » : des nappes de lumière bleue, orange et jaune sur fond bleu nuit. Vitra Lightscape, 17 et 18 septembre 2027.' },
-  { src: 'presentation/affiche-partager.webp', title: 'Juste partager', sub: 'La lumière qui rassemble', alt: 'Affiche « Juste PARTAGER, la lumière qui rassemble » : des silhouettes de visiteurs devant une lumière jaune et bleue. Vitra Lightscape, 17 et 18 septembre 2027.' },
-  { src: 'presentation/affiche-explorer.webp', title: 'Juste explorer', sub: 'Le parcours qui se révèle', alt: 'Affiche « Juste EXPLORER, le parcours qui se révèle » : une silhouette en haut d’un grand escalier éclairé de lumière orange et bleue, reflété dans l’eau. Vitra Lightscape, 17 et 18 septembre 2027.' },
+  { src: 'presentation/affiche-ressentir-v2.webp', title: 'Juste ressentir', sub: 'L’espace qui prend vie', alt: 'Affiche « Juste RESSENTIR, l’espace qui prend vie » : des nappes de lumière bleue, orange et jaune sur fond bleu nuit. Vitra Lightscape, du 3 septembre au 3 octobre 2027, avec un QR code.' },
+  { src: 'presentation/affiche-partager-v2.webp', title: 'Juste partager', sub: 'La lumière qui rassemble', alt: 'Affiche « Juste PARTAGER, la lumière qui rassemble » : des silhouettes de visiteurs devant une lumière jaune et bleue. Vitra Lightscape, du 3 septembre au 3 octobre 2027, avec un QR code.' },
+  { src: 'presentation/affiche-explorer-v2.webp', title: 'Juste explorer', sub: 'Le parcours qui se révèle', alt: 'Affiche « Juste EXPLORER, le parcours qui se révèle » : une silhouette en haut d’un grand escalier éclairé de lumière orange et bleue, reflété dans l’eau. Vitra Lightscape, du 3 septembre au 3 octobre 2027, avec un QR code.' },
 ];
 
 /** Les affiches en situation (mises en scène) : abribus, tram, couloir. `w` et `h` : dimensions du fichier. */

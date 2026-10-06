@@ -10,7 +10,7 @@ export const nav = [
 ];
 
 export const hero = {
-  meta: ['Vitra Campus, Weil am Rhein', '17 & 18 septembre 2027 · 19h00 – 23h00'],
+  meta: ['Vitra Campus, Weil am Rhein', '3 septembre – 3 octobre 2027 · 19h00 – 23h00'],
   title: 'Vitra, sous une autre lumière.',
   primary: 'Réserver',
   secondary: 'Découvrir le parcours',
@@ -37,8 +37,8 @@ export const lumiere = {
 
 export const soiree = {
   label: 'Votre soirée',
-  title: 'Les 17 et 18 septembre 2027, de 19h00 à 23h00.',
-  text: 'Une soirée qui accompagne la disparition progressive de la lumière naturelle pour révéler autrement l’architecture du Vitra Campus.',
+  title: 'Du 3 septembre au 3 octobre 2027, de 19h00 à 23h00.',
+  text: '31 soirées consécutives qui accompagnent la disparition progressive de la lumière naturelle pour révéler autrement l’architecture du Vitra Campus. Les familles avec de jeunes enfants viennent plutôt à 19h00.',
   programme: [
     { time: '19h00', text: 'Ouverture du site' },
     { time: '19h15 – 19h45', text: 'Animations famille, découverte, premières lumières' },
@@ -79,8 +79,8 @@ export const infos = {
   label: 'Infos pratiques',
   rows: [
     { term: 'Lieu', value: 'Vitra Campus\nCharles-Eames-Strasse 2\n79576 Weil am Rhein, Allemagne' },
-    { term: 'Dates', value: 'Vendredi 17 et samedi 18\nseptembre 2027' },
-    { term: 'Horaires', value: 'De 19h00 à 23h00\n(entrées échelonnées, provisoire)' },
+    { term: 'Dates', value: 'Du vendredi 3 septembre au\ndimanche 3 octobre 2027\n(31 soirées consécutives)' },
+    { term: 'Horaires', value: 'De 19h00 à 23h00\nEntrées toutes les 30 minutes,\nde 19h00 à 21h30' },
     { term: 'Accessibilité', value: 'À préciser avec le Campus' },
   ],
   visit: { label: 'Préparer sa venue sur vitra.com', href: 'https://www.vitra.com/fr-fr/campus' },

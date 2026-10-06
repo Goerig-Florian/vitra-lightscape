@@ -55,7 +55,7 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
           <span class={i === hero.meta.length - 1 ? 'hero__when' : undefined}>
             {m}
             {i === hero.meta.length - 1 && (
-              <span class="hero__count" data-countdown="2027-09-17T19:00:00+02:00">
+              <span class="hero__count" data-countdown="2027-09-03T19:00:00+02:00">
                 <span class="sr-only" data-count-sr></span>
                 <span class="hero__count-grid" aria-hidden="true">
                   <span><b data-c="d">--</b><i>jours</i></span>
@@ -93,7 +93,7 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
 </section>
 
 <script>
-  // compte à rebours jusqu'à l'ouverture (vendredi 17 septembre 2027, 19h00, heure de Weil am Rhein)
+  // compte à rebours jusqu'à l'ouverture (vendredi 3 septembre 2027, 19h00, heure de Weil am Rhein)
   const cd = document.querySelector<HTMLElement>('[data-countdown]');
   if (cd) {
     const cible = new Date(cd.dataset.countdown!).getTime();

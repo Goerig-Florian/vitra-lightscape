@@ -3,7 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
-import { dates, slots, tickets, maxPerType } from '../data/billetterie';
+import { dates, slots, tickets, maxPerType, isWeekend } from '../data/billetterie';
 import { url } from '../lib/url';
 
 interface Props {
@@ -18,7 +18,7 @@ const { title, description, home = true } = Astro.props;
 const label = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 const booking = JSON.stringify({
-  dates: dates.map((d) => ({ id: d, label: label(d) })),
+  dates: dates.map((d) => ({ id: d, label: label(d), we: isWeekend(d) })),
   slots,
   tickets,
   max: maxPerType,

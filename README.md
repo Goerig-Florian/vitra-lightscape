@@ -40,7 +40,7 @@ Sur écran large (1024 px et plus), un **fil lumineux** vertical court sur le c�
    - Au survol d'un numéro (ou au focus clavier), son bâtiment s'éclaire sur la carte et la fiche montre ce bâtiment ; en quittant le numéro, la fiche revient à l'étape choisie, dont le bâtiment reste éclairé. Les 31 photos sont préchargées au premier survol.
    - Un clic (ou Entrée) sur un repère ouvre la fiche du bâtiment : photo de jour, auteur, année, mode de mise en lumière, lien vitra.com. Le bouton « Voir de nuit » fait passer la photo du jour à la nuit par un fondu à teinte de coucher de soleil (30 bâtiments sur 31, le Designweg n'a pas de vue de nuit). Le passage à la nuit ne se lance qu'au clic ; chaque fiche s'ouvre de jour, et l'animation du chemin ne change pas la fiche toute seule. Précédent / suivant (flèches sur la photo).
    - Filtres façade / intérieur / interactif.
-5. **Votre soirée** : « Les 17 et 18 septembre 2027, de 19h00 à 23h00 », la phrase de concept (une soirée qui accompagne la disparition progressive de la lumière naturelle), puis le programme en ligne lumineuse : 19h00 ouverture, 19h15 – 19h45 animations famille / découverte / premières lumières, vers 19h35 coucher du soleil, 20h00 montée des projections, 20h15 – 22h15 coeur de Vitra Lightscape, 22h15 – 23h00 ambiance plus spectaculaire et fin de parcours, 23h00 fermeture. Puis les faits (31 étapes, 2,2 km, environ 35 min de marche, départ), le secret comme argument et le bouton de réservation.
+5. **Votre soirée** : « Du 3 septembre au 3 octobre 2027, de 19h00 à 23h00 », la phrase de concept (une soirée qui accompagne la disparition progressive de la lumière naturelle), puis le programme en ligne lumineuse : 19h00 ouverture, 19h15 – 19h45 animations famille / découverte / premières lumières, vers 19h35 coucher du soleil, 20h00 montée des projections, 20h15 – 22h15 coeur de Vitra Lightscape, 22h15 – 23h00 ambiance plus spectaculaire et fin de parcours, 23h00 fermeture. Puis les faits (31 étapes, 2,2 km, environ 35 min de marche, départ), le secret comme argument et le bouton de réservation.
 6. **Billetterie** (nuit) : choix d'une soirée, d'un horaire et des billets, puis ajout au panier.
 7. **Panier** : tiroir latéral et page `/panier/`. **Le paiement n'est pas branché** (message de démonstration).
 
@@ -140,3 +140,8 @@ src/
 - La vidéo a des boutons pause et revoir. L'animation du parcours a un bouton pause, reprendre et rejouer.
 - Les repères de la carte sont des boutons au clavier (Tab, Entrée). Chaque repère porte une étiquette lisible par un lecteur d'écran (numéro, nom, auteur, année).
 - Navigation au clavier, focus visibles, panier en dialogue modal (Échap pour fermer). Les filtres du parcours sont des boutons avec état.
+
+
+## Exploitation et tarifs (fixés par l'équipe)
+
+Vitra Lightscape : vendredi 3 septembre → dimanche 3 octobre 2027, 31 soirées consécutives, 19h00 → 23h00, entrées toutes les 30 minutes de 19h00 à 21h30. Tarifs lundi–jeudi / vendredi–dimanche : adulte 24,90 € / 29,90 € ; réduit-étudiant 19,90 € / 24,90 € ; enfant 6–14 ans 11,90 € / 14,90 € ; moins de 6 ans gratuit ; famille (2 adultes + jusqu'à 3 enfants) 59,90 € / 69,90 €. Données dans `src/data/billetterie.ts`.
