@@ -1,0 +1,138 @@
+---
+/**
+ * La scène du teaser : 1080 x 1920 (9:16), fond noir. Aucune animation CSS : tout est piloté par une horloge
+ * (reel.astro) qui écrit des variables (--e, --gx, --gy, --bx, --bo, --fd) pour qu'on puisse aussi se placer à
+ * n'importe quel instant (export image par image, curseur de la page).
+ * Logos : le SVG original du projet, tel quel. Le « vitra. » seul est le logo classique ; la barre et « Lightscape »
+ * s'y ajoutent pour le logo Vitra Lightscape (mêmes tracés, mêmes proportions).
+ */
+import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
+import { url } from '../lib/url';
+
+interface Props {
+  /** Visuel de mapping, chemin dans public/ */
+  mapping?: string;
+}
+const { mapping = 'photos/design-museum-mapping.png' } = Astro.props;
+
+// sans modifier le fichier source : on repère le texte « Lightscape » (1er tracé) et la barre (rect) par une classe
+const svg = logoSvg
+  .replace('<svg', '<svg aria-hidden="true" focusable="false"')
+  .replace('<path ', '<path class="rs-ls" ')
+  .replace('<rect ', '<rect class="rs-ls" ');
+---
+
+<div class="rs" data-rs style={`--map:url(${url(mapping)})`}>
+  <div class="rs__lock" data-rs-lock set:html={svg} />
+  <div class="rs__map" aria-hidden="true"></div>
+  <div class="rs__lit" aria-hidden="true"><div class="rs__lock rs__lock--lit" set:html={svg} /></div>
+  <div class="rs__halo" aria-hidden="true"></div>
+  <div class="rs__flare" aria-hidden="true"></div>
+  <div class="rs__fade" aria-hidden="true"></div>
+</div>
+
+<style is:global>
+  .rs {
+    --e: 0; /* 0 = logo classique, 1 = logo Lightscape (transformation) */
+    --gx: 0px;
+    --gy: 0px;
+    --bx: -400px; /* position du balayage (x, en pixels de la scène) */
+    --bo: 0; /* intensité du balayage */
+    --fd: 0; /* fondu final vers le noir */
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: #000;
+    color: #fff;
+    transform-origin: 0 0;
+    font-size: 0;
+  }
+
+  /* le logo : 640 px de large, centré dans la zone de sécurité (centre x 540, y 930) */
+  .rs__lock {
+    position: absolute;
+    left: 220px;
+    top: 801px;
+    width: 640px;
+    height: 255px;
+    transform: translate(var(--gx), var(--gy));
+  }
+
+  .rs__lock svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* la barre et « Lightscape » apparaissent en place ; le « vitra. » ne bouge pas, ne change pas d'opacité */
+  .rs [data-rs-lock] .rs-ls {
+    opacity: var(--e);
+  }
+
+  /* éclat du logo là où passe la lumière */
+  .rs__lit {
+    position: absolute;
+    inset: 0;
+    opacity: var(--bo);
+    -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 170px), #000 calc(var(--bx) - 20px), #000 calc(var(--bx) + 20px), transparent calc(var(--bx) + 230px));
+    mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 170px), #000 calc(var(--bx) - 20px), #000 calc(var(--bx) + 20px), transparent calc(var(--bx) + 230px));
+  }
+
+  .rs__lock--lit {
+    transform: none;
+    filter: drop-shadow(0 0 10px rgba(255, 238, 205, 0.85)) drop-shadow(0 0 34px rgba(255, 214, 160, 0.45));
+  }
+
+  /* le mapping : une fenêtre étroite qui suit le balayage ; il disparaît aussitôt la lumière passée */
+  .rs__map {
+    position: absolute;
+    left: 0;
+    top: 525px;
+    width: 1080px;
+    height: 810px;
+    background: var(--map) center / cover no-repeat;
+    filter: saturate(1.12) contrast(1.06) brightness(1.1);
+    opacity: var(--bo);
+    -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 140px), #000 calc(var(--bx) - 112px), #000 calc(var(--bx) + 56px), transparent calc(var(--bx) + 176px)),
+      linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 140px), #000 calc(var(--bx) - 112px), #000 calc(var(--bx) + 56px), transparent calc(var(--bx) + 176px)),
+      linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
+    mask-composite: intersect;
+  }
+
+  /* halo très léger devant le masque */
+  .rs__halo {
+    position: absolute;
+    top: 465px;
+    left: -260px;
+    width: 520px;
+    height: 930px;
+    transform: translateX(var(--bx));
+    opacity: calc(var(--bo) * 0.8);
+    background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(255, 236, 205, 0.3), rgba(255, 214, 160, 0.1) 45%, transparent 72%);
+    mix-blend-mode: screen;
+  }
+
+  /* petit flare horizontal à hauteur du logo */
+  .rs__flare {
+    position: absolute;
+    top: 928px;
+    left: -380px;
+    width: 760px;
+    height: 4px;
+    transform: translateX(var(--bx));
+    opacity: calc(var(--bo) * 0.7);
+    background: linear-gradient(90deg, transparent, rgba(255, 244, 226, 0.95) 50%, transparent);
+    filter: blur(1.4px);
+    mix-blend-mode: screen;
+  }
+
+  .rs__fade {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: var(--fd);
+  }
+</style>

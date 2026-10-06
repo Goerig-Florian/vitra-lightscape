@@ -59,3 +59,11 @@ Les dates, horaires et tarifs de `src/data/billetterie.ts` sont des **propositio
 ## Textes d'architecture du livre de cartes
 
 Les courtes notes sur l'architecture des 10 bâtiments (page de présentation, `src/data/lightscape-cards.ts`) sont une première rédaction de l'équipe, à partir des noms, architectes et dates de vitra.com et de connaissances publiques. **À relire et à valider avant toute diffusion.**
+
+## Reel teaser (page interne /reel/)
+
+- Logos : le SVG original du projet (`src/assets/logo/vitra-lightscape.svg`), sans aucune modification des tracés. Le « vitra. » seul sert de logo classique ; la barre et « Lightscape » s'y ajoutent.
+- Mapping : `public/photos/design-museum-mapping.png`, visualisation de projet fournie par l'équipe (révélée quelques fractions de seconde seulement).
+- Mockup Instagram : interface dessinée en code, compte @vitra de démonstration, **chiffres (mentions J'aime, commentaires, partages) fictifs**. Mockup destiné à la présentation de l'appel d'offres, pas à une publication. L'avatar est composé avec le logo « vitra. » du projet (pas d'avatar officiel dans le dépôt).
+- Export : `node scripts/export-reel.mjs` produit les deux mp4 (1080 x 1920 et 720 x 1280, 30 i/s, 6 s) dans `public/reel/`.
+
