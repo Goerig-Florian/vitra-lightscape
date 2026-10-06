@@ -4,7 +4,7 @@
  *
  * Prérequis : le site tourne (npm run dev, port 4321 par défaut), Chrome et ffmpeg installés.
  *   node scripts/export-reel.mjs [adresse-du-site] [chemin-de-ffmpeg]
- * Sortie : public/reel/vitra-lightscape-teaser-1080x1920.mp4 et ...-720x1280.mp4
+ * Sortie : public/reel/teaser-14s-1080x1920.mp4 et teaser-14s-720x1280.mp4 (le nom change quand la vidéo change : évite l'ancienne version en cache)
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync, existsSync } from 'node:fs';
@@ -88,7 +88,7 @@ const encode = (size, name) => {
   if (r.status !== 0) throw new Error(`ffmpeg a échoué pour ${name}`);
   console.log('écrit', join(out, name));
 };
-encode(null, 'vitra-lightscape-teaser-1080x1920.mp4');
-encode('720:1280', 'vitra-lightscape-teaser-720x1280.mp4');
+encode(null, 'teaser-14s-1080x1920.mp4');
+encode('720:1280', 'teaser-14s-720x1280.mp4');
 rmSync(frames, { recursive: true, force: true });
 rmSync(profil, { recursive: true, force: true });
