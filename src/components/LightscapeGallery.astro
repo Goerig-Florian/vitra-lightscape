@@ -33,6 +33,20 @@ const liste = cartes();
 <script>
   const grid = document.querySelector<HTMLElement>('[data-lgallery]');
   if (grid) {
+    // le clip prend la place libre à droite des dernières cartes ; s'il reste moins de deux cases, il passe sur sa propre rangée en 16:9
+    const clip = grid.querySelector<HTMLElement>('.lgallery__clip');
+    const placerClip = () => {
+      if (!clip) return;
+      const colonnes = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
+      const nb = grid.querySelectorAll('li:not(.lgallery__clip)').length;
+      const libres = (colonnes - (nb % colonnes)) % colonnes;
+      const cote = libres >= 2;
+      clip.style.gridColumn = cote ? `span ${libres}` : '1 / -1';
+      clip.classList.toggle('is-side', cote);
+    };
+    placerClip();
+    addEventListener('resize', placerClip);
+
     const maxTilt = Number(grid.dataset.tilt ?? 12);
     const soft = Number(grid.dataset.reveal ?? 0.18); // largeur de la zone de bascule, en part de la carte
     const still = matchMedia('(prefers-reduced-motion: reduce)');
