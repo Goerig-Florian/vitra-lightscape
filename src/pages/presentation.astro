@@ -358,6 +358,7 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
       const NS = 'http://www.w3.org/2000/svg';
       let ys: number[] = [];
       let circles: SVGCircleElement[] = [];
+      let nodeIdx: number[] = [];
       let height = 0;
 
       let pathLen = 0;
@@ -371,23 +372,31 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
         svg.setAttribute('width', String(box.width));
         svg.setAttribute('height', String(height));
         svg.setAttribute('viewBox', `0 0 ${box.width} ${height}`);
-        // un point par bloc (ouverture, slides, étapes) ; le fil serpente : il longe la marge gauche, puis droite, puis gauche…
-        // et change de côté UNIQUEMENT dans l'espace vide au-dessus du bloc suivant : aucun texte n'est traversé
-        const blocks = [...trail.querySelectorAll<HTMLElement>('.pi__caption, .sl .eyebrow, .station__n')].map((a) => {
-          let holder = (a.closest('.station, .sl, .pi') as HTMLElement) ?? a;
+        // points : le bas du cadre d'ouverture (départ du fil), chaque slide et chaque étape (avec un point), et quelques repères
+        // intermédiaires (titres de sous-parties) où le fil change simplement de côté, pour zigzaguer davantage
+        const frame = trail.querySelector<HTMLElement>('.pi__panel');
+        const fb = frame ? frame.getBoundingClientRect() : null;
+        const items: { y: number; top: number; node: boolean }[] = [];
+        if (fb) items.push({ y: fb.bottom - box.top, top: fb.bottom - box.top, node: true });
+        trail.querySelectorAll<HTMLElement>('.sl .eyebrow, .station__n').forEach((a) => {
+          let holder = (a.closest('.station, .sl') as HTMLElement) ?? a;
           // la première étape est précédée du titre de la section « La campagne » : le fil change de côté avant ce titre
           if (holder === trail.querySelector('.station')) holder = (trail.querySelector('.pres') as HTMLElement) ?? holder;
-          return {
-            y: a.getBoundingClientRect().top - box.top + a.getBoundingClientRect().height / 2,
-            top: holder.getBoundingClientRect().top - box.top,
-          };
+          const r = a.getBoundingClientRect();
+          items.push({ y: r.top - box.top + r.height / 2, top: holder.getBoundingClientRect().top - box.top, node: true });
         });
-        ys = blocks.map((b) => b.y);
-        const xs = blocks.map((_, i) => (i % 2 === 0 ? xl : xr));
-        let d = `M ${xs[0]} 0 V ${ys[0]}`;
-        for (let i = 1; i < blocks.length; i++) {
+        trail.querySelectorAll<HTMLElement>('.sl__sub, .posters-block__label').forEach((a) => {
+          const top = a.getBoundingClientRect().top - box.top;
+          items.push({ y: top + 6, top, node: false });
+        });
+        items.sort((p, q) => p.y - q.y);
+        const xc = fb ? (fb.left + fb.right) / 2 - box.left : xl;
+        const xs = items.map((_, i) => (i === 0 ? xc : i % 2 === 1 ? xl : xr));
+        ys = items.map((b) => b.y);
+        let d = `M ${xs[0]} ${ys[0]}`;
+        for (let i = 1; i < items.length; i++) {
           // angles droits : on descend dans la marge, on traverse à l'horizontale dans l'espace vide au-dessus du bloc suivant, puis on redescend
-          const yb = Math.max(ys[i - 1] + 20, i === 1 ? blocks[i].top + 16 : blocks[i].top - 24); // l'ouverture est suivie d'un espace très court : on traverse dans le haut de la première slide
+          const yb = Math.max(ys[i - 1] + 20, i === 1 ? items[i].top + 16 : items[i].top - 24);
           d += ` V ${yb} H ${xs[i]} V ${ys[i]}`;
         }
         const fin = (ys[ys.length - 1] ?? height) + 40;
@@ -397,14 +406,18 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
         pathLen = lit.getTotalLength();
         lit.style.strokeDasharray = String(pathLen);
         g.replaceChildren();
-        circles = ys.map((y, i) => {
+        nodeIdx = [];
+        circles = [];
+        items.forEach((it, i) => {
+          if (!it.node) return;
           const c = document.createElementNS(NS, 'circle');
           c.setAttribute('cx', String(xs[i]));
-          c.setAttribute('cy', String(y));
+          c.setAttribute('cy', String(it.y));
           c.setAttribute('r', '6');
           c.setAttribute('class', 'trail__node');
           g.appendChild(c);
-          return c;
+          circles.push(c);
+          nodeIdx.push(i);
         });
         update();
       };
@@ -426,7 +439,7 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
         const box = trail.getBoundingClientRect();
         const y = calm.matches ? height : Math.min(height, Math.max(0, innerHeight * 0.6 - box.top));
         lit.style.strokeDashoffset = String(calm.matches ? 0 : pathLen - lengthAt(y));
-        circles.forEach((c, i) => c.classList.toggle('is-lit', calm.matches || ys[i] <= y + 2));
+        circles.forEach((c, i) => c.classList.toggle('is-lit', calm.matches || ys[nodeIdx[i]] <= y + 2));
       };
 
       let queued = false;
