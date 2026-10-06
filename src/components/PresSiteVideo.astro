@@ -1,0 +1,49 @@
+---
+/**
+ * Fin de la présentation : 1) le site web (lien vers l'accueil), 2) la vidéo « Vitra by Night » (ancre #video, liée depuis le header).
+ */
+import { url } from '../lib/url';
+---
+
+<section class="sl sl--site" data-theme="night" aria-labelledby="sl-site">
+  <div class="container sl__inner">
+    <p class="eyebrow">Le site web</p>
+    <h2 class="sl__title reveal" id="sl-site">Le site pour préparer sa venue.</h2>
+    <p class="sl__lead reveal">Le parcours en 31 étapes, les soirées du 3 septembre au 3 octobre 2027, la billetterie et les infos pratiques, au même endroit.</p>
+    <p class="reveal"><a class="btn btn--quiet btn--neon" href={url()}>Ouvrir le site <span class="arrow" aria-hidden="true">→</span></a></p>
+  </div>
+</section>
+
+<section class="sl sl--video" id="video" data-theme="night" aria-labelledby="sl-video">
+  <div class="container sl__inner">
+    <p class="eyebrow">La vidéo</p>
+    <h2 class="sl__title reveal" id="sl-video">Vitra by Night.</h2>
+    <figure class="sl__film reveal">
+      <video class="sl__film-video" controls playsinline preload="metadata" poster={url('reel/vitra-by-night-poster.jpg')} aria-label="Vitra by Night : le Vitra Campus de nuit, ses bâtiments transformés par la lumière">
+        <source src={url('reel/vitra-by-night-960p.mp4')} type="video/mp4" />
+      </video>
+    </figure>
+  </div>
+</section>
+
+<style is:global>
+  .sl__film {
+    margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
+  }
+
+  .sl__film-video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    max-height: 82vh;
+    margin-inline: auto;
+    border-radius: 16px;
+    background: #04060f;
+    border: 1px solid rgba(220, 239, 255, 0.22);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 24px rgba(90, 169, 255, 0.12);
+  }
+
+  .sl--video {
+    scroll-margin-top: 4rem;
+  }
+</style>

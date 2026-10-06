@@ -2,12 +2,14 @@
 /**
  * Dernière slide de la présentation : les influenceurs relais de la campagne.
  * Source : dossier de communication de l'équipe (PDF « Stratégie de communication », page « Ligne éditoriale »).
- * Pas de photos de profil : seulement le nom de compte et un monogramme, pour ne pas utiliser l'image de personnes réelles sans leur accord.
+ * Photo de profil et nombre d'abonnés : à renseigner ci-dessous quand l'équipe les fournit (sans photo, un monogramme s'affiche).
  */
+import { url } from '../lib/url';
+// photo : chemin dans public/ (ex. 'presentation/relais-pauline.webp') · abonnes : texte affiché (ex. '23,4 K')
 const relais = [
-  { compte: '@onfaitquoi.maman', nom: 'Pauline', lieu: 'Alsace / Mulhouse', cible: 'Familles', role: 'Relayer l’événement auprès des familles de la région', mono: 'P' },
-  { compte: '@lerichti', nom: 'Philipp Heer', lieu: 'Bâle', cible: 'Art, design, architecture', role: 'Donner une image premium et artistique', mono: 'PH' },
-  { compte: '@girlinbasel', nom: 'Magdalena Getreuer', lieu: 'Bâle', cible: 'Culture, sorties, grand public', role: 'Toucher les non-initiés et le public local', mono: 'MG' },
+  { compte: '@onfaitquoi.maman', nom: 'Pauline', lieu: 'Alsace / Mulhouse', cible: 'Familles', role: 'Relayer l’événement auprès des familles de la région', mono: 'P', photo: '', abonnes: '' },
+  { compte: '@lerichti', nom: 'Philipp Heer', lieu: 'Bâle', cible: 'Art, design, architecture', role: 'Donner une image premium et artistique', mono: 'PH', photo: '', abonnes: '' },
+  { compte: '@girlinbasel', nom: 'Magdalena Getreuer', lieu: 'Bâle', cible: 'Culture, sorties, grand public', role: 'Toucher les non-initiés et le public local', mono: 'MG', photo: '', abonnes: '' },
 ];
 ---
 
@@ -20,9 +22,10 @@ const relais = [
       {
         relais.map((r) => (
           <li class="relay__card reveal">
-            <span class="relay__mono" aria-hidden="true">{r.mono}</span>
+            {r.photo ? <img class="relay__photo" src={url(r.photo)} alt={`Photo de profil de ${r.nom}`} width="96" height="96" loading="lazy" decoding="async" /> : <span class="relay__mono" aria-hidden="true">{r.mono}</span>}
             <p class="relay__handle">{r.compte}</p>
             <p class="relay__name">{r.nom} · {r.lieu}</p>
+            {r.abonnes && <p class="relay__followers"><strong>{r.abonnes}</strong> abonnés</p>}
             <dl class="relay__facts">
               <div><dt>Cible</dt><dd>{r.cible}</dd></div>
               <div><dt>Rôle</dt><dd>{r.role}</dd></div>
@@ -67,6 +70,26 @@ const relais = [
     box-shadow: 0 0 10px rgba(90, 169, 255, 0.55), inset 0 0 10px rgba(90, 169, 255, 0.25);
     font-size: var(--step-1);
     font-weight: 500;
+  }
+
+  .relay__photo {
+    width: 3.4em;
+    height: 3.4em;
+    margin-bottom: 0.6rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid #dcefff;
+    box-shadow: 0 0 10px rgba(90, 169, 255, 0.55);
+  }
+
+  .relay__followers {
+    margin: 0;
+    color: var(--night-muted);
+  }
+
+  .relay__followers strong {
+    font-weight: 500;
+    color: var(--night-text);
   }
 
   .relay__handle {

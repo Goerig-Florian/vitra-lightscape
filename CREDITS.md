@@ -96,3 +96,7 @@ Le clip du booster (`public/reel/promo-tcg-wide-1280x720.mp4`, créé avec `/pro
 ## Influenceurs (dernière slide de la présentation)
 
 Les trois comptes (@onfaitquoi.maman, @lerichti, @girlinbasel), leurs villes, cibles et rôles viennent du dossier de communication de l'équipe (« Stratégie de communication », ligne éditoriale). Aucune photo de ces personnes n'est utilisée (monogrammes uniquement). Le rôle du compte @onfaitquoi.maman est reformulé à partir de sa cible (familles) : la ligne du PDF y répétait celle de @lerichti.
+
+## Vidéo « Vitra by Night »
+
+`public/reel/vitra-by-night-960p.mp4` : version web (1280 x 960, 13,5 Mo) de la vidéo montée par l'équipe (original de 330 Mo conservé en local, non publié). Elle est présentée en fin de page de présentation, avec un lien « Vidéo » dans le header.
