@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { presentation } from '../data/presentation';
+import { presentation, reels } from '../data/presentation';
+import ReelPhone from '../components/ReelPhone.astro';
 import { url } from '../lib/url';
 import LightscapeGallery from '../components/LightscapeGallery.astro';
 import LightscapeBinder from '../components/LightscapeBinder.astro';
@@ -27,18 +28,43 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
         </svg>
         {
           presentation.stations.map((s, i) => (
-            <li class={`station station--${i % 2 ? 'right' : 'left'}`} data-station>
+            <li class={`station station--${i % 2 ? 'right' : 'left'}${s.reels ? ' station--reels' : ''}`} data-station>
               <span class="station__node" data-node aria-hidden="true"></span>
-              <figure class="station__frame" style={`--ratio:${s.ratio}`}>
-                {s.image ? (
-                  <img src={url(s.image)} alt={s.alt ?? ''} loading="lazy" decoding="async" />
-                ) : (
-                  <span class="station__empty">
-                    <span>{s.format}</span>
-                    <small>Visuel à venir</small>
-                  </span>
-                )}
-              </figure>
+              {s.reels ? (
+                <div class="reels-row">
+                  {reels.map((r) => (
+                    <figure class="reels-row__item">
+                      <ReelPhone platform={r.platform} caption={r.video ? undefined : ['Légende à venir']} tags={r.video ? undefined : ''} likes={r.video ? undefined : '—'} comments={r.video ? undefined : '—'} shares={r.video ? undefined : '—'}>
+                        {r.video ? (
+                          <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} aria-label="Teaser Vitra Lightscape : le logo Vitra s’éteint, le logo Vitra Lightscape apparaît et une lumière y révèle un mapping.">
+                            <source src={url(r.video)} type="video/mp4" />
+                          </video>
+                        ) : (
+                          <div class="phone__ph">
+                            <span>{r.label}</span>
+                            <small>Vidéo à venir</small>
+                          </div>
+                        )}
+                      </ReelPhone>
+                      <figcaption>
+                        <strong>{r.label}</strong>
+                        <span>{r.sub}</span>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ) : (
+                <figure class="station__frame" style={`--ratio:${s.ratio}`}>
+                  {s.image ? (
+                    <img src={url(s.image)} alt={s.alt ?? ''} loading="lazy" decoding="async" />
+                  ) : (
+                    <span class="station__empty">
+                      <span>{s.format}</span>
+                      <small>Visuel à venir</small>
+                    </span>
+                  )}
+                </figure>
+              )}
               <div class="station__text">
                 <p class="station__n">{String(i + 1).padStart(2, '0')} · {s.label}</p>
                 <h2>{s.title}</h2>
@@ -54,6 +80,27 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
 
   <LightscapeGallery />
   <LightscapeBinder />
+
+  <script>
+    // le teaser joue dans son mockup quand il est à l'écran (jamais de lecture automatique avec « réduire les animations »)
+    const videos = [...document.querySelectorAll<HTMLVideoElement>('.reel-video')];
+    const calm = matchMedia('(prefers-reduced-motion: reduce)');
+    if (videos.length) {
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            const v = e.target as HTMLVideoElement;
+            if (e.isIntersecting && !calm.matches) v.play().catch(() => undefined);
+            else v.pause();
+          }),
+        { threshold: 0.45 },
+      );
+      videos.forEach((v) => {
+        io.observe(v);
+        v.addEventListener('click', () => (v.paused ? v.play().catch(() => undefined) : v.pause()));
+      });
+    }
+  </script>
 
   <script>
     const root = document.querySelector<HTMLElement>('[data-pres]');

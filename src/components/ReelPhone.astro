@@ -1,0 +1,458 @@
+---
+/**
+ * Un téléphone avec l'interface d'un Reel Instagram ou d'une vidéo TikTok autour d'un média (slot : la vidéo ou un emplacement vide).
+ * Mockup de présentation : le compte et les chiffres sont fictifs. L'avatar est composé avec le « vitra. » du projet (même SVG).
+ */
+import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
+
+interface Props {
+  platform?: 'instagram' | 'tiktok';
+  likes?: string;
+  comments?: string;
+  shares?: string;
+  /** lignes de la légende */
+  caption?: string[];
+  tags?: string;
+}
+const {
+  platform = 'instagram',
+  likes = '12,8 K',
+  comments = '243',
+  shares = '1 456',
+  caption = ['Something is coming to the Vitra Campus.', 'Light changes everything.'],
+  tags = '#Vitra #VitraCampus #VitraLightscape',
+} = Astro.props;
+
+// avatar : le « vitra. » original (même fichier), en noir sur rond blanc
+const avatar = logoSvg
+  .replace('width="346" height="138" viewBox="0 0 346 138"', 'viewBox="4 -3 204 72"')
+  .replace('<svg', '<svg aria-hidden="true" focusable="false"')
+  .replace('<path ', '<path class="rs-ls" ')
+  .replace('<rect ', '<rect class="rs-ls" ');
+
+const insta = platform === 'instagram';
+---
+
+<div class={`phone phone--${platform}`} data-phone>
+  <div class="phone__screen">
+    <slot />
+
+    <div class={insta ? 'ig' : 'ig tt'}>
+      <div class="ig__status" aria-hidden="true">
+        <span>9:41</span>
+        <span class="ig__sys">
+          <svg viewBox="0 0 18 12" width="17" height="11"><path d="M1 9h2v2H1zM5 7h2v4H5zM9 4h2v7H9zM13 1h2v10h-2z" fill="currentColor" /></svg>
+          <svg viewBox="0 0 18 12" width="16" height="11"><path d="M9 11 .5 4.2a12 12 0 0 1 17 0Z" fill="currentColor" /></svg>
+          <svg viewBox="0 0 27 12" width="25" height="11"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".5" /><rect x="2" y="2" width="19" height="8" rx="2" fill="currentColor" /><rect x="24" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5" /></svg>
+        </span>
+      </div>
+
+      {
+        insta ? (
+          <div class="ig__top">
+            <span class="ig__title">Reels</span>
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-label="Appareil photo"><path d="M4 8.5h3l1.4-2h7.2l1.4 2h3V18H4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7" /></svg>
+          </div>
+        ) : (
+          <div class="ig__top tt__top">
+            <span class="tt__tabs"><span>Abonnements</span><b>Pour toi</b></span>
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-label="Rechercher"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2" /><path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+          </div>
+        )
+      }
+
+      <ul class="ig__side">
+        {
+          !insta && (
+            <li class="tt__follow">
+              <span class="ig__avatar" aria-hidden="true"><span set:html={avatar} /></span>
+              <i aria-hidden="true">+</i>
+            </li>
+          )
+        }
+        <li>
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 20.5s-8-4.8-8-11A4.6 4.6 0 0 1 12 6.8a4.6 4.6 0 0 1 8 2.7c0 6.2-8 11-8 11Z" fill={insta ? 'none' : 'currentColor'} stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
+          <span>{likes}</span><span class="sr-only"> mentions J’aime</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M20.5 11.6c0 4.2-3.8 7.4-8.5 7.4-1 0-1.9-.1-2.8-.4L4.5 20l1.4-3.6A7 7 0 0 1 3.5 11.6C3.5 7.4 7.3 4.2 12 4.2s8.5 3.2 8.5 7.4Z" fill={insta ? 'none' : 'currentColor'} stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
+          <span>{comments}</span><span class="sr-only"> commentaires</span>
+        </li>
+        {
+          insta ? (
+            <>
+              <li>
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M20.5 4 3.5 10.4l6.6 2.5 2.5 6.6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><path d="m10.1 12.9 5.4-4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                <span>{shares}</span><span class="sr-only"> partages</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M6.5 3.8h11V20L12 15.6 6.5 20Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
+                <span class="sr-only">Enregistrer</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><circle cx="5" cy="12" r="1.7" fill="currentColor" /><circle cx="12" cy="12" r="1.7" fill="currentColor" /><circle cx="19" cy="12" r="1.7" fill="currentColor" /></svg>
+                <span class="sr-only">Plus</span>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M6.5 3.8h11V20L12 15.6 6.5 20Z" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
+                <span>{shares}</span><span class="sr-only"> enregistrements</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M21 11.5 13.5 4v4.2C7.5 8.4 4 12 3 19c2.5-3.2 5.8-4.6 10.5-4.6V19Z" fill="currentColor" /></svg>
+                <span>—</span><span class="sr-only"> partages</span>
+              </li>
+            </>
+          )
+        }
+        <li class="ig__disc" aria-hidden="true"><span set:html={avatar} /></li>
+      </ul>
+
+      <div class="ig__bottom">
+        {
+          insta ? (
+            <div class="ig__acct">
+              <span class="ig__avatar" aria-hidden="true"><span set:html={avatar} /></span>
+              <strong>vitra</strong>
+              <svg class="ig__verified" viewBox="0 0 24 24" width="15" height="15" aria-label="Compte vérifié"><path d="M12 1.6l2.6 1.9 3.2-.2 1 3 2.6 1.9-1 3 1 3-2.6 1.9-1 3-3.2-.2L12 22.4l-2.6-1.9-3.2.2-1-3L2.6 15.8l1-3-1-3 2.6-1.9 1-3 3.2.2Z" fill="#3897f0" /><path d="m8.2 12.2 2.7 2.6 5-5.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <button type="button" class="ig__follow" tabindex="-1">Suivre</button>
+            </div>
+          ) : (
+            <div class="ig__acct">
+              <strong>@vitra</strong>
+              <svg class="ig__verified" viewBox="0 0 24 24" width="15" height="15" aria-label="Compte vérifié"><path d="M12 1.6l2.6 1.9 3.2-.2 1 3 2.6 1.9-1 3 1 3-2.6 1.9-1 3-3.2-.2L12 22.4l-2.6-1.9-3.2.2-1-3L2.6 15.8l1-3-1-3 2.6-1.9 1-3 3.2.2Z" fill="#20d5ec" /><path d="m8.2 12.2 2.7 2.6 5-5.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </div>
+          )
+        }
+        <p class="ig__cap">
+          {caption.map((l) => <>{l}<br /></>)}
+          <span>{tags}</span>
+        </p>
+        <p class="ig__audio">
+          <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M9 18V6.5l9-2V16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><circle cx="6.5" cy="18" r="2.5" fill="currentColor" /><circle cx="15.5" cy="16" r="2.5" fill="currentColor" /></svg>
+          {insta ? 'vitra · Audio d’origine' : 'son original - vitra'}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  /* ---- téléphone ---- */
+  /* Samsung Galaxy S26 : cadre aluminium plat et fin, coins peu arrondis, écran quasi sans bords, poinçon de caméra centré */
+  .phone {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 19.5;
+    container-type: inline-size;
+    padding: 1.7%;
+    border-radius: 9% / 4.2%;
+    background: linear-gradient(135deg, #3a3e46, #15171c 38%, #2a2d34 62%, #101216);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+      inset 0 0 0 3px #08090c,
+      0 0 0 1px #0b0c10,
+      0 40px 80px rgba(0, 0, 0, 0.7);
+  }
+
+  /* boutons latéraux, côté droit : volume (deux touches) puis verrouillage */
+  .phone::before,
+  .phone::after {
+    content: '';
+    position: absolute;
+    right: -1.3%;
+    width: 1.3%;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(90deg, #1b1d22, #4a4e57 55%, #2a2d34);
+  }
+
+  .phone::before {
+    top: 21%;
+    height: 11%;
+  }
+
+  .phone::after {
+    top: 36%;
+    height: 6.5%;
+  }
+
+  .phone__screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 7.6% / 3.5%;
+    background: #000;
+  }
+
+  /* poinçon de la caméra frontale */
+  .phone__screen::before {
+    content: '';
+    position: absolute;
+    z-index: 6;
+    top: 1.5%;
+    left: 50%;
+    width: 4.6%;
+    aspect-ratio: 1;
+    margin-left: -2.3%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 36%, #2b3140 0 14%, #05060a 38%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  /* barre de gestes Android */
+  .phone__screen::after {
+    content: '';
+    position: absolute;
+    z-index: 6;
+    bottom: 1.1%;
+    left: 50%;
+    width: 30%;
+    height: 0.5%;
+    min-height: 3px;
+    margin-left: -15%;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  .phone .reel__wrap {
+    position: absolute;
+    inset: 0;
+    height: 100% !important;
+  }
+
+  /* ---- interface Reels ---- */
+  .ig {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #fff;
+    font-size: 3.3cqw;
+    line-height: 1.3;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 16%),
+      linear-gradient(0deg, rgba(0, 0, 0, 0.62), transparent 30%);
+  }
+
+  .ig__status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1em 1.9em 0;
+    font-weight: 600;
+    font-size: 1.05em;
+  }
+
+  .ig__sys {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .ig__top {
+    position: absolute;
+    top: 3.5em;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.4em;
+  }
+
+  .ig__title {
+    font-size: 1.75em;
+    font-weight: 600;
+  }
+
+  .ig__side {
+    position: absolute;
+    right: 0.9em;
+    bottom: 8.4em;
+    display: grid;
+    gap: 1.35em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    justify-items: center;
+    text-align: center;
+    font-size: 0.95em;
+    font-weight: 600;
+  }
+
+  .ig__side li {
+    display: grid;
+    gap: 0.25em;
+    justify-items: center;
+  }
+
+  .ig__side svg {
+    width: 2.55em;
+    height: 2.55em;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+  }
+
+  .ig__disc {
+    width: 2.3em;
+    height: 2.3em;
+    margin-top: 0.3em;
+    border-radius: 0.55em;
+    border: 2px solid #fff;
+    overflow: hidden;
+    background: #fff;
+    transform: rotate(8deg);
+  }
+
+  .ig__avatar span,
+  .ig__disc span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #000;
+  }
+
+  .ig__avatar svg,
+  .ig__disc svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ig__avatar .rs-ls,
+  .ig__disc .rs-ls {
+    display: none;
+  }
+
+  .ig__bottom {
+    padding: 0 1.1em 1.6em;
+    display: grid;
+    gap: 0.75em;
+    margin-right: 4.4em;
+  }
+
+  .ig__acct {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 1.12em;
+  }
+
+  .ig__avatar {
+    display: block;
+    width: 2.5em;
+    height: 2.5em;
+    padding: 0.62em 0.36em;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+  }
+
+  .ig__follow {
+    margin-left: 0.3em;
+    padding: 0.3em 0.9em;
+    border-radius: 0.55em;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    font-size: 0.95em;
+    font-weight: 600;
+  }
+
+  .ig__cap {
+    margin: 0;
+    font-size: 1.05em;
+  }
+
+  .ig__cap span {
+    opacity: 0.8;
+  }
+
+  .ig__audio {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    margin: 0;
+    font-size: 0.98em;
+    opacity: 0.92;
+  }
+
+  /* emplacement d'un reel pas encore tourné */
+  .phone__ph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 0.4em;
+    justify-items: center;
+    text-align: center;
+    font-size: 4cqw;
+    color: rgba(255, 255, 255, 0.7);
+    background: repeating-linear-gradient(135deg, #07080d 0 14px, #0d0f17 14px 15px);
+  }
+
+  .phone__ph small {
+    font-size: 0.85em;
+    color: #ffb44c;
+  }
+
+  /* TikTok : onglets en haut, bouton « suivre » sur l'avatar, nom en gras */
+  .tt__tabs {
+    display: flex;
+    gap: 1.4em;
+    margin: 0 auto;
+    padding-left: 1.6em;
+    font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .tt__tabs b {
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 0.25em;
+  }
+
+  .tt__top {
+    justify-content: center;
+  }
+
+  .tt__top > svg {
+    position: absolute;
+    right: 1.4em;
+  }
+
+  .tt__follow {
+    position: relative;
+    margin-bottom: 0.4em;
+  }
+
+  .tt__follow .ig__avatar {
+    width: 3.1em;
+    height: 3.1em;
+    padding: 0.75em 0.45em;
+  }
+
+  .tt__follow i {
+    position: absolute;
+    bottom: -0.55em;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 1.5em;
+    height: 1.5em;
+    margin-left: -0.75em;
+    border-radius: 50%;
+    background: #fe2c55;
+    color: #fff;
+    font-style: normal;
+    font-size: 0.95em;
+    font-weight: 700;
+    line-height: 1;
+  }
+</style>

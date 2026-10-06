@@ -6,15 +6,8 @@
  */
 import '../styles/global.css';
 import ReelStage from '../components/ReelStage.astro';
-import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
+import ReelPhone from '../components/ReelPhone.astro';
 import { url } from '../lib/url';
-
-// avatar : le « vitra. » original (même fichier), en noir sur rond blanc
-const avatar = logoSvg
-  .replace('width="346" height="138" viewBox="0 0 346 138"', 'viewBox="4 -3 204 72"')
-  .replace('<svg', '<svg aria-hidden="true" focusable="false"')
-  .replace('<path ', '<path class="rs-ls" ')
-  .replace('<rect ', '<rect class="rs-ls" ');
 
 const timings = [
   { t: '0:00', text: 'Ambiance grave très légère, à peine audible : fond noir, logo Vitra classique fixe.' },
@@ -55,64 +48,9 @@ const timings = [
       </section>
 
       <section class="reel__view" data-panel="mockup" hidden aria-label="Mockup Instagram Reel">
-        <div class="phone" data-phone>
-          <div class="phone__screen">
-            <div class="reel__wrap" data-wrap><ReelStage /></div>
-
-            <div class="ig">
-              <div class="ig__status" aria-hidden="true">
-                <span>9:41</span>
-                <span class="ig__sys">
-                  <svg viewBox="0 0 18 12" width="17" height="11"><path d="M1 9h2v2H1zM5 7h2v4H5zM9 4h2v7H9zM13 1h2v10h-2z" fill="currentColor" /></svg>
-                  <svg viewBox="0 0 18 12" width="16" height="11"><path d="M9 11 .5 4.2a12 12 0 0 1 17 0Z" fill="currentColor" /></svg>
-                  <svg viewBox="0 0 27 12" width="25" height="11"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".5" /><rect x="2" y="2" width="19" height="8" rx="2" fill="currentColor" /><rect x="24" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5" /></svg>
-                </span>
-              </div>
-              <div class="ig__top">
-                <span class="ig__title">Reels</span>
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-label="Appareil photo"><path d="M4 8.5h3l1.4-2h7.2l1.4 2h3V18H4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7" /></svg>
-              </div>
-
-              <ul class="ig__side">
-                <li>
-                  <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 20.5s-8-4.8-8-11A4.6 4.6 0 0 1 12 6.8a4.6 4.6 0 0 1 8 2.7c0 6.2-8 11-8 11Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
-                  <span>12,8 K</span><span class="sr-only"> mentions J’aime</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M20.5 11.6c0 4.2-3.8 7.4-8.5 7.4-1 0-1.9-.1-2.8-.4L4.5 20l1.4-3.6A7 7 0 0 1 3.5 11.6C3.5 7.4 7.3 4.2 12 4.2s8.5 3.2 8.5 7.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
-                  <span>243</span><span class="sr-only"> commentaires</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M20.5 4 3.5 10.4l6.6 2.5 2.5 6.6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><path d="m10.1 12.9 5.4-4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
-                  <span>1 456</span><span class="sr-only"> partages</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M6.5 3.8h11V20L12 15.6 6.5 20Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
-                  <span class="sr-only">Enregistrer</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><circle cx="5" cy="12" r="1.7" fill="currentColor" /><circle cx="12" cy="12" r="1.7" fill="currentColor" /><circle cx="19" cy="12" r="1.7" fill="currentColor" /></svg>
-                  <span class="sr-only">Plus</span>
-                </li>
-                <li class="ig__disc" aria-hidden="true"><span set:html={avatar}></span></li>
-              </ul>
-
-              <div class="ig__bottom">
-                <div class="ig__acct">
-                  <span class="ig__avatar" aria-hidden="true"><span set:html={avatar}></span></span>
-                  <strong>vitra</strong>
-                  <svg class="ig__verified" viewBox="0 0 24 24" width="15" height="15" aria-label="Compte vérifié"><path d="M12 1.6l2.6 1.9 3.2-.2 1 3 2.6 1.9-1 3 1 3-2.6 1.9-1 3-3.2-.2L12 22.4l-2.6-1.9-3.2.2-1-3L2.6 15.8l1-3-1-3 2.6-1.9 1-3 3.2.2Z" fill="#3897f0" /><path d="m8.2 12.2 2.7 2.6 5-5.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                  <button type="button" class="ig__follow" tabindex="-1">Suivre</button>
-                </div>
-                <p class="ig__cap">Something is coming to the Vitra Campus.<br />Light changes everything.<br /><span>#Vitra #VitraCampus #VitraLightscape</span></p>
-                <p class="ig__audio">
-                  <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M9 18V6.5l9-2V16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><circle cx="6.5" cy="18" r="2.5" fill="currentColor" /><circle cx="15.5" cy="16" r="2.5" fill="currentColor" /></svg>
-                  vitra · Audio d’origine
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ReelPhone platform="instagram" likes="12,8 K" comments="243" shares="1 456">
+          <div class="reel__wrap" data-wrap><ReelStage /></div>
+        </ReelPhone>
       </section>
 
       <aside class="reel__side" data-side>
@@ -194,17 +132,11 @@ const timings = [
 
       // ----- mise à l'échelle : la scène fait toujours 1080 x 1920, on la réduit pour l'affichage -----
       const fit = () => {
-        wraps.forEach((w) => {
-          const s = w.querySelector<HTMLElement>('[data-rs]')!;
-          const k = clean ? 1 : w.clientWidth / 1080;
-          s.style.transform = `scale(${k})`;
-          w.style.height = `${1920 * k}px`;
-        });
         const phone = document.querySelector<HTMLElement>('[data-phone]');
         if (phone && !clean) {
-          const avail = Math.max(420, window.innerHeight - 150);
-          const h = Math.min(avail, 780);
-          phone.style.setProperty('--ph', `${h}px`);
+          // écran du Galaxy S26 : 9:19,5
+          const h = Math.min(Math.max(420, window.innerHeight - 150), 780);
+          phone.style.width = `${(h * 9) / 19.5}px`;
         }
         if (!clean) {
           const video = document.querySelector<HTMLElement>('.reel__wrap--video');
@@ -212,9 +144,15 @@ const timings = [
         }
         wraps.forEach((w) => {
           const s = w.querySelector<HTMLElement>('[data-rs]')!;
-          const k = clean ? 1 : w.clientWidth / 1080;
-          s.style.transform = `scale(${k})`;
-          w.style.height = `${1920 * k}px`;
+          if (w.closest('.phone')) {
+            // l'écran est plus haut que le 9:16 : la vidéo le remplit (cadrage centré), le logo reste au milieu
+            const k = Math.max(w.clientWidth / 1080, w.clientHeight / 1920);
+            s.style.transform = `translateX(${(w.clientWidth - 1080 * k) * 0.8}px) scale(${k})`;
+          } else {
+            const k = clean ? 1 : w.clientWidth / 1080;
+            s.style.transform = `scale(${k})`;
+            w.style.height = `${1920 * k}px`;
+          }
         });
       };
 
@@ -413,191 +351,6 @@ const timings = [
   .reel__wrap--video {
     border-radius: 14px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 30px 60px rgba(0, 0, 0, 0.6);
-  }
-
-  /* ---- téléphone ---- */
-  .phone {
-    --ph: 720px;
-    height: var(--ph);
-    aspect-ratio: 9 / 16;
-    padding: 9px;
-    border-radius: 40px;
-    background: #14161c;
-    box-shadow: 0 0 0 1.5px #3a3d47, 0 0 0 5px #0a0b0f, 0 40px 80px rgba(0, 0, 0, 0.7);
-  }
-
-  .phone__screen {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    border-radius: 32px;
-    background: #000;
-  }
-
-  .phone .reel__wrap {
-    position: absolute;
-    inset: 0;
-    height: 100% !important;
-  }
-
-  /* ---- interface Reels ---- */
-  .ig {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    color: #fff;
-    font-size: calc(var(--ph) * 0.0185);
-    line-height: 1.3;
-    pointer-events: none;
-    background:
-      linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 16%),
-      linear-gradient(0deg, rgba(0, 0, 0, 0.62), transparent 30%);
-  }
-
-  .ig__status {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.1em 1.9em 0;
-    font-weight: 600;
-    font-size: 1.05em;
-  }
-
-  .ig__sys {
-    display: flex;
-    align-items: center;
-    gap: 0.4em;
-  }
-
-  .ig__top {
-    position: absolute;
-    top: 3.5em;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1.4em;
-  }
-
-  .ig__title {
-    font-size: 1.75em;
-    font-weight: 600;
-  }
-
-  .ig__side {
-    position: absolute;
-    right: 0.9em;
-    bottom: 8.4em;
-    display: grid;
-    gap: 1.35em;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    justify-items: center;
-    text-align: center;
-    font-size: 0.95em;
-    font-weight: 600;
-  }
-
-  .ig__side li {
-    display: grid;
-    gap: 0.25em;
-    justify-items: center;
-  }
-
-  .ig__side svg {
-    width: 2.55em;
-    height: 2.55em;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
-  }
-
-  .ig__disc {
-    width: 2.3em;
-    height: 2.3em;
-    margin-top: 0.3em;
-    border-radius: 0.55em;
-    border: 2px solid #fff;
-    overflow: hidden;
-    background: #fff;
-    transform: rotate(8deg);
-  }
-
-  .ig__avatar span,
-  .ig__disc span {
-    display: block;
-    width: 100%;
-    height: 100%;
-    color: #000;
-  }
-
-  .ig__avatar svg,
-  .ig__disc svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .ig__avatar .rs-ls,
-  .ig__disc .rs-ls {
-    display: none;
-  }
-
-  .ig__bottom {
-    padding: 0 1.1em 1.6em;
-    display: grid;
-    gap: 0.75em;
-    margin-right: 4.4em;
-  }
-
-  .ig__acct {
-    display: flex;
-    align-items: center;
-    gap: 0.6em;
-    font-size: 1.12em;
-  }
-
-  .ig__avatar {
-    display: block;
-    width: 2.5em;
-    height: 2.5em;
-    padding: 0.62em 0.36em;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
-  }
-
-  .ig__follow {
-    margin-left: 0.3em;
-    padding: 0.3em 0.9em;
-    border-radius: 0.55em;
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    background: transparent;
-    color: #fff;
-    font: inherit;
-    font-size: 0.95em;
-    font-weight: 600;
-  }
-
-  .ig__cap {
-    margin: 0;
-    font-size: 1.05em;
-  }
-
-  .ig__cap span {
-    opacity: 0.8;
-  }
-
-  .ig__audio {
-    display: flex;
-    align-items: center;
-    gap: 0.45em;
-    margin: 0;
-    font-size: 0.98em;
-    opacity: 0.92;
   }
 
   /* ---- panneau de repères ---- */
