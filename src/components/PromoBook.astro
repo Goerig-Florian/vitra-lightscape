@@ -1,0 +1,236 @@
+---
+/**
+ * Le book du clip promo : le MÊME livre que celui du site (mêmes classes, même CSS, mêmes données, même couverture, même page de titre),
+ * mais sans interface (ni boutons, ni texte d'accompagnement) et sans animation automatique : l'ouverture de la couverture,
+ * la position du livre et l'apparition de la carte insérée sont pilotées par la chronologie de /promo-tcg/.
+ *
+ * Double page montrée : les entrées 4 à 6 (page gauche) et 7 à 9 (page droite). La pochette « 07 » (Vitra Design Museum) est
+ * livrée vide ; la carte du clip vient s'y insérer. Les cartes déjà rangées montrent leur version mapping.
+ */
+import { classeur } from '../data/lightscape-cards';
+import Logo from './Logo.astro';
+import TitlePage from './LightscapeTitlePage.astro';
+import CoverScene from './CoverScene.astro';
+import { url } from '../lib/url';
+
+interface Props {
+  /** identifiant de la carte qui sera insérée (sa pochette est livrée vide) */
+  cible: string;
+}
+const { cible } = Astro.props;
+
+const slots = classeur();
+const rangees = slots.filter((s) => s.carte).length;
+const flags = slots.map((s) => s.carte);
+const idx = slots.findIndex((s) => s.id === cible);
+const page0 = Math.floor(idx / 3); // page d'entrées qui contient la carte
+// dans le livre, les pages d'entrées d'indice pair sont à droite, celles d'indice impair à gauche : la double page est (impair, pair suivant)
+const gauche = page0 % 2 === 0 ? page0 - 1 : page0;
+if (gauche < 1) throw new Error(`PromoBook : la carte « ${cible} » est sur la toute première page (face à la page de titre) : choisir une carte plus loin dans le parcours`);
+const pages = [slots.slice(gauche * 3, gauche * 3 + 3), slots.slice((gauche + 1) * 3, (gauche + 1) * 3 + 3)];
+const total = Math.ceil(slots.length / 3) + 1;
+---
+
+<div class="bk pbook" data-pbook>
+  <div class="pbook__persp">
+    <div class="bk__book" data-pbook-book>
+      <div class="bk__block" data-pbook-block>
+        {
+          pages.map((page, k) => {
+            const i = gauche + k;
+            const gauchePage = k === 0;
+            return (
+              <section class="sheet" data-side={gauchePage ? 'l' : 'r'} data-pbook-sheet={gauchePage ? 'l' : 'r'}>
+                <header class="sheet__head">
+                  {gauchePage ? (
+                    <>
+                      <span class="sheet__logo" aria-hidden="true"><Logo label={false} /></span>
+                      <span>Vitra Campus</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>L’architecture en lumière</span>
+                      <span class="sheet__pg">{String(i + 2).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
+                    </>
+                  )}
+                </header>
+                <ol class="entries">
+                  {page.map((s) => {
+                    const estCible = s.id === cible;
+                    return (
+                      <li class="entry">
+                        <div class={`pocket${s.carte && !estCible ? '' : ' is-empty'}`} data-pbook-slot={estCible ? '' : undefined}>
+                          {estCible ? (
+                            <div class="pocket__stack">
+                              <div class="mini mini--empty" data-pbook-empty aria-hidden="true">
+                                <span class="mini__n">{s.n}</span>
+                              </div>
+                              <div class="mini" data-pbook-fill aria-hidden="true" style="opacity:0">
+                                <img class="mini__img" src={url(s.jour)} alt="" width="960" height="720" decoding="async" draggable="false" />
+                                <img class="mini__img mini__img--map" src={url(s.mapping)} alt="" width="1448" height="1086" decoding="async" draggable="false" style="opacity:1" />
+                                <span class="mini__frame"></span>
+                                <span class="mini__logo"><Logo label={false} /></span>
+                                <span class="mini__no">{s.n} / {slots.length}</span>
+                              </div>
+                            </div>
+                          ) : s.carte ? (
+                            <div class="mini is-on" aria-hidden="true">
+                              <img class="mini__img" src={url(s.jour)} alt="" width="960" height="720" decoding="async" draggable="false" />
+                              <img class="mini__img mini__img--map" src={url(s.mapping)} alt="" width="1448" height="1086" decoding="async" draggable="false" />
+                              <span class="mini__frame"></span>
+                              <span class="mini__logo"><Logo label={false} /></span>
+                              <span class="mini__no">{s.n} / {slots.length}</span>
+                            </div>
+                          ) : (
+                            <div class="mini mini--empty" aria-hidden="true">
+                              <span class="mini__n">{s.n}</span>
+                            </div>
+                          )}
+                        </div>
+                        {estCible ? (
+                          <div class="entry__stack">
+                            <div class="entry__txt entry__txt--empty" data-pbook-txt-empty>
+                              <h4>Carte n° {s.n}</h4>
+                              <p class="entry__text">Pochette vide : cette carte t’attend sur le parcours.</p>
+                            </div>
+                            <div class="entry__txt" data-pbook-txt-fill style="opacity:0">
+                              <h4>{s.name}</h4>
+                              <p class="entry__by">{[s.author, s.year].filter(Boolean).join(', ')}</p>
+                              <p class="entry__text">{s.text}</p>
+                            </div>
+                          </div>
+                        ) : s.carte ? (
+                          <div class="entry__txt">
+                            <h4>{s.name}</h4>
+                            <p class="entry__by">{[s.author, s.year].filter(Boolean).join(', ')}</p>
+                            <p class="entry__text">{s.text}</p>
+                          </div>
+                        ) : (
+                          <div class="entry__txt entry__txt--empty">
+                            <h4>Carte n° {s.n}</h4>
+                            <p class="entry__text">Pochette vide : cette carte t’attend sur le parcours.</p>
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ol>
+              </section>
+            );
+          })
+        }
+        <span class="bk__gutter" aria-hidden="true"></span>
+      </div>
+
+      <div class="cvr" data-pbook-cover>
+        <div class="cvr__front">
+          <span class="cvr__spine" aria-hidden="true"></span>
+          <span class="cvr__top">
+            <span class="cvr__logo" aria-hidden="true"><Logo label={false} /></span>
+            <span class="cvr__campus">Vitra Campus</span>
+          </span>
+          <CoverScene />
+          <span class="cvr__bottom">
+            <span class="cvr__title">Album de collection</span>
+            <span class="cvr__rule" aria-hidden="true"></span>
+            <span class="cvr__sub">Architectures en lumière<br />Vitra Campus</span>
+          </span>
+        </div>
+        <div class="cvr__back" aria-hidden="true">
+          <TitlePage rangees={rangees} total={slots.length} flags={flags} />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  /* ---- le livre du clip : pas de table ni de perspective de page, tailles fixes (le clip est en pixels, pas en vw) ---- */
+  .pbook {
+    position: absolute;
+    left: 90px;
+    top: 930px;
+    width: 900px;
+    margin: 0;
+  }
+
+  .pbook__persp {
+    perspective: 2400px;
+  }
+
+  .pbook .sheet {
+    min-height: 600px;
+    padding: 26px 30px;
+  }
+
+  .pbook .sheet__head {
+    font-size: 9px;
+    padding-bottom: 14px;
+  }
+
+  .pbook .entries {
+    gap: 12px;
+    padding-top: 16px;
+  }
+
+  .pbook .entry {
+    grid-template-columns: 112px 1fr;
+    gap: 20px;
+  }
+
+  .pbook .entry__txt h4 {
+    font-size: 21px;
+  }
+
+  .pbook .entry__by {
+    font-size: 13px;
+  }
+
+  .pbook .entry__text {
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  /* aucune transition ni animation autonome : tout vient de la chronologie */
+  .pbook .cvr,
+  .pbook .bk__book,
+  .pbook .mini__img--map,
+  .pbook .sheet {
+    transition: none !important;
+  }
+
+  .pbook .cv-stars circle,
+  .pbook .cv-path,
+  .pbook .cvr__hint {
+    animation: none !important;
+  }
+
+  .pbook .cvr__hint {
+    display: none;
+  }
+
+  /* pochette de la carte insérée : l'emplacement vide et la carte posée sont superposés */
+  .pbook .pocket__stack,
+  .pbook .entry__stack {
+    display: grid;
+  }
+
+  .pbook .pocket__stack > *,
+  .pbook .entry__stack > * {
+    grid-area: 1 / 1;
+  }
+
+  .pbook .cvr__bottom {
+    display: grid;
+    justify-items: center;
+    gap: 0.55rem;
+    text-align: center;
+  }
+
+  .pbook .cvr__front {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+  }
+</style>

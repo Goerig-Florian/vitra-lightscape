@@ -1,0 +1,676 @@
+---
+/**
+ * Clip promotionnel vertical (TikTok / Reels), 1080 x 1920, environ 10 s, sans son.
+ * Booster → révélation des cartes → carte collector → le book s'ouvre → la carte entre dans sa pochette → plan final.
+ *
+ * Réutilise : LightscapeCard (les cartes), les classes et le CSS du livre (PromoBook = le même livre, sans interface),
+ * la couverture illustrée (CoverScene), le logo, les données (classeur / cartes). Le booster est créé pour le clip (PromoBooster).
+ *
+ * La page se lance seule au chargement ; « Rejouer » (ou la touche R) relance. Aucune animation CSS : tout est piloté par une
+ * horloge (render(t)), donc le clip peut aussi se rendre image par image (scripts/export-promo.mjs).
+ * Adresses utiles : ?clean (aucune interface : la scène seule, pour l'enregistrement) · ?t=4.5 (se place à un instant, sans lecture).
+ */
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import LightscapeCard from '../components/LightscapeCard.astro';
+import PromoBook from '../components/PromoBook.astro';
+import PromoBooster from '../components/PromoBooster.astro';
+import { cartes } from '../data/lightscape-cards';
+import { url } from '../lib/url';
+
+const toutes = cartes();
+const prendre = (id: string) => {
+  const c = toutes.find((x) => x.id === id);
+  if (!c) throw new Error(`carte « ${id} » introuvable (il faut ${id}.webp et ${id}-mapping.png dans public/photos)`);
+  return c;
+};
+// les trois cartes du booster ; la dernière est celle que l'on met en avant, puis range dans le book
+const CIBLE = 'design-museum';
+const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)];
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Clip TCG · Vitra Lightscape</title>
+    <link rel="icon" href={url('vitra-lightscape-logo.svg')} type="image/svg+xml" />
+  </head>
+  <body class="pp" data-pp>
+    <header class="pp__bar">
+      <a href={url('presentation/')}>← Présentation</a>
+      <span class="pp__time" data-time>0:00</span>
+      <input type="range" min="0" max="10.5" step="0.01" value="0" data-scrub aria-label="Instant du clip, en secondes" />
+      <button type="button" data-replay>Rejouer (R)</button>
+    </header>
+
+    <main class="pp__main">
+      <div class="pp__wrap" data-wrap>
+        <div class="pr" data-pr aria-label="Clip : ouverture d'un booster Vitra Lightscape, une carte rejoint le book de collection">
+          <div class="pr__bg"></div>
+          <div class="pr__blob pr__blob--a" data-blob-a></div>
+          <div class="pr__blob pr__blob--b" data-blob-b></div>
+          <div class="pr__dust" data-dust></div>
+          <div class="pr__halo" data-halo></div>
+
+          <div class="pr__world" data-world>
+            <div class="pr__shadow"></div>
+            <PromoBook cible={CIBLE} />
+          </div>
+
+          <PromoBooster />
+
+          <div class="pr__card" data-card="a" inert><LightscapeCard carte={a} /></div>
+          <div class="pr__card" data-card="b" inert><LightscapeCard carte={b} /></div>
+          <div class="pr__card" data-card="c" inert><LightscapeCard carte={c} /></div>
+
+          <div class="pr__flash" data-flash></div>
+
+          <div class="pr__title" data-title>
+            <span class="pr__logo"><Logo label={false} /></span>
+          </div>
+          <p class="pr__tag" data-tag>Collect them all.</p>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // ------------------------------------------------------------------ outils
+      const DUR = 10.5;
+      const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+      const inOut = (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
+      const outC = (u: number) => 1 - Math.pow(1 - u, 3);
+      const inC = (u: number) => u * u * u;
+      const sm = (t: number, a: number, b: number) => 0.5 - 0.5 * Math.cos(Math.PI * clamp((t - a) / (b - a)));
+      const lerp = (a: number, b: number, u: number) => a + (b - a) * u;
+      const px = (n: number) => `${n.toFixed(2)}px`;
+
+      const q = <T extends Element>(s: string) => document.querySelector<T>(s)!;
+      const pr = q<HTMLElement>('[data-pr]');
+      const world = q<HTMLElement>('[data-world]');
+      const glow = q<HTMLElement>('.pk-glow');
+      const body = q<HTMLElement>('.pk-body');
+      const strip = q<HTMLElement>('.pk-strip');
+      const flash = q<HTMLElement>('[data-flash]');
+      const halo = q<HTMLElement>('[data-halo]');
+      const title = q<HTMLElement>('[data-title]');
+      const tag = q<HTMLElement>('[data-tag]');
+      const blobA = q<HTMLElement>('[data-blob-a]');
+      const blobB = q<HTMLElement>('[data-blob-b]');
+      const dustBox = q<HTMLElement>('[data-dust]');
+      const book = q<HTMLElement>('[data-pbook-book]');
+      const block = q<HTMLElement>('[data-pbook-block]');
+      const cover = q<HTMLElement>('[data-pbook-cover]');
+      const sheetL = q<HTMLElement>('[data-pbook-sheet="l"]');
+      const slotEl = q<HTMLElement>('[data-pbook-slot]');
+      const slotEmpty = q<HTMLElement>('[data-pbook-empty]');
+      const slotFill = q<HTMLElement>('[data-pbook-fill]');
+      const txtEmpty = q<HTMLElement>('[data-pbook-txt-empty]');
+      const txtFill = q<HTMLElement>('[data-pbook-txt-fill]');
+      const cards = (['a', 'b', 'c'] as const).map((k) => {
+        const el = q<HTMLElement>(`[data-card="${k}"]`);
+        return { el, lc: el.querySelector<HTMLElement>('.lcard')!, tilt: el.querySelector<HTMLElement>('.lcard__tilt')! };
+      });
+      const [cA, cB, cC] = cards;
+
+      // ------------------------------------------------------------------ déchirure du booster (irrégulière, toujours la même)
+      let seed = 7;
+      const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      const yT = (100 / 920) * 100; // la déchirure se fait à 100 px du haut du paquet (en %)
+      const jag: [number, number][] = [];
+      for (let i = 0; i <= 30; i++) {
+        const x = (i / 30) * 100;
+        jag.push([x, yT + (rnd() - 0.5) * 2.2 + (i % 2 ? 0.55 : -0.55) + (x - 50) * 0.012]);
+      }
+      const poly = (pts: [number, number][]) => `polygon(${pts.map(([x, y]) => `${x.toFixed(2)}% ${y.toFixed(2)}%`).join(',')})`;
+      strip.style.clipPath = poly([[0, 0], [100, 0], ...jag.map(([x, y]) => [x, y + 0.3] as [number, number]).reverse()]);
+      body.style.clipPath = poly([...jag, [100, 100], [0, 100]]);
+
+      // ------------------------------------------------------------------ poussière de lumière (très légère)
+      const dust: { el: HTMLElement; x: number; y: number; v: number; s: number; p: number }[] = [];
+      for (let i = 0; i < 46; i++) {
+        const el = document.createElement('i');
+        dustBox.appendChild(el);
+        dust.push({ el, x: rnd() * 1080, y: rnd() * 1920, v: 6 + rnd() * 16, s: 2 + rnd() * 3.2, p: rnd() * 6.28 });
+      }
+
+      // ------------------------------------------------------------------ mesure de l'emplacement de la carte dans le book (état final)
+      let slot = { x: 700, y: 1150, w: 112 };
+      const apply = (t: number) => render(t);
+      const measure = () => {
+        render(10.3); // livre ouvert, caméra posée : c'est là que la carte doit arriver
+        const k = pr.getBoundingClientRect().width / 1080;
+        const r0 = pr.getBoundingClientRect();
+        const r = slotEmpty.getBoundingClientRect();
+        slot = { x: (r.left + r.width / 2 - r0.left) / k, y: (r.top + r.height / 2 - r0.top) / k, w: r.width / k };
+      };
+
+      // ------------------------------------------------------------------ chronologie
+      // 0 - 2,0   booster : approche légère, la bande du haut se déchire (1,15 - 1,85)
+      // 1,75 - 3,2 les cartes sortent : A et B glissent de côté, C s'arrête (micro-pause)
+      // 3,0 - 3,7  le booster tombe ; 3,75 - 4,5 C vient au centre
+      // 4,3 - 5,9  carte collector (rotation douce, bascule jour → mapping, halo)
+      // 5,5 - 6,9  la caméra recule ; le book apparaît, fermé ; 6,2 - 7,2 la couverture s'ouvre
+      // 7,1 - 8,55 la carte descend dans sa pochette ; 8,5 - 9,4 enclenchement et lueur
+      // 8,9 - 10,5 plan final : légère reculée, VITRA LIGHTSCAPE, « Collect them all. »
+      const CW = 440; // largeur de base des cartes
+      const CH = 660;
+      const PCX = 540; // centre du paquet
+      const PCY = 1000;
+
+      function pack(t: number) {
+        const approach = 0.95 + 0.08 * sm(t, 0, 2.0);
+        const jolt = Math.sin(Math.PI * clamp((t - 1.12) / 0.32));
+        const dx = Math.sin(t * 2.3) * 3 + 7 * jolt * Math.sin(t * 40);
+        const dy = jolt * 9 + 1150 * inC(clamp((t - 3.0) / 0.72));
+        const rot = 0.8 * Math.sin(t * 1.7) + jolt * 1.3;
+        const ry = 7 * Math.sin(t * 2.4) * (1 - sm(t, 0.9, 1.4)); // se penche, puis se pose pour la déchirure
+        return { s: approach, dx, dy, rot, ry };
+      }
+      const packT = (p: ReturnType<typeof pack>) => `translate(${px(PCX + p.dx)}, ${px(PCY + p.dy)}) perspective(1700px) rotateY(${p.ry.toFixed(2)}deg) rotate(${p.rot.toFixed(3)}deg) scale(${p.s.toFixed(4)}) translate(${px(-PCX)}, ${px(-PCY)})`;
+      /** position, dans la scène, d'un point du paquet (x, y de la scène à l'arrêt) */
+      const packPoint = (p: ReturnType<typeof pack>, x: number, y: number) => {
+        const a = (p.rot * Math.PI) / 180;
+        const vx = (x - PCX) * p.s;
+        const vy = (y - PCY) * p.s;
+        return { x: PCX + p.dx + vx * Math.cos(a) - vy * Math.sin(a), y: PCY + p.dy + vx * Math.sin(a) + vy * Math.cos(a) };
+      };
+
+      type Etat = { x: number; y: number; s: number; rot: number; op: number; blur: number; rx: number; ry: number; m: number; f: number; z: number };
+
+      function carteA(t: number): Etat {
+        const p = pack(t);
+        const base = packPoint(p, 540, 1060);
+        const rise = outC(clamp((t - 1.75) / 0.45));
+        const slide = inOut(clamp((t - 2.2) / 0.5));
+        return { x: base.x - 1000 * slide, y: base.y - 380 * rise - 140 * slide, s: p.s * (1 - 0.04 * slide), rot: -13 * slide + p.rot, op: 1, blur: 5 * Math.sin(Math.PI * clamp((t - 2.2) / 0.5)), rx: 0, ry: 180 * (1 - sm(t, 2.2, 2.62)) + 10 * slide, m: 0.15, f: Math.max(0.15 * slide, 0.14 * Math.sin(Math.PI * clamp((t - 2.2) / 0.42))), z: 7 };
+      }
+      function carteB(t: number): Etat {
+        const p = pack(t);
+        const base = packPoint(p, 540, 1060);
+        const rise = outC(clamp((t - 2.05) / 0.4));
+        const slide = inOut(clamp((t - 2.5) / 0.5));
+        return { x: base.x + 1000 * slide, y: base.y - 380 * rise - 140 * slide, s: p.s * (1 - 0.04 * slide), rot: 13 * slide + p.rot, op: 1, blur: 5 * Math.sin(Math.PI * clamp((t - 2.5) / 0.5)), rx: 0, ry: 180 * (1 - sm(t, 2.5, 2.92)) - 10 * slide, m: 0.15, f: Math.max(0.15 * slide, 0.14 * Math.sin(Math.PI * clamp((t - 2.5) / 0.42))), z: 6 };
+      }
+      function carteC(t: number): Etat {
+        const p = pack(t);
+        const base = packPoint(p, 540, 1060);
+        const rise = outC(clamp((t - 2.7) / 0.5));
+        const sans = { x: base.x, y: base.y - 360 * rise };
+        let x = sans.x;
+        let y = sans.y;
+        let s = p.s;
+        let rot = p.rot;
+        let z = 5;
+        let m = 0;
+        let f = 0.1 * sm(t, 3.0, 3.4) * (1 - sm(t, 3.8, 4.4));
+        let rx = 0;
+        let ry = 0;
+        // au repos (3,2 - 3,75) : le booster tombe derrière ; micro-pause. Puis la carte vient au centre, plus grande.
+        const pMid = pack(3.2);
+        const b3 = packPoint(pMid, 540, 1060);
+        const reste = { x: b3.x, y: b3.y - 360 };
+        if (t >= 3.2) {
+          x = reste.x;
+          y = reste.y;
+          s = pMid.s;
+          rot = pMid.rot * (1 - sm(t, 3.2, 3.75));
+        }
+        const centre = inOut(clamp((t - 3.75) / 0.75));
+        if (t >= 3.75) {
+          x = lerp(reste.x, 540, centre);
+          y = lerp(reste.y, 960, centre);
+          s = lerp(pMid.s, 1.36, centre);
+        }
+        if (t >= 3.2) z = 10;
+        // 4,3 - 5,9 : rotation douce, bascule jour → mapping, reflet irisé
+        const w = clamp((t - 4.3) / 1.6);
+        const env = Math.sin(Math.PI * w) ** 0.6;
+        // la carte attend de dos (micro-pause), puis se retourne en venant au centre : l'emblème devient le bâtiment
+        const flip = sm(t, 3.8, 4.45);
+        ry = 180 * (1 - flip) + 26 * Math.sin(2 * Math.PI * w) * (t >= 4.3 && t <= 5.9 ? 1 : 0);
+        f = Math.max(f, 0.16 * Math.sin(Math.PI * clamp((t - 3.8) / 0.65)));
+        rx = 6 * Math.sin(2 * Math.PI * w + 1.2) * (t >= 4.3 && t <= 5.9 ? 1 : 0);
+        m = sm(t, 4.6, 5.4);
+        f = Math.max(f, 0.2 * env);
+        // 5,5 - 6,9 : la caméra recule, la carte reste au-dessus du livre, plus petite
+        const rec = inOut(clamp((t - 5.5) / 1.4));
+        if (t >= 5.5) {
+          x = 540;
+          y = lerp(960, 560, rec);
+          s = lerp(1.36, 0.78, rec);
+        }
+        // 7,1 - 8,3 : le vol vers la pochette (translation légère, puis descente) ; 8,3 - 8,55 : enclenchement
+        const pv = inOut(clamp((t - 7.1) / 1.2));
+        let op = 1;
+        if (t >= 7.1) {
+          const sT = slot.w / CW;
+          x = lerp(540, slot.x, sm(pv, 0, 0.62));
+          y = lerp(560, slot.y, Math.pow(pv, 1.6));
+          s = lerp(0.78, sT * 1.1, pv);
+          rx = 24 * Math.sin(Math.PI * pv);
+          ry = -5 * Math.sin(Math.PI * pv);
+          rot = -5 * Math.sin(Math.PI * pv);
+          const qq = clamp((t - 8.3) / 0.25);
+          if (t >= 8.3) {
+            s = sT * (qq < 0.5 ? lerp(1.1, 0.965, qq * 2) : lerp(0.965, 1.0, (qq - 0.5) * 2));
+            y = slot.y + 5 * Math.sin(Math.PI * qq);
+            rx = 0;
+            ry = 0;
+            rot = 0;
+          }
+          m = 1;
+          f = 0.1 * (1 - sm(t, 8.3, 8.6));
+          if (t >= 8.55) op = 0; // la carte posée du livre prend le relais (même image, même taille)
+        }
+        return { x, y, s, rot, op, blur: 0, rx, ry, m, f, z };
+      }
+
+      function setCard(c: (typeof cards)[number], e: Etat, t: number) {
+        c.el.style.zIndex = String(e.z);
+        c.el.style.opacity = String(e.op);
+        c.el.style.visibility = e.op <= 0 ? 'hidden' : 'visible';
+        c.el.style.filter = e.blur > 0.05 ? `blur(${e.blur.toFixed(2)}px)` : '';
+        c.el.style.transform = `translate(${px(e.x - CW / 2)}, ${px(e.y - CH / 2)}) rotate(${e.rot.toFixed(3)}deg) scale(${e.s.toFixed(4)})`;
+        c.tilt.style.transform = `rotateX(${e.rx.toFixed(2)}deg) rotateY(${e.ry.toFixed(2)}deg)`;
+        const ox = 50 + 40 * Math.sin((e.ry * Math.PI) / 70 + t * 0.5);
+        c.lc.style.setProperty('--m', e.m.toFixed(3));
+        c.lc.style.setProperty('--f', e.f.toFixed(3));
+        c.lc.style.setProperty('--shine', Math.min(1, e.f * 1.6).toFixed(3));
+        c.lc.style.setProperty('--x', `${ox.toFixed(1)}%`);
+        c.lc.style.setProperty('--y', `${(50 + 30 * Math.sin((e.rx * Math.PI) / 40)).toFixed(1)}%`);
+        c.lc.style.setProperty('--hue', `${Math.round(e.ry * 6 + t * 12)}deg`);
+      }
+
+      function render(t: number) {
+        t = clamp(t, 0, DUR);
+
+        // ---- booster
+        const p = pack(t);
+        const pt = packT(p);
+        const tear = clamp((t - 1.15) / 0.7);
+        const gone = 1 - sm(t, 3.3, 3.7);
+        glow.style.transform = pt;
+        glow.style.opacity = String(sm(t, 1.15, 1.6) * (1 - sm(t, 3.0, 3.6)) * 0.9);
+        body.style.transform = pt;
+        body.style.opacity = String(gone);
+        const pivot = { x: 820, y: 600 };
+        strip.style.transform = `${pt} translate(${px(pivot.x)}, ${px(pivot.y)}) translate(${px(60 * tear)}, ${px(-620 * inC(tear))}) rotate(${(-36 * inOut(tear)).toFixed(2)}deg) translate(${px(-pivot.x)}, ${px(-pivot.y)})`;
+        strip.style.opacity = String(1 - sm(t, 1.8, 2.05));
+        for (const el of [body, strip]) {
+          el.style.setProperty('--pk-gloss', String(0.95 * (1 - sm(t, 1.2, 1.5))));
+          el.style.setProperty('--pk-gx', `${lerp(-30, 130, sm(t, 0.15, 1.15)).toFixed(1)}%`);
+        }
+        flash.style.opacity = String(0.28 * Math.sin(Math.PI * clamp((t - 1.15) / 0.5)) ** 2);
+
+        // ---- cartes
+        setCard(cA, carteA(t), t);
+        setCard(cB, carteB(t), t);
+        setCard(cC, carteC(t), t);
+        for (const c of [cA, cB]) c.el.style.display = t > 3.2 ? 'none' : '';
+
+        // ---- halo derrière la carte collector
+        const hv = sm(t, 3.9, 4.6) * (1 - sm(t, 5.6, 6.5));
+        halo.style.opacity = String(hv);
+        halo.style.transform = `translate(540px, 960px) scale(${(0.9 + 0.12 * Math.sin(t * 1.4)).toFixed(3)}) translate(-540px, -960px)`;
+
+        // ---- caméra / livre
+        const rec = outC(clamp((t - 5.4) / 1.5));
+        const final = inOut(clamp((t - 8.9) / 1.6));
+        const ws = lerp(1.55, 1.0, rec) * lerp(1, 0.955, final);
+        world.style.transform = `translate(0px, ${px(lerp(60, 0, rec) - 215 * final)}) scale(${ws.toFixed(4)})`;
+        world.style.opacity = String(sm(t, 5.4, 6.3));
+        const open = inOut(clamp((t - 6.2) / 1.0));
+        book.style.transform = `translateX(${px(-225 * (1 - open))})`;
+        cover.style.transform = `rotateY(${(-180 * open).toFixed(2)}deg)`;
+        cover.style.opacity = String(1 - clamp((open - 0.97) / 0.03));
+        const lv = clamp((open - 0.51) / 0.32);
+        sheetL.style.opacity = String(lv);
+        block.style.clipPath = `inset(-60px -60px -60px ${((1 - lv) * 50).toFixed(2)}%)`;
+
+        // ---- insertion dans la pochette
+        const swap = t >= 8.55 ? 1 : 0;
+        slotFill.style.opacity = String(swap);
+        slotEmpty.style.opacity = String(1 - swap);
+        txtFill.style.opacity = String(sm(t, 8.55, 9.0));
+        txtEmpty.style.opacity = String(1 - sm(t, 8.55, 9.0));
+        const g = sm(t, 8.5, 8.8) * (1 - sm(t, 8.9, 9.8));
+        slotEl.style.boxShadow = g > 0.001 ? `0 0 ${(46 * g).toFixed(1)}px ${(8 * g).toFixed(1)}px rgba(255, 196, 120, ${(0.75 * g).toFixed(3)}), inset 0 0 0 1px rgba(255,255,255,0.1)` : '';
+
+        // ---- titre
+        const tIn = sm(t, 9.0, 9.8);
+        title.style.opacity = String(tIn);
+        title.style.transform = `translateY(${px((1 - tIn) * 18)})`;
+        const gIn = sm(t, 9.5, 10.2);
+        tag.style.opacity = String(gIn);
+        tag.style.transform = `translateY(${px((1 - gIn) * 14)})`;
+
+        // ---- ambiance : lueurs de mapping très douces, poussière de lumière
+        blobA.style.opacity = String(0.55 + 0.25 * sm(t, 3.8, 5.0) - 0.2 * sm(t, 7, 8));
+        blobA.style.transform = `translate(${px(Math.sin(t * 0.4) * 60)}, ${px(Math.cos(t * 0.33) * 50)})`;
+        blobB.style.opacity = String(0.5 + 0.4 * Math.sin(Math.PI * clamp((t - 1.0) / 1.6)) + 0.2 * sm(t, 8.4, 9.2));
+        blobB.style.transform = `translate(${px(Math.cos(t * 0.37) * 60)}, ${px(Math.sin(t * 0.3) * 50)})`;
+        for (const d of dust) {
+          const y = (((d.y - t * d.v) % 1920) + 1920) % 1920;
+          d.el.style.transform = `translate(${px(d.x + Math.sin(t * 0.5 + d.p) * 18)}, ${px(y)})`;
+          d.el.style.opacity = String(0.18 + 0.22 * (0.5 + 0.5 * Math.sin(t * 1.3 + d.p)));
+          d.el.style.width = d.el.style.height = px(d.s);
+        }
+
+        // ---- interface (hors scène)
+        const sec = Math.floor(t);
+        const time = document.querySelector('[data-time]');
+        if (time) time.textContent = `${sec}:${String(Math.floor((t - sec) * 30)).padStart(2, '0')}`;
+        const scrub = document.querySelector<HTMLInputElement>('[data-scrub]');
+        if (scrub && document.activeElement !== scrub) scrub.value = String(t);
+      }
+      void apply;
+
+      // ------------------------------------------------------------------ mise à l'échelle et lecture
+      const params = new URLSearchParams(location.search);
+      const clean = params.has('clean');
+      document.body.classList.toggle('is-clean', clean);
+      const wrap = q<HTMLElement>('[data-wrap]');
+      const fit = () => {
+        const w = clean ? 1080 : Math.max(240, Math.min(window.innerWidth - 40, ((window.innerHeight - 100) * 9) / 16));
+        wrap.style.width = `${w}px`;
+        wrap.style.height = `${(w * 16) / 9}px`;
+        pr.style.transform = `scale(${w / 1080})`;
+      };
+
+      let raf = 0;
+      let t0 = 0;
+      const frame = (now: number) => {
+        const t = (now - t0) / 1000;
+        render(Math.min(t, DUR));
+        if (t < DUR + 0.5) raf = requestAnimationFrame(frame);
+      };
+      const play = () => {
+        cancelAnimationFrame(raf);
+        t0 = performance.now();
+        raf = requestAnimationFrame(frame);
+      };
+      const seek = (t: number) => {
+        cancelAnimationFrame(raf);
+        render(t);
+      };
+      q('[data-replay]').addEventListener('click', play);
+      q<HTMLInputElement>('[data-scrub]').addEventListener('input', (e) => seek(Number((e.target as HTMLInputElement).value)));
+      addEventListener('keydown', (e) => {
+        if (e.key === 'r' || e.key === 'R') play();
+      });
+      addEventListener('resize', fit);
+
+      // les images doivent être décodées avant le premier plan (indispensable pour l'export image par image)
+      const ready = (async () => {
+        await document.fonts?.ready;
+        await Promise.all([...document.images].map((i) => i.decode().catch(() => undefined)));
+        fit();
+        measure();
+      })();
+      (window as unknown as { __promo: unknown }).__promo = { ready, seek, duration: DUR };
+      ready.then(() => {
+        const start = params.get('t');
+        if (start !== null) seek(Number(start));
+        else play();
+        document.documentElement.dataset.promoReady = '1';
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .pp {
+    margin: 0;
+    min-height: 100vh;
+    background: #05060b;
+    color: #f1eee6;
+    font-family: var(--font-body, 'Futura', system-ui, sans-serif);
+  }
+
+  .pp.is-clean {
+    overflow: hidden;
+    background: #000;
+  }
+
+  .pp.is-clean .pp__bar {
+    display: none;
+  }
+
+  .pp__bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.85rem;
+  }
+
+  .pp__bar a,
+  .pp__bar button {
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+  }
+
+  .pp__bar input {
+    flex: 1;
+    accent-color: #ffb44c;
+  }
+
+  .pp__bar button {
+    padding: 0.4rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .pp__time {
+    min-width: 3rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pp__main {
+    display: grid;
+    place-items: center;
+    padding: 12px 0 16px;
+  }
+
+  .pp.is-clean .pp__main {
+    display: block;
+    padding: 0;
+  }
+
+  .pp__wrap {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 30px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .pp.is-clean .pp__wrap {
+    box-shadow: none;
+  }
+
+  /* ---------------------------------------------------------------- la scène : 1080 x 1920 */
+  .pr {
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: #04060f;
+    font-size: 16px;
+  }
+
+  .pr * {
+    box-sizing: border-box;
+  }
+
+  .pr__bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(50% 30% at 6% 2%, rgba(255, 176, 88, 0.3), transparent 64%),
+      radial-gradient(70% 38% at 50% 40%, rgba(40, 70, 150, 0.34), transparent 72%),
+      radial-gradient(90% 45% at 50% 100%, rgba(12, 22, 56, 0.9), transparent 80%),
+      linear-gradient(180deg, #0a1124, #04060f 70%);
+  }
+
+  .pr__blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+  }
+
+  .pr__blob--a {
+    left: -160px;
+    top: 880px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(60, 120, 255, 0.5), transparent 70%);
+  }
+
+  .pr__blob--b {
+    right: -200px;
+    top: 260px;
+    width: 720px;
+    height: 720px;
+    background: radial-gradient(circle, rgba(255, 150, 70, 0.42), rgba(190, 80, 220, 0.18) 55%, transparent 72%);
+  }
+
+  .pr__dust {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .pr__dust i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffe9c4, rgba(255, 220, 160, 0));
+  }
+
+  .pr__halo {
+    position: absolute;
+    z-index: 2;
+    left: 90px;
+    top: 510px;
+    width: 900px;
+    height: 900px;
+    opacity: 0;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(110, 165, 255, 0.42), rgba(255, 170, 90, 0.2) 38%, rgba(160, 90, 255, 0.1) 55%, transparent 70%);
+  }
+
+  .pr__world {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    opacity: 0;
+    transform-origin: 540px 1230px;
+  }
+
+  .pr__shadow {
+    position: absolute;
+    left: 40px;
+    top: 1440px;
+    width: 1000px;
+    height: 150px;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.78), transparent 72%);
+    filter: blur(16px);
+  }
+
+  /* z-index : lueur 4 · cartes 5 à 10 · booster (paquet 11, bande 12) · éclat 13 · titre 14 */
+  .pk-glow {
+    z-index: 4;
+  }
+
+  .pk-body {
+    z-index: 11;
+  }
+
+  .pk-strip {
+    z-index: 12;
+  }
+
+  .pr__card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 440px;
+    height: 660px;
+    transform-origin: 50% 50%;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .pr__card .lcard {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .pr__flash {
+    position: absolute;
+    z-index: 13;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    background: radial-gradient(40% 22% at 50% 38%, rgba(255, 226, 170, 0.85), rgba(255, 190, 110, 0.25) 55%, transparent 80%);
+    mix-blend-mode: screen;
+  }
+
+  .pr__title {
+    position: absolute;
+    z-index: 14;
+    left: 0;
+    right: 0;
+    top: 190px;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+  }
+
+  .pr__logo {
+    width: 480px;
+    color: #fff;
+    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.6));
+  }
+
+  .pr__logo .logo,
+  .pr__logo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .pr__tag {
+    position: absolute;
+    z-index: 14;
+    left: 0;
+    right: 0;
+    top: 1430px;
+    margin: 0;
+    opacity: 0;
+    text-align: center;
+    font-size: 34px;
+    font-weight: 300;
+    letter-spacing: 0.34em;
+    padding-left: 0.34em;
+    text-transform: uppercase;
+    color: rgba(243, 240, 234, 0.86);
+  }
+
+  /* hors scène : le curseur et les barres de défilement n'existent pas dans la scène seule */
+  .pp.is-clean,
+  .pp.is-clean * {
+    cursor: none !important;
+  }
+</style>

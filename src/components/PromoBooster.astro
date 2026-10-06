@@ -1,0 +1,194 @@
+---
+/**
+ * Le booster Vitra Lightscape du clip promo (le projet n'en avait pas : il est dessiné ici, dans la même direction artistique
+ * que le livre : bleu nuit, filets dorés, l'illustration de la couverture, le logo Vitra Lightscape).
+ * Langage visuel d'un paquet de cartes à collectionner (soudures crantées en haut et en bas, bande de déchirure en haut),
+ * sans aucun élément d'une marque existante.
+ *
+ * Trois pièces superposées, animées par /promo-tcg/ :
+ *   .pk-glow  : la lueur de l'intérieur, derrière les cartes
+ *   .pk-body  : le paquet (face avant), découpé le long d'une déchirure irrégulière
+ *   .pk-strip : la bande du haut, qui se détache en pivotant
+ * Les cartes passent entre .pk-glow et .pk-body.
+ */
+import Logo from './Logo.astro';
+import CoverScene from './CoverScene.astro';
+---
+
+<div class="pk-glow" data-pk-glow aria-hidden="true"></div>
+
+{
+  ['body', 'strip'].map((piece) => (
+    <div class={`pk pk-${piece}`} data-pk-piece={piece} aria-hidden="true">
+      <div class="pk__art">
+        <span class="pk__fin pk__fin--l"></span>
+        <span class="pk__fin pk__fin--r"></span>
+        <span class="pk__crimp pk__crimp--top"></span>
+        <span class="pk__crimp pk__crimp--bottom"></span>
+        <span class="pk__logo"><Logo label={false} /></span>
+        <span class="pk__scene"><CoverScene /></span>
+        <span class="pk__label">
+          <b>Booster</b>
+          <i>3 cartes · Architectures en lumière</i>
+        </span>
+        <span class="pk__gloss" data-pk-gloss></span>
+      </div>
+    </div>
+  ))
+}
+
+<style is:global>
+  .pk-glow,
+  .pk {
+    position: absolute;
+    left: 260px;
+    top: 540px;
+    width: 560px;
+    height: 920px;
+    transform-origin: 0 0;
+    pointer-events: none;
+  }
+
+  /* lueur dorée de l'intérieur, qui monte de la déchirure */
+  .pk-glow {
+    height: 360px;
+    top: 540px;
+    background: radial-gradient(ellipse 62% 62% at 50% 100%, rgba(255, 205, 130, 0.75), rgba(255, 160, 80, 0.28) 45%, transparent 75%);
+    opacity: 0;
+  }
+
+  .pk {
+    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.55));
+  }
+
+  .pk__art {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    background:
+      radial-gradient(70% 38% at 88% 6%, rgba(255, 176, 88, 0.24), transparent 70%),
+      radial-gradient(75% 40% at 8% 96%, rgba(70, 130, 255, 0.3), transparent 72%),
+      repeating-linear-gradient(115deg, rgba(150, 190, 255, 0.045) 0 2px, transparent 2px 15px),
+      linear-gradient(165deg, #142450, #0a1230 52%, #0e1a40);
+    box-shadow: inset 0 0 0 1.5px rgba(232, 184, 101, 0.55), inset 0 0 0 5px rgba(5, 8, 20, 0.5), inset 0 0 0 6px rgba(232, 184, 101, 0.28);
+  }
+
+  /* ailerons latéraux : le pli du paquet */
+  .pk__fin {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 26px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.25) 55%, transparent);
+  }
+
+  .pk__fin--l {
+    left: 0;
+  }
+
+  .pk__fin--r {
+    right: 0;
+    transform: scaleX(-1);
+  }
+
+  /* soudures crantées, comme sur un vrai paquet */
+  .pk__crimp {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 58px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 2px, rgba(0, 0, 0, 0.42) 2px 6px),
+      linear-gradient(180deg, #2a3866, #121a3a);
+    background-blend-mode: soft-light, normal;
+    box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.18), inset 0 2px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  .pk__crimp--top {
+    top: 0;
+  }
+
+  .pk__crimp--bottom {
+    bottom: 0;
+    transform: scaleY(-1);
+  }
+
+  .pk__logo {
+    position: absolute;
+    top: 152px;
+    left: 50%;
+    width: 330px;
+    margin-left: -165px;
+    color: #fff;
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.6));
+  }
+
+  .pk__logo .logo,
+  .pk__logo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .pk__scene {
+    position: absolute;
+    top: 340px;
+    left: 40px;
+    right: 40px;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 82%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 14%, #000 82%, transparent);
+  }
+
+  .pk__scene .cvr__scene {
+    display: block;
+    width: 100%;
+    height: auto;
+    animation: none !important;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .pk__scene .cv-stars circle,
+  .pk__scene .cv-path {
+    animation: none !important;
+  }
+
+  .pk__label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 84px;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    text-align: center;
+    color: #f3f0ea;
+  }
+
+  .pk__label b {
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    padding-left: 0.42em;
+  }
+
+  .pk__label i {
+    font-style: normal;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(238, 241, 251, 0.62);
+  }
+
+  /* reflet de lumière qui glisse sur le papier métallisé (position pilotée par la chronologie) */
+  .pk__gloss {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--pk-gloss, 0);
+    background: linear-gradient(110deg, transparent calc(var(--pk-gx, -40%) - 14%), rgba(255, 255, 255, 0.3) var(--pk-gx, -40%), transparent calc(var(--pk-gx, -40%) + 14%));
+    mix-blend-mode: soft-light;
+  }
+</style>
