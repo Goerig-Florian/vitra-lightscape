@@ -1,11 +1,11 @@
 ---
 /**
- * La scène du teaser : 1080 x 1920 (9:16), fond noir. Aucune animation CSS : tout est piloté par une horloge
- * (reel.astro) qui écrit des variables (--ca, --na, --bx, --bo, --fd...) pour qu'on puisse aussi se placer à
+ * La scène du teaser : 1080 x 1920 (9:16). Aucune animation CSS : tout est piloté par une horloge
+ * (reel.astro) qui écrit des variables (--pw, --ca, --na, --bx, --bo, --mo...) pour qu'on puisse aussi se placer à
  * n'importe quel instant (export image par image, curseur de la page).
  * Logos : le SVG original du projet, tel quel. Le « vitra. » seul est le logo classique ; avec la barre et « Lightscape »
  * c'est le logo Vitra Lightscape (mêmes tracés, mêmes proportions).
- * Mapping : uniquement des formes de lumière (flammes), sans bâtiment, découpées DANS les lettres du logo.
+ * Mapping : uniquement des formes de lumière (flammes), sans bâtiment, en arrière-plan, animées.
  */
 import logoSvg from '../assets/logo/vitra-lightscape.svg?raw';
 import { url } from '../lib/url';
@@ -23,11 +23,13 @@ const svg = logoSvg
   .replace('<rect ', '<rect class="rs-ls" ');
 ---
 
-<div class="rs" data-rs style={`--map:url(${url(mapping)});--logo:url(${url('vitra-lightscape-logo.svg')})`}>
+<div class="rs" data-rs style={`--map:url(${url(mapping)})`}>
+  <div class="rs__bg rs__bg--a" aria-hidden="true"></div>
+  <div class="rs__bg rs__bg--b" aria-hidden="true"></div>
+  <div class="rs__shade" aria-hidden="true"></div>
+  <div class="rs__paper" aria-hidden="true"></div>
   <div class="rs__lock rs__lock--classic" data-rs-lock set:html={svg} />
-  <div class="rs__lit" aria-hidden="true"><div class="rs__lock rs__lock--lit" set:html={svg} /></div>
   <div class="rs__lock rs__lock--full" set:html={svg} />
-  <div class="rs__fill" aria-hidden="true"></div>
   <div class="rs__halo" aria-hidden="true"></div>
   <div class="rs__flare" aria-hidden="true"></div>
   <div class="rs__fade" aria-hidden="true"></div>
@@ -35,14 +37,18 @@ const svg = logoSvg
 
 <style is:global>
   .rs {
-    --ca: 1; /* opacité du logo classique */
-    --na: 0; /* opacité du logo Lightscape */
+    --pw: 1; /* opacité du fond blanc du début */
+    --ca: 1; /* opacité du logo classique (noir) */
+    --na: 0; /* opacité du logo Lightscape (blanc) */
     --gx: 0px;
     --gy: 0px;
-    --bx: -400px; /* position du balayage (x, en pixels de la scène) */
-    --bo: 0; /* intensité du balayage */
-    --mx: 50%; /* dérive du mapping dans les lettres */
-    --my: 0%;
+    --bx: -400px; /* position de la lumière qui découvre le mapping (x, en pixels de la scène) */
+    --bo: 0; /* intensité de la lumière */
+    --mo: 0; /* opacité du mapping d'arrière-plan */
+    --ax: 50%;
+    --ay: 50%;
+    --bxp: 50%;
+    --byp: 50%;
     --fd: 0; /* fondu final vers le noir */
     position: relative;
     width: 1080px;
@@ -52,6 +58,46 @@ const svg = logoSvg
     color: #fff;
     transform-origin: 0 0;
     font-size: 0;
+  }
+
+  /* mapping d'arrière-plan : deux couches de la même texture qui dérivent en sens contraire, fondues en « écran » */
+  .rs__bg {
+    position: absolute;
+    inset: -8%;
+    opacity: calc(var(--mo) * 0.72);
+    background: var(--map) no-repeat;
+    filter: blur(6px) saturate(1.15) brightness(0.95);
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--bx) - 360px), transparent calc(var(--bx) + 40px));
+    mask-image: linear-gradient(90deg, #000 calc(var(--bx) - 360px), transparent calc(var(--bx) + 40px));
+  }
+
+  .rs__bg--a {
+    background-size: auto 150%;
+    background-position: var(--ax) var(--ay);
+  }
+
+  .rs__bg--b {
+    background-size: auto 125%;
+    background-position: var(--bxp) var(--byp);
+    mix-blend-mode: screen;
+    opacity: calc(var(--mo) * 0.4);
+    transform: scaleX(-1);
+  }
+
+  /* ombre douce derrière le logo pour qu'il reste parfaitement lisible */
+  .rs__shade {
+    position: absolute;
+    inset: 0;
+    opacity: var(--na);
+    background: radial-gradient(ellipse 62% 17% at 50% 48.5%, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.35) 55%, transparent 100%);
+  }
+
+  /* fond blanc du début : il passe au noir, le logo noir disparaît dedans */
+  .rs__paper {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: var(--pw);
   }
 
   /* le logo : 640 px de large, centré dans la zone de sécurité (centre x 540, y 930) */
@@ -69,8 +115,9 @@ const svg = logoSvg
     height: 100%;
   }
 
-  /* logo classique : le « vitra. » seul, centré (même fichier, sans la barre ni « Lightscape ») */
+  /* logo classique : le « vitra. » seul, centré, en noir (même fichier, sans la barre ni « Lightscape ») */
   .rs__lock--classic {
+    color: #000;
     opacity: var(--ca);
     transform: translate(var(--gx), var(--gy));
   }
@@ -83,49 +130,16 @@ const svg = logoSvg
     opacity: var(--na);
   }
 
-  /* le mapping est incrusté dans les lettres : la texture est découpée dans la forme du logo, uniquement dans la zone du balayage */
-  .rs__fill {
-    position: absolute;
-    left: 220px;
-    top: 801px;
-    width: 640px;
-    height: 255px;
-    opacity: var(--bo);
-    background: var(--map) var(--mx) var(--my) / 125% auto no-repeat;
-    filter: brightness(1.35) saturate(1.2) contrast(1.05);
-    -webkit-mask-image: var(--logo), linear-gradient(90deg, transparent calc(var(--bx) - 370px), #000 calc(var(--bx) - 338px), #000 calc(var(--bx) - 180px), transparent calc(var(--bx) - 20px));
-    -webkit-mask-size: 100% 100%, 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-composite: source-in;
-    mask-image: var(--logo), linear-gradient(90deg, transparent calc(var(--bx) - 370px), #000 calc(var(--bx) - 338px), #000 calc(var(--bx) - 180px), transparent calc(var(--bx) - 20px));
-    mask-size: 100% 100%, 100% 100%;
-    mask-repeat: no-repeat;
-    mask-composite: intersect;
-  }
-
-  /* lueur chaude autour des lettres, là où passe la lumière */
-  .rs__lit {
-    position: absolute;
-    inset: 0;
-    opacity: var(--bo);
-    -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 200px), #000 calc(var(--bx) - 30px), #000 calc(var(--bx) + 30px), transparent calc(var(--bx) + 260px));
-    mask-image: linear-gradient(90deg, transparent calc(var(--bx) - 200px), #000 calc(var(--bx) - 30px), #000 calc(var(--bx) + 30px), transparent calc(var(--bx) + 260px));
-  }
-
-  .rs__lock--lit {
-    filter: drop-shadow(0 0 8px rgba(255, 170, 90, 0.9)) drop-shadow(0 0 30px rgba(255, 120, 40, 0.5));
-  }
-
-  /* halo très léger devant le masque */
+  /* halo très léger au bord de la lumière qui découvre le mapping */
   .rs__halo {
     position: absolute;
-    top: 585px;
-    left: -250px;
-    width: 500px;
-    height: 690px;
+    top: 0;
+    left: -280px;
+    width: 560px;
+    height: 1920px;
     transform: translateX(var(--bx));
-    opacity: calc(var(--bo) * 0.7);
-    background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(255, 196, 140, 0.26), rgba(255, 150, 80, 0.08) 45%, transparent 72%);
+    opacity: calc(var(--bo) * 0.6);
+    background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(255, 196, 140, 0.32), rgba(255, 150, 80, 0.08) 45%, transparent 72%);
     mix-blend-mode: screen;
   }
 

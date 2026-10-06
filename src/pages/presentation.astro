@@ -63,8 +63,9 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
                 </div>
               ) : s.reels ? (
                 <div class="reels-row">
-                  {reels.map((r) => (
+                  {reels.map((r, n) => (
                     <figure class="reels-row__item">
+                      <div class="reels-row__open" role="button" tabindex="0" data-open-phone={n} aria-label={`${r.label} : afficher le mockup en plein écran`}>
                       <ReelPhone platform={r.platform} caption={r.video ? undefined : ['Légende à venir']} tags={r.video ? undefined : ''} likes={r.video ? undefined : '—'} comments={r.video ? undefined : '—'} shares={r.video ? undefined : '—'}>
                         {r.video ? (
                           <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} aria-label="Teaser Vitra Lightscape : le logo Vitra s’éteint, le logo Vitra Lightscape apparaît et une lumière y révèle un mapping.">
@@ -77,6 +78,7 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
                           </div>
                         )}
                       </ReelPhone>
+                      </div>
                       <figcaption>
                         <strong>{r.label}</strong>
                         <span>{r.sub}</span>
@@ -123,6 +125,20 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
     </button>
   </dialog>
 
+  <dialog class="lightbox phonebox" data-phonebox aria-label="Mockup en plein écran">
+    <div class="phonebox__stage" data-phonebox-stage></div>
+    <p class="lightbox__cap" data-phonebox-cap></p>
+    <button type="button" class="lightbox__btn lightbox__btn--close" data-phonebox-close aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+    </button>
+    <button type="button" class="lightbox__btn lightbox__btn--prev" data-phonebox-prev aria-label="Mockup précédent">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" fill="none" /></svg>
+    </button>
+    <button type="button" class="lightbox__btn lightbox__btn--next" data-phonebox-next aria-label="Mockup suivant">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" fill="none" /></svg>
+    </button>
+  </dialog>
+
   <LightscapeGallery />
   <LightscapeBinder />
 
@@ -157,6 +173,65 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
       box.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') show(at + 1);
         else if (e.key === 'ArrowLeft') show(at - 1);
+      });
+    }
+  </script>
+
+  <script>
+    // mockups : un clic (ou Entrée) affiche le téléphone en grand, avec la vidéo qui joue
+    const pbox = document.querySelector<HTMLDialogElement>('[data-phonebox]');
+    const opens = [...document.querySelectorAll<HTMLElement>('[data-open-phone]')];
+    if (pbox && opens.length) {
+      const stage = pbox.querySelector<HTMLElement>('[data-phonebox-stage]')!;
+      const pcap = pbox.querySelector<HTMLElement>('[data-phonebox-cap]')!;
+      let cur = 0;
+      const showPhone = (n: number) => {
+        cur = (n + opens.length) % opens.length;
+        const src = opens[cur].querySelector<HTMLElement>('.phone')!;
+        const copy = src.cloneNode(true) as HTMLElement;
+        copy.removeAttribute('data-phone');
+        stage.replaceChildren(copy);
+        const v = copy.querySelector('video');
+        if (v) {
+          v.muted = true; // une copie ne garde pas l'état « muet » : sans lui, le navigateur refuse de lancer la lecture
+          v.removeAttribute('poster');
+          v.currentTime = 0;
+          v.play().catch(() => undefined);
+        }
+        pcap.textContent = opens[cur].closest('figure')?.querySelector('figcaption strong')?.textContent ?? '';
+      };
+      opens.forEach((o, n) => {
+        const go = () => {
+          showPhone(n);
+          pbox.showModal();
+        };
+        o.addEventListener('click', go);
+        o.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            go();
+          }
+        });
+      });
+      // on vide la fenêtre à la fermeture (bouton, fond ou Échap) : la vidéo s'arrête
+      const shut = () => {
+        stage.querySelector('video')?.pause();
+        stage.replaceChildren();
+      };
+      const closeBox = () => {
+        shut();
+        pbox.close();
+      };
+      pbox.addEventListener('close', shut);
+      pbox.querySelector('[data-phonebox-close]')!.addEventListener('click', closeBox);
+      pbox.querySelector('[data-phonebox-prev]')!.addEventListener('click', () => showPhone(cur - 1));
+      pbox.querySelector('[data-phonebox-next]')!.addEventListener('click', () => showPhone(cur + 1));
+      pbox.addEventListener('click', (e) => {
+        if (e.target === pbox || e.target === stage) closeBox();
+      });
+      pbox.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') showPhone(cur + 1);
+        else if (e.key === 'ArrowLeft') showPhone(cur - 1);
       });
     }
   </script>

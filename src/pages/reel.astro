@@ -10,13 +10,13 @@ import ReelPhone from '../components/ReelPhone.astro';
 import { url } from '../lib/url';
 
 const timings = [
-  { t: '0:00', text: 'Ambiance grave très légère, à peine audible : fond noir, logo Vitra classique fixe.' },
-  { t: '1:06 – 2:00', text: 'Le logo classique s’éteint : la nappe grave descend vers le silence presque total.' },
-  { t: '2:00 – 2:12', text: 'Écran totalement noir.' },
-  { t: '2:12 – 3:03', text: 'Apparition du logo Lightscape : montée subtile, très douce, qui s’ouvre.' },
-  { t: '3:03 – 4:21', text: 'Whoosh synchronisé avec le balayage dans les lettres : entrée à gauche à 3:03, pic quand la lumière est au centre du logo (3:24), sortie à droite vers 4:21.' },
-  { t: '4:21', text: 'Petit impact doux sur le logo final. La nappe grave retombe.' },
-  { t: '5:20 – 6:00', text: 'Queue de réverbération, léger fondu vers le noir.' },
+  { t: '0:00', text: 'Presque silence, un souffle d’air très léger : fond blanc, logo Vitra noir fixe.' },
+  { t: '1:06 – 2:00', text: 'Le fond passe du blanc au noir, le logo noir s’y fond : une nappe grave descend vers le silence.' },
+  { t: '2:00 – 2:15', text: 'Écran totalement noir.' },
+  { t: '2:15 – 3:03', text: 'Apparition en fondu du logo Vitra Lightscape : montée subtile, très douce, qui s’ouvre.' },
+  { t: '3:03 – 4:15', text: 'Whoosh synchronisé avec la lumière qui traverse l’écran et découvre le mapping en arrière-plan : entrée à 3:03, pic au centre de l’écran (3:20), sortie à droite vers 4:15.' },
+  { t: '4:15', text: 'Petit impact doux : le mapping couvre tout l’arrière-plan.' },
+  { t: '5:00 – 6:00', text: 'Le mapping se retire, la nappe grave retombe, queue de réverbération et léger fondu vers le noir.' },
 ];
 ---
 
@@ -71,7 +71,7 @@ const timings = [
 
     <script>
       // ----- chronologie (secondes) -----
-      const T = { still: 1.2, off: 2.0, on: 2.4, shown: 3.1, sweepStart: 3.1, sweepEnd: 4.7, fadeStart: 5.65, end: 6 };
+      const T = { still: 1.2, off: 2.0, on: 2.5, shown: 3.1, sweepStart: 3.1, sweepEnd: 4.5, mapOut: 5.0, mapEnd: 5.7, fadeStart: 5.7, end: 6 };
       const DURATION = T.end;
       const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
       const inOut = (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
@@ -102,25 +102,34 @@ const timings = [
 
       const render = (t: number) => {
         t = clamp(t, 0, DURATION);
-        // 1) le logo classique s'éteint jusqu'au noir total, 2) un instant de noir, 3) le logo Lightscape apparaît
-        const ca = 1 - sine((t - T.still) / (T.off - T.still));
+        // 1) logo Vitra noir sur fond blanc ; 2) le fond devient noir, le logo noir s'y fond ; 3) un instant de noir complet
+        const pw = 1 - sine((t - T.still) / (T.off - T.still));
+        const ca = t < T.off + 0.15 ? 1 : 0;
+        // 4) le nouveau logo apparaît en fondu dans le noir
         const na = sine((t - T.on) / (T.shown - T.on));
-        // 4) la lumière traverse le logo : le mapping n'existe que dans les lettres, dans la zone du balayage
+        // 5) une lumière traverse l'écran et découvre un mapping dynamique en arrière-plan, puis il se retire
         const u = clamp((t - T.sweepStart) / (T.sweepEnd - T.sweepStart));
-        const move = 0.5 - 0.5 * Math.cos(Math.PI * Math.pow(u, 0.92)); // départ et arrivée doux
-        const bx = 290 + move * 860; // la zone visible suit le balayage : elle traverse le logo (x 220 à 860) de bout en bout
+        const move = 0.5 - 0.5 * Math.cos(Math.PI * Math.pow(u, 0.92));
+        const bx = -380 + move * (1080 + 380 + 420);
         const bo = u > 0 && u < 1 ? Math.pow(Math.sin(Math.PI * u), 0.6) : 0;
+        const mo = clamp((t - T.sweepStart) / 0.5) * (1 - sine((t - T.mapOut) / (T.mapEnd - T.mapOut)));
         const fd = sine((t - T.fadeStart) / (T.end - T.fadeStart)) * 0.9;
         stages.forEach((s) => {
-          s.style.setProperty('--ca', ca.toFixed(4));
-          s.style.setProperty('--na', na.toFixed(4));
-          s.style.setProperty('--gx', `${glide.x.toFixed(2)}px`);
-          s.style.setProperty('--gy', `${glide.y.toFixed(2)}px`);
-          s.style.setProperty('--bx', `${bx.toFixed(1)}px`);
-          s.style.setProperty('--bo', bo.toFixed(4));
-          s.style.setProperty('--mx', `${(50 + 38 * Math.sin(t * 1.7)).toFixed(1)}%`);
-          s.style.setProperty('--my', `${(50 + 50 * Math.sin(t * 2.3 + 1)).toFixed(1)}%`);
-          s.style.setProperty('--fd', fd.toFixed(4));
+          const set = (k: string, v: string) => s.style.setProperty(k, v);
+          set('--pw', pw.toFixed(4));
+          set('--ca', ca.toFixed(4));
+          set('--na', na.toFixed(4));
+          set('--gx', `${glide.x.toFixed(2)}px`);
+          set('--gy', `${glide.y.toFixed(2)}px`);
+          set('--bx', `${bx.toFixed(1)}px`);
+          set('--bo', bo.toFixed(4));
+          set('--mo', mo.toFixed(4));
+          // le mapping coule : deux couches qui dérivent lentement en sens contraire
+          set('--ax', `${(50 + 42 * Math.sin(t * 0.9)).toFixed(1)}%`);
+          set('--ay', `${(50 + 46 * Math.sin(t * 1.3 + 1)).toFixed(1)}%`);
+          set('--bxp', `${(50 + 40 * Math.cos(t * 1.1 + 2)).toFixed(1)}%`);
+          set('--byp', `${(50 + 48 * Math.sin(t * 0.8 + 4)).toFixed(1)}%`);
+          set('--fd', fd.toFixed(4));
         });
         const time = document.querySelector<HTMLElement>('[data-time]');
         const scrub = document.querySelector<HTMLInputElement>('[data-scrub]');
