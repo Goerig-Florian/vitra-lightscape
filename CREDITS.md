@@ -104,3 +104,7 @@ Les trois comptes (@onfaitquoi.maman, @lerichti, @girlinbasel), leurs villes, ci
 ## Devis (page de présentation et pied de page)
 
 `public/devis/` : les trois devis de l'agence Deux Rives pour Vitra Lightscape, émis le 06/10/2026 : DR-2026-001 (communication 360°, affiché dans la présentation), DR-2026-002 (achats externes et merchandising) et DR-2026-003 (production événementielle), ces deux derniers liés depuis la présentation et le pied de page. Documents de l'équipe, montants fictifs dans le cadre de l'exercice.
+
+## TikTok (mockup de la présentation)
+
+`public/reel/tiktok-720x1280.mp4` : vidéo générée par IA fournie par l'équipe (`gemini_generated_video_*.mp4`, 10 s), remontée avec `scripts/make-tiktok.mjs` : mise en vertical sur un fond flouté, fondu au noir à 7 s, puis logo Vitra Lightscape et dates du 3 septembre au 3 octobre 2027. Les chiffres du mockup (mentions J'aime, commentaires) sont fictifs.
