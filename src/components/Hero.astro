@@ -50,7 +50,24 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
 
   <div class="container hero__content">
     <p class="hero__meta">
-      {hero.meta.map((m) => <span>{m}</span>)}
+      {
+        hero.meta.map((m, i) => (
+          <span class={i === hero.meta.length - 1 ? 'hero__when' : undefined}>
+            {m}
+            {i === hero.meta.length - 1 && (
+              <span class="hero__count" data-countdown="2027-09-17T19:00:00+02:00">
+                <span class="sr-only" data-count-sr></span>
+                <span class="hero__count-grid" aria-hidden="true">
+                  <span><b data-c="d">--</b><i>jours</i></span>
+                  <span><b data-c="h">--</b><i>heures</i></span>
+                  <span><b data-c="m">--</b><i>min</i></span>
+                  <span><b data-c="s">--</b><i>sec</i></span>
+                </span>
+              </span>
+            )}
+          </span>
+        ))
+      }
     </p>
     <div class="hero__bottom">
       <h1 class="hero__title" id="hero-title">{hero.title}</h1>
@@ -74,3 +91,36 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
     </button>
   </div>
 </section>
+
+<script>
+  // compte à rebours jusqu'à l'ouverture (vendredi 17 septembre 2027, 19h00, heure de Weil am Rhein)
+  const cd = document.querySelector<HTMLElement>('[data-countdown]');
+  if (cd) {
+    const cible = new Date(cd.dataset.countdown!).getTime();
+    const val = (k: string) => cd.querySelector<HTMLElement>(`[data-c="${k}"]`)!;
+    const sr = cd.querySelector<HTMLElement>('[data-count-sr]')!;
+    const calme = matchMedia('(prefers-reduced-motion: reduce)');
+    let derniereMinute = -1;
+    const maj = () => {
+      const reste = Math.max(0, cible - Date.now());
+      const j = Math.floor(reste / 86400000);
+      const h = Math.floor(reste / 3600000) % 24;
+      const m = Math.floor(reste / 60000) % 60;
+      const sec = Math.floor(reste / 1000) % 60;
+      val('d').textContent = String(j);
+      val('h').textContent = String(h).padStart(2, '0');
+      val('m').textContent = String(m).padStart(2, '0');
+      val('s').textContent = String(sec).padStart(2, '0');
+      // lecteur d'écran : une annonce par minute (pas toutes les secondes)
+      const minute = Math.floor(reste / 60000);
+      if (minute !== derniereMinute) {
+        derniereMinute = minute;
+        sr.textContent = reste === 0 ? 'Vitra Lightscape est ouvert.' : `Ouverture dans ${j} jours, ${h} heures et ${m} minutes.`;
+      }
+      cd.classList.toggle('is-over', reste === 0);
+    };
+    maj();
+    // avec « réduire les animations », les secondes ne défilent pas : mise à jour à la minute
+    setInterval(maj, calme.matches ? 60000 : 1000);
+  }
+</script>

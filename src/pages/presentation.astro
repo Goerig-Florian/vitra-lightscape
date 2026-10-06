@@ -1,10 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import { presentation, reels, reelsCarte, posters, situations, presse } from '../data/presentation';
+import { presentation, reels, posters, situations, presse } from '../data/presentation';
 import ReelPhone from '../components/ReelPhone.astro';
 import { url } from '../lib/url';
 import LightscapeGallery from '../components/LightscapeGallery.astro';
-import LightscapeBinder from '../components/LightscapeBinder.astro';
 ---
 
 <Base
@@ -77,8 +76,8 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
                   </div>
                 </div>
               ) : s.reels ? (
-                <div class={`reels-row${s.id === 'carte' ? ' reels-row--one' : ''}`}>
-                  {(s.id === 'carte' ? reelsCarte : reels).map((r, n) => (
+                <div class="reels-row">
+                  {reels.map((r, n) => (
                     <figure class="reels-row__item">
                       <div class="reels-row__open" role="button" tabindex="0" data-open-phone={n} aria-label={`${r.label} : afficher le mockup en plein écran`}>
                       <ReelPhone platform={r.platform} caption={r.video ? r.caption : ['Légende à venir']} tags={r.video ? r.tags : ''} likes={r.video ? r.likes : '—'} comments={r.video ? r.comments : '—'} shares={r.video ? r.shares : '—'}>
@@ -165,7 +164,6 @@ import LightscapeBinder from '../components/LightscapeBinder.astro';
   </dialog>
 
   <LightscapeGallery />
-  <LightscapeBinder />
 
   <script>
     // affiches : un clic ouvre l'affiche en plein écran (Échap, clic à côté, flèches du clavier)

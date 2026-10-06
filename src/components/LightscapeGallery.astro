@@ -5,6 +5,7 @@
  */
 import LightscapeCard from './LightscapeCard.astro';
 import { cartes, reglages } from '../data/lightscape-cards';
+import { url } from '../lib/url';
 
 const liste = cartes();
 ---
@@ -23,6 +24,18 @@ const liste = cartes();
             </li>
           ))}
         </ul>
+
+        <figure class="lclip">
+          <div class="lclip__frame">
+            <video class="lclip__video" playsinline loop preload="metadata" controls controlslist="nodownload" poster={url('reel/promo-tcg-poster.jpg')} aria-label="Clip : l'ouverture d'un booster Vitra Lightscape, une carte entre dans le book de collection">
+              <source src={url('reel/promo-tcg-720x1280.mp4')} type="video/mp4" />
+            </video>
+          </div>
+          <figcaption>
+            <strong>Du booster au book</strong>
+            <span>On ouvre le booster, on découvre sa carte, puis elle rejoint la collection. Lance la lecture avec le bouton.</span>
+          </figcaption>
+        </figure>
       </div>
     </section>
   )
