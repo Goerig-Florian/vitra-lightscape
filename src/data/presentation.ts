@@ -21,6 +21,8 @@ export interface Station {
   reels?: boolean;
   /** Station des affiches : les affiches de `posters`, cliquables pour un affichage plein écran */
   posters?: boolean;
+  /** Station des cartes : la galerie de cartes et le clip du booster (LightscapeGallery) */
+  cards?: boolean;
 }
 
 /**
@@ -56,6 +58,7 @@ export const presentation = {
   stations: [
     { id: 'affiche', label: 'Affiche', title: 'L’affiche', text: 'Le premier signal dans la rue : une façade qui s’allume, une promesse en une image.', ratio: '3 / 4', format: 'Affiche · portrait', posters: true },
     { id: 'reels', label: 'Reels', title: 'Les reels', text: 'Quelques secondes de nuit qui tombe, pour donner envie de venir voir en vrai.', ratio: '9 / 16', format: 'Reel · 9:16', reels: true },
+    { id: 'cartes', label: 'Cartes à gagner', title: 'Les cartes à gagner', text: 'Le bâtiment se transforme en Vitra Lightscape. Inclinez une carte pour passer du jour à sa version mapping, glissez pour la faire tourner, cliquez pour la retourner.', ratio: '5 / 7', format: 'Cartes', cards: true },
   ] as Station[],
 };
 

@@ -1,6 +1,7 @@
 ---
 /**
- * Galerie de cartes Lightscape (page de présentation).
+ * Cartes Lightscape (page de présentation) : les cartes côte à côte, puis le clip du booster à leur suite.
+ * Ce n'est pas une section à part : c'est le contenu de l'étape « Les cartes » du chemin néon.
  * Le tilt et la bascule se règlent dans src/data/lightscape-cards.ts (objet `reglages`).
  */
 import LightscapeCard from './LightscapeCard.astro';
@@ -12,32 +13,20 @@ const liste = cartes();
 
 {
   liste.length > 0 && (
-    <section class="lgallery" data-theme="night" aria-labelledby="lgallery-title">
-      <div class="container">
-        <p class="eyebrow">Cartes à gagner</p>
-        <h2 class="lgallery__title" id="lgallery-title">Le bâtiment se transforme en Vitra Lightscape.</h2>
-        <p class="lgallery__lead">Inclinez la carte : le bâtiment passe du jour à sa version Lightscape. Glissez pour la faire tourner, cliquez pour la retourner.</p>
-        <ul class="lgallery__grid" data-lgallery data-tilt={reglages.tilt} data-reveal={reglages.reveal}>
-          {liste.map((c) => (
-            <li>
-              <LightscapeCard carte={c} />
-            </li>
-          ))}
-        </ul>
-
-        <figure class="lclip">
-          <div class="lclip__frame">
-            <video class="lclip__video" playsinline loop preload="metadata" controls controlslist="nodownload" poster={url('reel/promo-tcg-poster.jpg')} aria-label="Clip : l'ouverture d'un booster Vitra Lightscape, une carte entre dans le book de collection">
-              <source src={url('reel/promo-tcg-720x1280.mp4')} type="video/mp4" />
-            </video>
-          </div>
-          <figcaption>
-            <strong>Du booster au book</strong>
-            <span>On ouvre le booster, on découvre sa carte, puis elle rejoint la collection. Lance la lecture avec le bouton.</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
+    <div class="lgallery" data-theme="night">
+      <ul class="lgallery__grid" data-lgallery data-tilt={reglages.tilt} data-reveal={reglages.reveal}>
+        {liste.map((c) => (
+          <li>
+            <LightscapeCard carte={c} />
+          </li>
+        ))}
+        <li class="lgallery__clip">
+          <video class="lgallery__video" playsinline loop preload="metadata" controls controlslist="nodownload" poster={url('reel/promo-tcg-wide-poster.jpg')} aria-label="Clip : on ouvre un booster Vitra Lightscape, une carte entre dans le book de collection">
+            <source src={url('reel/promo-tcg-wide-1280x720.mp4')} type="video/mp4" />
+          </video>
+        </li>
+      </ul>
+    </div>
   )
 }
 

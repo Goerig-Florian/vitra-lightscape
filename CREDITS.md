@@ -83,4 +83,4 @@ Clip vertical de 10,5 s (booster → cartes → carte collector → book → ins
 
 `public/presentation/presse-dna.webp` et `presse-alsace.webp` : deux **maquettes de pages de journaux** (DNA et L'Alsace) réalisées par l'équipe pour illustrer la couverture presse. Ce sont des mises en scène : les articles, citations et témoignages sont fictifs, et les titres de presse ne sont pas affiliés au projet. Les originaux (`public/photos/journaux*.png`) restent en local.
 
-Le clip du booster (`public/reel/promo-tcg-720x1280.mp4`, créé avec `/promo-tcg/`) est présenté dans un mockup de téléphone dans la station « La carte à gagner » ; ses chiffres de réseau sont fictifs.
+Le clip du booster (`public/reel/promo-tcg-wide-1280x720.mp4`, créé avec `/promo-tcg/?wide`) est présenté à la suite des cartes, dans l'étape « Les cartes à gagner » de la page de présentation.

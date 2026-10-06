@@ -27,9 +27,13 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
         </svg>
         {
           presentation.stations.map((s, i) => (
-            <li class={`station station--${i % 2 ? 'right' : 'left'}${s.reels || s.posters ? ' station--wide' : ''}`} data-station>
+            <li class={`station station--${i % 2 ? 'right' : 'left'}${s.reels || s.posters || s.cards ? ' station--wide' : ''}`} data-station>
               <span class="station__node" data-node aria-hidden="true"></span>
-              {s.posters ? (
+              {s.cards ? (
+                <div class="cards-block">
+                  <LightscapeGallery />
+                </div>
+              ) : s.posters ? (
                 <div class="posters-block">
                   <div class="posters-row">
                     {posters.map((p, n) => (
@@ -163,7 +167,6 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
     </button>
   </dialog>
 
-  <LightscapeGallery />
 
   <script>
     // affiches : un clic ouvre l'affiche en plein écran (Échap, clic à côté, flèches du clavier)

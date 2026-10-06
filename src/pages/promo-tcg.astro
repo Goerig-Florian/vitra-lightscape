@@ -79,6 +79,9 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
     <script>
       // ------------------------------------------------------------------ outils
       const DUR = 10.5;
+      // ?wide : format horizontal 16:9 (1920 x 1080), cadré sur le booster et le book (sans le titre du haut) ; sert au site
+      const WIDE = new URLSearchParams(location.search).has('wide');
+      document.body.classList.toggle('is-wide', WIDE);
       const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
       const inOut = (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
       const outC = (u: number) => 1 - Math.pow(1 - u, 3);
@@ -133,7 +136,7 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
       for (let i = 0; i < 46; i++) {
         const el = document.createElement('i');
         dustBox.appendChild(el);
-        dust.push({ el, x: rnd() * 1080, y: rnd() * 1920, v: 6 + rnd() * 16, s: 2 + rnd() * 3.2, p: rnd() * 6.28 });
+        dust.push({ el, x: rnd() * (WIDE ? 1920 : 1080) - (WIDE ? 420 : 0), y: rnd() * 1920, v: 6 + rnd() * 16, s: 2 + rnd() * 3.2, p: rnd() * 6.28 });
       }
 
       // ------------------------------------------------------------------ mesure de l'emplacement de la carte dans le book (état final)
@@ -141,7 +144,7 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
       const apply = (t: number) => render(t);
       const measure = () => {
         render(10.3); // livre ouvert, caméra posée : c'est là que la carte doit arriver
-        const k = pr.getBoundingClientRect().width / 1080;
+        const k = pr.getBoundingClientRect().width / pr.offsetWidth;
         const r0 = pr.getBoundingClientRect();
         const r = slotEmpty.getBoundingClientRect();
         slot = { x: (r.left + r.width / 2 - r0.left) / k, y: (r.top + r.height / 2 - r0.top) / k, w: r.width / k };
@@ -384,6 +387,15 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
       document.body.classList.toggle('is-clean', clean);
       const wrap = q<HTMLElement>('[data-wrap]');
       const fit = () => {
+        if (WIDE) {
+          const w = clean ? 1920 : Math.max(320, Math.min(window.innerWidth - 40, ((window.innerHeight - 100) * 16) / 9));
+          const k = w / 1920;
+          wrap.style.width = `${w}px`;
+          wrap.style.height = `${w * 9 / 16}px`;
+          // la scène (1080 de large) est centrée dans l'image horizontale, réduite à 92 % : on garde la bande verticale de y = 470 à 1644
+          pr.style.transform = `scale(${k}) translate(463px, -432px) scale(0.92)`;
+          return;
+        }
         const w = clean ? 1080 : Math.max(240, Math.min(window.innerWidth - 40, ((window.innerHeight - 100) * 9) / 16));
         wrap.style.width = `${w}px`;
         wrap.style.height = `${(w * 16) / 9}px`;
@@ -682,5 +694,32 @@ const [a, b, c] = [prendre('vitrahaus'), prendre('water-garden'), prendre(CIBLE)
   .pp.is-clean,
   .pp.is-clean * {
     cursor: none !important;
+  }
+
+  /* format horizontal : le fond et les lueurs débordent de part et d'autre de la scène de 1080 px */
+  .pp.is-wide .pr {
+    overflow: visible;
+  }
+
+  .pp.is-wide .pr__bg {
+    left: -420px;
+    right: -420px;
+  }
+
+  .pp.is-wide .pr__blob--a {
+    left: -420px;
+  }
+
+  .pp.is-wide .pr__blob--b {
+    right: -420px;
+  }
+
+  .pp.is-wide .pr__title {
+    display: none;
+  }
+
+  .pp.is-wide.is-clean .pp__wrap {
+    width: 1920px;
+    height: 1080px;
   }
 </style>
