@@ -32,7 +32,7 @@ export interface Station {
 export const reels = [
   { platform: 'instagram', label: 'Reel Instagram n° 1', sub: 'Teaser : Vitra devient Vitra Lightscape', video: 'reel/teaser-14s-b-midnight-720x1280.mp4', poster: 'reel/teaser-14s-b-poster.jpg' },
   { platform: 'instagram', label: 'Reel Instagram n° 2', sub: 'Trailer : découvrir, interagir, s’immerger', video: 'reel/trailer-v2-720x1280.mp4', poster: 'reel/trailer-v2-poster.jpg', caption: ['Découvrir. Interagir. S’immerger.', 'Vivre l’architecture dans la lumière.'], tags: '#Vitra #VitraLightscape', likes: '9,4 K', comments: '187', shares: '812', cadrage: '50% 50%' },
-  { platform: 'tiktok', label: 'TikTok', sub: 'Suivez la lumière', video: 'reel/tiktok-v2-720x1280.mp4', poster: 'reel/tiktok-v2-poster.jpg', caption: ['Suivez la lumière.', 'Du 3 septembre au 3 octobre 2027.'], tags: '#Vitra #VitraLightscape #Lightscape', likes: '4,2 K', comments: '96', shares: '311', cadrage: '50% 50%' },
+  { platform: 'tiktok', label: 'TikTok', sub: 'Suivez la lumière', video: 'reel/tiktok-v3-720x1280.mp4', poster: 'reel/tiktok-v3-poster.jpg', caption: ['Suivez la lumière.', 'Du 3 septembre au 3 octobre 2027.'], tags: '#Vitra #VitraLightscape #Lightscape', likes: '4,2 K', comments: '96', shares: '311', cadrage: '50% 50%' },
 ] as {
   platform: 'instagram' | 'tiktok';
   label: string;

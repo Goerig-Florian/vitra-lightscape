@@ -4,7 +4,7 @@
  * Le son d'origine est conservé jusqu'au bout, y compris sous le logo et les dates (fondu de sortie sur la dernière seconde).
  *
  *   node scripts/make-tiktok.mjs "<video-source.mp4>" "<chemin-de-ffmpeg>" [secondes-de-coupe=7]
- * Sorties : exports/tiktok/tiktok-1080x1920.mp4 et public/reel/tiktok-v2-720x1280.mp4 (+ affiche).
+ * Sorties : exports/tiktok/tiktok-1080x1920.mp4 et public/reel/tiktok-v3-720x1280.mp4 (+ affiche).
  * La carte finale (logo + dates) est dessinée par Chrome avec la police Futura du site (aucune image externe).
  */
 import { spawn, spawnSync } from 'node:child_process';
@@ -29,10 +29,10 @@ const font = (w, f) => `@font-face{font-family:F;font-weight:${w};src:url('${pat
 const html = `<!doctype html><meta charset="utf-8"><style>
 ${font(300, 'futura-light.woff')}${font(400, 'futura-regular.woff')}${font(500, 'futura-medium.woff')}
 html,body{margin:0;width:1080px;height:1920px;background:transparent;color:#fff;font-family:F,Futura,sans-serif}
-.c{position:absolute;left:0;right:0;top:760px;display:grid;justify-items:center;gap:56px;text-align:center}
-.l{width:560px;color:#fff}.l svg{display:block;width:100%;height:auto}
-.d{font-size:40px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;padding-left:.2em}
-.s{font-size:26px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:#d9b26a;padding-left:.3em;margin-top:-26px}
+.c{position:absolute;left:0;right:0;top:760px;display:grid;justify-items:center;gap:48px;text-align:center}
+.l{width:400px;color:#fff}.l svg{display:block;width:100%;height:auto}
+.d{font-size:30px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;padding-left:.2em}
+.s{font-size:22px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:#d9b26a;padding-left:.3em;margin-top:-26px}
 </style><div class="c"><div class="l">${logo}</div><div class="d">3 septembre — 3 octobre 2027</div><div class="s">Vitra Campus</div></div>`;
 const page = join(tmpdir(), `vitra-tiktok-${Date.now()}.html`);
 writeFileSync(page, html);
@@ -77,7 +77,11 @@ const T = CUT + 0.3; // fin de la partie vidéo (le fondu au noir se termine ici
 const total = T + CARD;
 const filter = [
   // plein écran vertical : fenêtre 9:16 prélevée dans l'image paysage (hauteur entière), puis agrandie à 1080 x 1920
-  `[0:v]trim=0:${T},setpts=PTS-STARTPTS,fps=30,crop=w=ih*9/16:h=ih:x='min(iw-ow\,max(0\,${cx}*iw-ow/2))':y=0,scale=1080:1920:flags=lanczos,fade=t=out:st=${CUT - 0.4}:d=${FADE + 0.4},format=yuv420p[va]`,
+  // dézoom : la vidéo entière est agrandie à 1,5 x la largeur de l'écran (67 % de l'image visible, recadrage qui suit l'action), sur un fond flouté
+  `[0:v]trim=0:${T},setpts=PTS-STARTPTS,fps=30,split[a][b]`,
+  `[a]crop=w=ih*9/16:h=ih:x='min(iw-ow\,max(0\,${cx}*iw-ow/2))':y=0,scale=1080:1920,boxblur=40:4,eq=brightness=-0.15[bg]`,
+  `[b]scale=1620:-2,crop=w=1080:h=ih:x='min(iw-1080\,max(0\,${cx}*iw-540))':y=0[fg]`,
+  `[bg][fg]overlay=0:(H-h)/2,fade=t=out:st=${CUT - 0.4}:d=${FADE + 0.4},format=yuv420p[va]`,
   // carte finale : noir + logo et dates en fondu
   `color=c=black:s=1080x1920:r=30:d=${CARD}[k]`,
   `[1:v]format=rgba,loop=loop=-1:size=1:start=0,trim=duration=${CARD},setpts=PTS-STARTPTS,fade=t=in:st=0.3:d=1.0:alpha=1[lg]`,
@@ -93,7 +97,7 @@ const run = (args) => {
 const full = join(out, 'tiktok-1080x1920.mp4');
 run(['-y', '-v', 'error', '-i', src, '-loop', '1', '-framerate', '30', '-i', card, '-filter_complex', filter, '-map', '[v]', '-map', '[aud]', '-t', String(total), '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', full]);
 mkdirSync('public/reel', { recursive: true });
-run(['-y', '-v', 'error', '-i', full, '-vf', 'scale=720:1280:flags=lanczos', '-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', 'public/reel/tiktok-v2-720x1280.mp4']);
-run(['-y', '-v', 'error', '-ss', '3', '-i', 'public/reel/tiktok-v2-720x1280.mp4', '-frames:v', '1', '-q:v', '5', 'public/reel/tiktok-v2-poster.jpg']);
+run(['-y', '-v', 'error', '-i', full, '-vf', 'scale=720:1280:flags=lanczos', '-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', 'public/reel/tiktok-v3-720x1280.mp4']);
+run(['-y', '-v', 'error', '-ss', '3', '-i', 'public/reel/tiktok-v3-720x1280.mp4', '-frames:v', '1', '-q:v', '5', 'public/reel/tiktok-v3-poster.jpg']);
 rmSync(page, { force: true });
-console.log('écrit', full, 'et public/reel/tiktok-v2-720x1280.mp4', `(durée ${total.toFixed(1)} s)`);
+console.log('écrit', full, 'et public/reel/tiktok-v3-720x1280.mp4', `(durée ${total.toFixed(1)} s)`);

@@ -107,4 +107,4 @@ Les trois comptes (@onfaitquoi.maman, @lerichti, @girlinbasel), leurs villes, ci
 
 ## TikTok (mockup de la présentation)
 
-`public/reel/tiktok-v2-720x1280.mp4` : vidéo générée par IA fournie par l'équipe (`gemini_generated_video_*.mp4`, 10 s), remontée avec `scripts/make-tiktok.mjs` : plein écran vertical 9:16 (recadrage qui suit l'action), son d'origine conservé jusqu'au bout, fondu au noir à 7 s, puis logo Vitra Lightscape et dates du 3 septembre au 3 octobre 2027. Les chiffres du mockup (mentions J'aime, commentaires) sont fictifs.
+`public/reel/tiktok-v3-720x1280.mp4` : vidéo générée par IA fournie par l'équipe (`gemini_generated_video_*.mp4`, 10 s), remontée avec `scripts/make-tiktok.mjs` : vertical 9:16, vidéo dézoomée (2/3 de l'image visible, recadrage qui suit l'action) sur fond flouté, son d'origine conservé jusqu'au bout, fondu au noir à 7 s, puis logo Vitra Lightscape et dates du 3 septembre au 3 octobre 2027. Les chiffres du mockup (mentions J'aime, commentaires) sont fictifs.

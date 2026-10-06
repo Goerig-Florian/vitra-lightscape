@@ -96,14 +96,14 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
                       <ReelPhone platform={r.platform} caption={r.video ? r.caption : ['Légende à venir']} tags={r.video ? r.tags : ''} likes={r.video ? r.likes : '—'} comments={r.video ? r.comments : '—'} shares={r.video ? r.shares : '—'}>
                         {r.video ? (
                           <>
-                            <video class="reel-video" muted loop playsinline preload="metadata" poster={url(r.poster ?? '')} style={[r.cadrage ? `object-position:${r.cadrage}` : '', r.ajuste ? `object-fit:${r.ajuste}` : ''].filter(Boolean).join(';') || undefined} aria-label={r.label + ' : ' + r.sub}>
+                            <video class="reel-video" loop playsinline preload="metadata" poster={url(r.poster ?? '')} style={[r.cadrage ? `object-position:${r.cadrage}` : '', r.ajuste ? `object-fit:${r.ajuste}` : ''].filter(Boolean).join(';') || undefined} aria-label={r.label + ' : ' + r.sub}>
                               <source src={url(r.video)} type="video/mp4" />
                             </video>
                             <button type="button" class="reel-play" data-play aria-label="Lancer la lecture">
                               <svg class="reel-play__play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5Z" fill="currentColor" /></svg>
                               <svg class="reel-play__pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 5.5h3.4v13H7.5zM13.1 5.5h3.4v13h-3.4z" fill="currentColor" /></svg>
                             </button>
-                            <button type="button" class="reel-sound" data-sound aria-pressed="false" aria-label="Activer le son du teaser">
+                            <button type="button" class="reel-sound" data-sound aria-pressed="true" aria-label="Couper le son du teaser">
                               <svg class="reel-sound__off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.6L12 6v12l-4.4-3.5H4Z" fill="currentColor" /><path d="m16 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
                               <svg class="reel-sound__on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.6L12 6v12l-4.4-3.5H4Z" fill="currentColor" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
                             </button>
@@ -223,7 +223,7 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
       const stage = pbox.querySelector<HTMLElement>('[data-phonebox-stage]')!;
       const pcap = pbox.querySelector<HTMLElement>('[data-phonebox-cap]')!;
       let cur = 0;
-      // bouton haut-parleur : le son est coupé par défaut (les navigateurs interdisent le son automatique)
+      // bouton haut-parleur : le son est actif par défaut (la lecture ne démarre qu'au clic sur ▶)
       const setSoundButton = (b: Element | null, on: boolean) => {
         if (!b) return;
         b.setAttribute('aria-pressed', String(on));
@@ -259,7 +259,7 @@ import LightscapeGallery from '../components/LightscapeGallery.astro';
         const v = copy.querySelector('video');
         if (v) {
           // une copie ne garde pas l'état « muet » : on reprend celui de la vidéo d'origine (le clic sur le téléphone autorise le son)
-          v.muted = src.querySelector('video')?.muted ?? true;
+          v.muted = src.querySelector('video')?.muted ?? false;
           setSoundButton(copy.querySelector('.reel-sound'), !v.muted);
           // on reprend là où la vignette en était : elle se met en pause, la copie joue seulement si la vignette jouait
           const srcV = src.querySelector('video');
