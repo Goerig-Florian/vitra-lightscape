@@ -13,3 +13,6 @@ photos-nuit/
 polices-sources/
 # visualisations de mapping d'origine fournies par l'équipe, gardées en local
 mapping-sources/
+
+# exports locaux (vidéos, pages autonomes), régénérables avec les scripts
+exports/
