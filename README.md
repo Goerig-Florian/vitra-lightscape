@@ -145,3 +145,7 @@ src/
 ## Exploitation et tarifs (fixés par l'équipe)
 
 Vitra Lightscape : vendredi 3 septembre → dimanche 3 octobre 2027, 31 soirées consécutives, 19h00 → 23h00, entrées toutes les 30 minutes de 19h00 à 21h30. Tarifs lundi–jeudi / vendredi–dimanche : adulte 24,90 € / 29,90 € ; réduit-étudiant 19,90 € / 24,90 € ; enfant 6–14 ans 11,90 € / 14,90 € ; moins de 6 ans gratuit ; famille (2 adultes + jusqu'à 3 enfants) 59,90 € / 69,90 €. Données dans `src/data/billetterie.ts`.
+
+## Langues (accueil et panier)
+
+Le site est en français par défaut ; l'accueil et le panier existent aussi en anglais (`/en/`) et en allemand (`/de/`), au choix dans le header (FR · EN · DE). Tous les textes se trouvent dans `src/data/i18n.ts` (même structure dans les trois langues) ; la langue est déduite de l'adresse (`src/lib/i18n.ts`). La page Présentation et les devis restent en français. Les liens « Voir sur vitra.com » pointent vers les versions `en-eu` et `de-de` du site de Vitra (à vérifier).

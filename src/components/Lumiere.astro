@@ -4,8 +4,9 @@
  * Un seul exemple, sous forme de lampe torche : on passe la lumière sur une façade calme et la
  * visualisation de mapping n'apparaît que dans le cercle (souris ou doigt). Le reste se découvre sur place.
  */
-import { lumiere } from '../data/content';
 import { url } from '../lib/url';
+import { getT } from '../lib/i18n';
+const lumiere = getT(Astro.url).lumiere;
 ---
 
 <section class="section lumiere" id="lumiere" data-theme="night" aria-labelledby="lumiere-title">

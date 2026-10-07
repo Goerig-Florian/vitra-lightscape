@@ -6,10 +6,12 @@
  * et reste affichée.
  * Animations réduites : pas de lecture automatique, image de nuit fixe.
  */
-import { hero } from '../data/content';
+import { getT } from '../lib/i18n';
 import { museeSilhouette } from '../data/batiments';
 import { url } from '../lib/url';
 
+const t = getT(Astro.url);
+const hero = t.hero;
 const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
 
 ---
@@ -58,10 +60,10 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
               <span class="hero__count" data-countdown="2027-09-03T19:00:00+02:00">
                 <span class="sr-only" data-count-sr></span>
                 <span class="hero__count-grid" aria-hidden="true">
-                  <span><b data-c="d">--</b><i>jours</i></span>
-                  <span><b data-c="h">--</b><i>heures</i></span>
-                  <span><b data-c="m">--</b><i>min</i></span>
-                  <span><b data-c="s">--</b><i>sec</i></span>
+                  <span><b data-c="d">--</b><i>{hero.d}</i></span>
+                  <span><b data-c="h">--</b><i>{hero.h}</i></span>
+                  <span><b data-c="m">--</b><i>{hero.m}</i></span>
+                  <span><b data-c="s">--</b><i>{hero.s}</i></span>
                 </span>
               </span>
             )}
@@ -83,11 +85,11 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
   <p class="hero__teaser-note" aria-hidden="true">{hero.teaserNote}</p>
 
   <div class="hero__controls">
-    <p class="hero__note">Vidéo d’ambiance, simulation</p>
+    <p class="hero__note">{hero.note}</p>
     <button type="button" class="hero__ctrl" data-video-toggle aria-pressed="false">
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-pause"><path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor" /></svg>
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-play"><path d="M8 5l11 7-11 7z" fill="currentColor" /></svg>
-      <span data-video-label>Mettre la vidéo en pause</span>
+      <span data-video-label>{hero.pause}</span>
     </button>
   </div>
 </section>
@@ -115,7 +117,9 @@ const pts = museeSilhouette.map((p) => p.join(',')).join(' ');
       const minute = Math.floor(reste / 60000);
       if (minute !== derniereMinute) {
         derniereMinute = minute;
-        sr.textContent = reste === 0 ? 'Vitra Lightscape est ouvert.' : `Ouverture dans ${j} jours, ${h} heures et ${m} minutes.`;
+        const tx = JSON.parse(document.body.dataset.i18n || '{}').hero || {};
+        const fill = (s: string) => s.replace('{d}', String(j)).replace('{h}', String(h)).replace('{m}', String(m));
+        sr.textContent = reste === 0 ? tx.srOpen || 'Vitra Lightscape est ouvert.' : fill(tx.srIn || 'Ouverture dans {d} jours, {h} heures et {m} minutes.');
       }
       cd.classList.toggle('is-over', reste === 0);
     };

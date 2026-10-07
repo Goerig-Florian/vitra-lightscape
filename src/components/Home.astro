@@ -1,0 +1,25 @@
+---
+/** Page d'accueil, identique dans les trois langues : les textes viennent de src/data/i18n.ts (langue déduite de l'adresse). */
+import Base from '../layouts/Base.astro';
+import Hero from './Hero.astro';
+import Dusk from './Dusk.astro';
+import Lumiere from './Lumiere.astro';
+import Parcours from './Parcours.astro';
+import Soiree from './Soiree.astro';
+import Billetterie from './Billetterie.astro';
+import Infos from './Infos.astro';
+import Rail from './Rail.astro';
+import { getT } from '../lib/i18n';
+const t = getT(Astro.url);
+---
+
+<Base title={t.title} description={t.description}>
+  <Hero />
+  <Dusk />
+  <Lumiere />
+  <Parcours />
+  <Soiree />
+  <Billetterie />
+  <Infos />
+  <Rail />
+</Base>

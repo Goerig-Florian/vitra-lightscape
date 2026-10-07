@@ -7,13 +7,18 @@
  * un élément de la liste ou les flèches de la fiche fixe le choix.
  * Les repères sont des boutons : on y accède au clavier (Tab, Entrée).
  */
-import { parcours } from '../data/content';
-import { batiments, modes, type Mode } from '../data/batiments';
+import { batiments, type Mode } from '../data/batiments';
+import { getT, fill, getLang } from '../lib/i18n';
 import { url } from '../lib/url';
 import plan from '../data/carte.json';
 import fiches from '../data/fiches.json';
 import nuit from '../data/nuit.json';
 
+const T = getT(Astro.url);
+const parcours = T.parcours;
+const modes = T.modes;
+const nameOf = (b: { id: string; name: string }) => T.names[b.id] ?? b.name;
+const vitraLink = (href: string) => (getLang(Astro.url) === 'fr' ? href : href.replace('/fr-fr/', `/${T.ui.vitraPath}/`));
 // Positions, trajet et formes des bâtiments : scripts/make-map.py. Photos : scripts/fetch-photos.py.
 const [vx, vy, vw, vh] = plan.viewBox;
 const byId = new Map(plan.stops.map((s) => [s.id, s]));
@@ -29,23 +34,23 @@ const order: Mode[] = ['facade', 'interieur', 'interactif'];
 const count = (m: Mode) => batiments.filter((b) => b.modes.includes(m)).length;
 const num = (i: number) => String(i + 1).padStart(2, '0');
 const credit = (b: { author: string; year: string }) => (b.author ? `${b.author}, ${b.year}` : b.year);
-const km = (plan.length / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+const km = (plan.length / 1000).toLocaleString(T.locale, { maximumFractionDigits: 1 });
 const minutes = Math.round(plan.length / (4000 / 60) / 5) * 5; // marche à 4 km/h, arrondie à 5 min
 const f = (v: number) => v.toFixed(1);
 const photo = (id: string) => url(`photos/${id}.webp`);
 const night = (id: string) => ((nuit as string[]).includes(id) ? url(`photos/${id}-nuit.webp`) : null);
-const label = (b: (typeof stops)[number], i: number) => `Étape ${i + 1} sur ${stops.length} : ${b.name}, ${credit(b)}`;
+const label = (b: (typeof stops)[number], i: number) => fill(parcours.stepOf, { i: i + 1, n: stops.length, name: nameOf(b), credit: credit(b) });
 
 // Données de la fiche, lues par main.js
 const data = stops.map((b) => ({
   id: b.id,
-  name: b.name,
+  name: nameOf(b),
   meta: credit(b),
   photo: photo(b.id),
   night: night(b.id),
   w: b.fiche.w,
   h: b.fiche.h,
-  href: b.fiche.href,
+  href: vitraLink(b.fiche.href),
   modes: b.modes.map((m) => ({ key: m, short: modes[m].short, text: modes[m].text })),
 }));
 const credits = { day: parcours.photoCredit, night: parcours.nightCredit };
@@ -65,30 +70,30 @@ const firstNight = night(first.id);
 
     <dl class="kpis reveal">
       <div class="kpis__item">
-        <dt>Étapes</dt>
+        <dt>{parcours.stepsLabel}</dt>
         <dd>{batiments.length}</dd>
-        <p>bâtiments et oeuvres</p>
+        <p>{parcours.stepsSub}</p>
       </div>
       <div class="kpis__item">
-        <dt>Distance</dt>
-        <dd>{km}<span> km</span></dd>
-        <p>une boucle à pied</p>
+        <dt>{parcours.distance}</dt>
+        <dd>{km}<span>{parcours.km}</span></dd>
+        <p>{parcours.loop}</p>
       </div>
       <div class="kpis__item">
-        <dt>Marche</dt>
-        <dd>≈ {minutes}<span> min</span></dd>
-        <p>hors arrêts</p>
+        <dt>{parcours.walkLabel}</dt>
+        <dd>≈ {minutes}<span>{parcours.min}</span></dd>
+        <p>{parcours.noStops}</p>
       </div>
       <div class="kpis__item">
-        <dt>Départ</dt>
-        <dd class="kpis__text">Parking visiteurs</dd>
-        <p>départ et arrivée</p>
+        <dt>{parcours.startLabel}</dt>
+        <dd class="kpis__text">{parcours.startVal}</dd>
+        <p>{parcours.startSub}</p>
       </div>
     </dl>
     <p class="kpis__note">{parcours.walkNote}</p>
 
-    <div class="filters" role="group" aria-label="Filtrer par mode de mise en lumière">
-      <button type="button" class="filter" data-filter="all" aria-pressed="true">Tout <span>{batiments.length}</span></button>
+    <div class="filters" role="group" aria-label={parcours.filterAria}>
+      <button type="button" class="filter" data-filter="all" aria-pressed="true">{parcours.all} <span>{batiments.length}</span></button>
       {
         order.map((m) => (
           <button type="button" class="filter" data-filter={m} aria-pressed="false">
@@ -116,7 +121,7 @@ const firstNight = night(first.id);
             class="plan"
             data-plan
             role="group"
-            aria-label={`Carte du Vitra Campus en perspective. Le chemin lumineux part du parking visiteurs et passe par les ${batiments.length} étapes numérotées. Choisissez une étape pour afficher sa fiche.`}
+            aria-label={fill(parcours.planAria, { n: batiments.length })}
           >
 
 
@@ -141,15 +146,15 @@ const firstNight = night(first.id);
               <g class="plan__park">
                 <rect x={f(plan.parking.x - 9)} y={f(plan.parking.y - 9)} width="18" height="18" rx="3" />
                 <text x={f(plan.parking.x)} y={f(plan.parking.y + 4.5)} text-anchor="middle">P</text>
-                <text class="plan__tag" x={f(plan.parking.x)} y={f(plan.parking.y + 22)} text-anchor="middle">Parking visiteurs</text>
+                <text class="plan__tag" x={f(plan.parking.x)} y={f(plan.parking.y + 22)} text-anchor="middle">{parcours.parking}</text>
               </g>
               <g class="plan__gate">
                 <circle cx={f(plan.parking.gx)} cy={f(plan.parking.gy)} r="4" />
-                <text class="plan__tag" x={f(plan.parking.x)} y={f(plan.parking.y + 34)} text-anchor="middle">Départ · arrivée</text>
+                <text class="plan__tag" x={f(plan.parking.x)} y={f(plan.parking.y + 34)} text-anchor="middle">{parcours.gate}</text>
               </g>
               <g class="plan__entree">
                 <path d={`M ${f(plan.entree.x)} ${f(plan.entree.y - 6)} l 6 6 l -6 6 l -6 -6 z`} />
-                <text class="plan__tag" x={f(plan.entree.x - 9)} y={f(plan.entree.y + 15)} text-anchor="end">Entrée</text>
+                <text class="plan__tag" x={f(plan.entree.x - 9)} y={f(plan.entree.y + 15)} text-anchor="end">{parcours.entrance}</text>
               </g>
             </g>
 
@@ -181,27 +186,27 @@ const firstNight = night(first.id);
           <p class="plan__now" data-plan-now>
             <span class="plan__now-n" data-now-n>{num(0)}</span>
             <span class="plan__now-text">
-              <strong data-now-name>{first.name}</strong>
+              <strong data-now-name>{nameOf(first)}</strong>
               <span data-now-meta>{credit(first)}</span>
             </span>
           </p>
           <button type="button" class="plan__ctrl" data-plan-toggle hidden>
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-pause"><path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor" /></svg>
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="icon-play"><path d="M8 5l11 7-11 7z" fill="currentColor" /></svg>
-            <span data-plan-label>Mettre en pause</span>
+            <span data-plan-label>{parcours.pause}</span>
           </button>
         </div>
 
       </figure>
 
-      <article class="fiche" data-fiche aria-label="Fiche du bâtiment">
+      <article class="fiche" data-fiche aria-label={parcours.ficheAria}>
         <figure class="fiche__photo">
           <img
             data-fiche-img
             src={photo(first.id)}
             width={first.fiche.w}
             height={first.fiche.h}
-            alt={`Photographie de jour : ${first.name}`}
+            alt={`${parcours.altDay}${nameOf(first)}`}
             decoding="async"
           />
           <img class="fiche__night" data-fiche-night src={firstNight ?? undefined} alt="" aria-hidden="true" decoding="async" />
@@ -209,21 +214,21 @@ const firstNight = night(first.id);
           <button type="button" class="fiche__time" data-fiche-time aria-pressed="false" hidden>
             <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor" /></svg>
             <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
-            <span data-fiche-time-label>Voir de nuit</span>
+            <span data-fiche-time-label>{parcours.seeNight}</span>
           </button>
           <figcaption data-fiche-credit>{parcours.photoCredit}</figcaption>
           <div class="fiche__nav">
-            <button type="button" class="fiche__btn" data-fiche-prev aria-label="Étape précédente">
+            <button type="button" class="fiche__btn" data-fiche-prev aria-label={parcours.prev}>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" fill="none" /></svg>
             </button>
-            <button type="button" class="fiche__btn" data-fiche-next aria-label="Étape suivante">
+            <button type="button" class="fiche__btn" data-fiche-next aria-label={parcours.next}>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" /></svg>
             </button>
           </div>
         </figure>
         <div class="fiche__body" aria-live="polite">
           <p class="fiche__n"><span data-fiche-n>{num(0)}</span> / {batiments.length}</p>
-          <h3 class="fiche__name" data-fiche-name>{first.name}</h3>
+          <h3 class="fiche__name" data-fiche-name>{nameOf(first)}</h3>
           <p class="fiche__meta" data-fiche-meta>{credit(first)}</p>
           <div class="fiche__modes" data-fiche-modes>
             {
@@ -238,24 +243,24 @@ const firstNight = night(first.id);
               ))
             }
           </div>
-          <a class="fiche__link" data-fiche-link href={first.fiche.href} rel="noopener">Voir sur vitra.com<span class="sr-only"> (site externe)</span></a>
+          <a class="fiche__link" data-fiche-link href={vitraLink(first.fiche.href)} rel="noopener">{parcours.seeOn}<span class="sr-only">{T.ui.external}</span></a>
         </div>
       </article>
     </div>
 
     <div class="parcours__notes">
-    <ul class="plan__legend" aria-label="Légende de la carte">
-      <li><span class="legend__path" aria-hidden="true"></span>Chemin lumineux</li>
-      <li><span class="mode-mark mode-mark--facade" aria-hidden="true"></span>Façade</li>
-      <li><span class="mode-mark mode-mark--interieur" aria-hidden="true"></span>Intérieur</li>
-      <li><span class="mode-mark mode-mark--interactif" aria-hidden="true"></span>Interactif</li>
-      <li><span class="legend__approx" aria-hidden="true"></span>Repère décalé</li>
+    <ul class="plan__legend" aria-label={parcours.legendAria}>
+      <li><span class="legend__path" aria-hidden="true"></span>{parcours.legendPath}</li>
+      <li><span class="mode-mark mode-mark--facade" aria-hidden="true"></span>{parcours.legendFacade}</li>
+      <li><span class="mode-mark mode-mark--interieur" aria-hidden="true"></span>{parcours.legendInside}</li>
+      <li><span class="mode-mark mode-mark--interactif" aria-hidden="true"></span>{parcours.legendInteractive}</li>
+      <li><span class="legend__approx" aria-hidden="true"></span>{parcours.legendApprox}</li>
     </ul>
 
     <p class="caption" id="plan-caption">
       {parcours.notice} {parcours.nightNote}
-      <a href={parcours.carte.href} rel="noopener">{parcours.carte.label}<span class="sr-only"> (site externe)</span></a>. Trajet calculé
-      d’après <a href={parcours.osm.href} rel="noopener">{parcours.osm.label}<span class="sr-only"> (site externe)</span></a>, licence ODbL.
+      <a href={parcours.carte.href} rel="noopener">{parcours.carte.label}<span class="sr-only">{T.ui.external}</span></a>. {parcours.captionTrail}
+      <a href={parcours.osm.href} rel="noopener">{parcours.osm.label}<span class="sr-only">{T.ui.external}</span></a>{parcours.captionLicense}
     </p>
     </div>
 

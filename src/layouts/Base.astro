@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 import { dates, slots, tickets, maxPerType, isWeekend } from '../data/billetterie';
 import { url } from '../lib/url';
+import { getLang, getT, langs, homeUrl, cartUrl } from '../lib/i18n';
 
 interface Props {
   title: string;
@@ -13,21 +14,35 @@ interface Props {
 }
 
 const { title, description, home = true } = Astro.props;
+const lang = getLang(Astro.url);
+const t = getT(Astro.url);
+const path = Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/?$/, '/').length - 1).replace(/^\/(en|de)(?=\/|$)/, '');
+const translated = home || path.startsWith('/panier');
+const alt = (l: (typeof langs)[number]) => (l === 'fr' ? url(path.replace(/^\//, '')) : url(`${l}${path || '/'}`));
 
 // Données de billetterie transmises au script du panier
 const label = (iso: string) =>
-  new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  new Date(`${iso}T12:00:00`).toLocaleDateString(t.locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 const booking = JSON.stringify({
   dates: dates.map((d) => ({ id: d, label: label(d), we: isWeekend(d) })),
   slots,
-  tickets,
+  tickets: tickets.map((tk) => ({ ...tk, ...t.tickets[tk.id] })),
   max: maxPerType,
-  cartUrl: url('panier/'),
+  cartUrl: cartUrl(lang),
+  locale: t.locale,
+});
+// textes utilisés par les scripts (vidéo, parcours, panier) : même langue que la page
+const i18n = JSON.stringify({
+  hero: t.hero,
+  parcours: t.parcours,
+  torchTouch: t.lumiere.torch.hintTouch,
+  cart: t.cartUi,
+  form: t.billetterie,
 });
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -39,13 +54,15 @@ const booking = JSON.stringify({
     <meta property="og:type" content="website" />
     <meta property="og:image" content={url('video/musee-affiche-nuit.jpg')} />
     <link rel="icon" href={url('vitra-lightscape-logo.svg')} type="image/svg+xml" />
+    {translated && langs.map((l) => <link rel="alternate" hreflang={l} href={alt(l)} />)}
+    {translated && <link rel="alternate" hreflang="x-default" href={alt('fr')} />}
     <slot name="head" />
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
   </head>
-  <body data-booking={booking}>
-    <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <body data-booking={booking} data-i18n={i18n}>
+    <a class="skip-link" href="#contenu">{t.ui.skip}</a>
     <Header home={home} />
     <main id="contenu">
       <slot />

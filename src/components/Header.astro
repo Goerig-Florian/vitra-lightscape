@@ -1,25 +1,32 @@
 ---
 import Logo from './Logo.astro';
-import { nav } from '../data/content';
 import { url } from '../lib/url';
+import { getLang, getT, langs, homeUrl } from '../lib/i18n';
 
 interface Props {
   home?: boolean;
 }
 const { home = true } = Astro.props;
-const link = (href: string) => (home ? href : url(href));
+const lang = getLang(Astro.url);
+const t = getT(Astro.url);
+const nav = t.nav;
+const link = (href: string) => (home ? href : homeUrl(lang) + href);
+// la même page dans une autre langue (accueil ou panier)
+const rest = Astro.url.pathname.slice(url().length - 1).replace(/^\/(en|de)(?=\/|$)/, '').replace(/^\//, '');
+const other = (l: string) => url(l === 'fr' ? rest : `${l}/${rest}`);
+const canSwitch = home || rest.startsWith('panier');
 ---
 
 <header class="site-header" data-header data-theme={home ? 'hero' : 'day'}>
   <div class="site-header__inner">
-    <a class="site-header__logo" href={home ? '#top' : url()} aria-label="Vitra Lightscape, accueil">
+    <a class="site-header__logo" href={home ? '#top' : homeUrl(lang)} aria-label={t.ui.homeAria}>
       <Logo label={false} />
     </a>
 
-    <nav class="site-nav" aria-label="Navigation principale" data-nav>
+    <nav class="site-nav" aria-label={t.ui.navAria} data-nav>
       <button class="icon-btn site-nav__toggle" type="button" aria-expanded="false" aria-controls="site-nav-list" data-nav-toggle>
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
-        <span class="sr-only">Menu</span>
+        <span class="sr-only">{t.ui.menu}</span>
       </button>
       <ul class="site-nav__list" id="site-nav-list">
         {
@@ -29,25 +36,44 @@ const link = (href: string) => (home ? href : url(href));
             </li>
           ))
         }
-        <li>
-          <a href={url('presentation/')} aria-current={Astro.url.pathname.replace(/\/$/, '').endsWith('/presentation') ? 'page' : undefined}>Présentation</a>
-        </li>
-        <li>
-          <a href={url('presentation/#devis')}>Devis strat de com</a>
-        </li>
+        {
+          lang === 'fr' && (
+            <>
+              <li>
+                <a href={url('presentation/')} aria-current={Astro.url.pathname.replace(/\/$/, '').endsWith('/presentation') ? 'page' : undefined}>Présentation</a>
+              </li>
+              <li>
+                <a href={url('presentation/#devis')}>Devis strat de com</a>
+              </li>
+            </>
+          )
+        }
       </ul>
     </nav>
 
     <div class="site-header__actions">
+      {
+        canSwitch && (
+          <ul class="lang" aria-label={t.ui.langAria}>
+            {langs.map((l) => (
+              <li>
+                <a href={other(l)} lang={l} hreflang={l} aria-current={l === lang ? 'true' : undefined} aria-label={{ fr: 'Français', en: 'English', de: 'Deutsch' }[l]}>
+                  {l.toUpperCase()}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
       <button class="icon-btn cart-btn" type="button" data-cart-open aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
           <path d="M5 8h14l-1.2 12H6.2L5 8Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round" />
           <path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke="currentColor" stroke-width="1.5" fill="none" />
         </svg>
         <span class="cart-btn__count" data-cart-count hidden>0</span>
-        <span class="sr-only" data-cart-label>Panier</span>
+        <span class="sr-only" data-cart-label>{t.ui.cart}</span>
       </button>
-      <a class="btn btn--small btn--solid site-header__cta" href={link('#billetterie')}>Réserver</a>
+      <a class="btn btn--small btn--solid site-header__cta" href={link('#billetterie')}>{t.ui.reserve}</a>
     </div>
   </div>
 </header>

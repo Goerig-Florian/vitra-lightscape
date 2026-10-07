@@ -1,38 +1,37 @@
 ---
 import Logo from './Logo.astro';
-import { nav, footer } from '../data/content';
 import { url } from '../lib/url';
+import { getLang, getT, homeUrl, cartUrl } from '../lib/i18n';
 
 interface Props {
   home?: boolean;
 }
 const { home = true } = Astro.props;
-const link = (href: string) => (home ? href : url(href));
+const lang = getLang(Astro.url);
+const t = getT(Astro.url);
+const { nav, footer } = t;
+const link = (href: string) => (home ? href : homeUrl(lang) + href);
 ---
 
 <footer class="site-footer" data-theme="night">
   <div class="container">
     <div class="site-footer__top">
-      <a href={home ? '#top' : url()} class="site-footer__logo" aria-label="Vitra Lightscape, retour en haut">
+      <a href={home ? '#top' : homeUrl(lang)} class="site-footer__logo" aria-label={t.ui.topAria}>
         <Logo label={false} />
       </a>
-      <nav aria-label="Pied de page">
+      <nav aria-label={t.ui.footerNavAria}>
         <ul class="site-footer__nav">
           {nav.map((n) => <li><a href={link(n.href)}>{n.label}</a></li>)}
-          <li><a href={url('panier/')}>Panier</a></li>
-          <li><a href={url('devis/devis-2-achats-externes-merchandising.pdf')} target="_blank" rel="noopener">Devis 2 · Achats externes</a></li>
-          <li><a href={url('devis/devis-3-production-evenementielle.pdf')} target="_blank" rel="noopener">Devis 3 · Production événementielle</a></li>
+          <li><a href={cartUrl(lang)}>{t.ui.cart}</a></li>
+          {lang === 'fr' && <li><a href={url('devis/devis-2-achats-externes-merchandising.pdf')} target="_blank" rel="noopener">{t.ui.devis2}</a></li>}
+          {lang === 'fr' && <li><a href={url('devis/devis-3-production-evenementielle.pdf')} target="_blank" rel="noopener">{t.ui.devis3}</a></li>}
         </ul>
       </nav>
     </div>
 
     <section class="credits" aria-labelledby="credits-title">
-      <h2 id="credits-title">Crédits</h2>
-      <p>
-        Vidéo du premier écran : montage réalisé à partir d’une photo de visite de l’équipe (16 septembre 2026) et de sa visualisation de nuit ; le
-        coucher de soleil est un étalonnage, la lumière sur le musée une simulation. Liste des bâtiments, auteurs et dates : page « Architecture du
-        Vitra Campus » de vitra.com. Carte du parcours et photos de jour des bâtiments : vitra.com (maquette fictive) ; vues de nuit : visualisations de projet de l’équipe ; trajet d’après les données (c) contributeurs OpenStreetMap, licence ODbL. Caractère : Futura (ParaType), fournie par l’équipe, sans accents.
-      </p>
+      <h2 id="credits-title">{t.ui.credits}</h2>
+      <p>{t.ui.creditsText}</p>
     </section>
 
     <p class="site-footer__mention">{footer.mention}</p>

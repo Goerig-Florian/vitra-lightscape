@@ -8,6 +8,10 @@
  * Tout le contenu reste lisible sans JavaScript.
  */
 (function () {
+  var I = {};
+  try { I = JSON.parse(document.body.getAttribute('data-i18n') || '{}'); } catch (e) { I = {}; }
+  var IH = I.hero || {};
+  var IP = I.parcours || {};
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
   var smooth = function (a, b, v) {
@@ -72,7 +76,7 @@
 
     var setPaused = function (paused) {
       toggleBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
-      toggleLabel.textContent = paused ? 'Lire la vidéo' : 'Mettre la vidéo en pause';
+      toggleLabel.textContent = paused ? (IH.play || 'Lire la vidéo') : (IH.pause || 'Mettre la vidéo en pause');
     };
 
     var sync = function () {
@@ -112,7 +116,7 @@
     video.addEventListener('ended', function () {
       if (!reduceMotion) teaser(true);
       setPaused(true);
-      toggleLabel.textContent = 'Revoir la vidéo';
+      toggleLabel.textContent = IH.replay || 'Revoir la vidéo';
       sync();
     });
     video.addEventListener('seeked', sync);
@@ -282,14 +286,14 @@
       fiche.classList.toggle('is-night', on);
       fTime.hidden = !has || i !== selected;
       fTime.setAttribute('aria-pressed', on ? 'true' : 'false');
-      fTimeLabel.textContent = on ? 'Voir de jour' : 'Voir de nuit';
+      fTimeLabel.textContent = on ? (IP.seeDay || 'Voir de jour') : (IP.seeNight || 'Voir de nuit');
       fCredit.textContent = on ? payload.credits.night : payload.credits.day;
       if (has && i === selected) { // la vue de nuit ne se charge que pour l'étape choisie
         if (fNight.getAttribute('src') !== d.night) fNight.src = d.night;
       } else {
         fNight.removeAttribute('src');
       }
-      fImg.alt = (on ? 'Visualisation de nuit : ' : 'Photographie de jour : ') + d.name;
+      fImg.alt = (on ? (IP.altNight || 'Visualisation de nuit : ') : (IP.altDay || 'Photographie de jour : ')) + d.name;
     };
 
     fTime.addEventListener('click', function () {
@@ -434,7 +438,7 @@
 
       var setState = function (state) {
         ctrl.dataset.state = state;
-        ctrlLabel.textContent = state === 'playing' ? 'Mettre en pause' : state === 'paused' ? 'Reprendre' : 'Rejouer le parcours';
+        ctrlLabel.textContent = state === 'playing' ? (IP.pause || 'Mettre en pause') : state === 'paused' ? (IP.play || 'Reprendre') : (IP.replay || 'Rejouer le parcours');
       };
 
       var draw = function () { plan.style.setProperty('--dash', (1 - p).toFixed(4)); };
@@ -483,7 +487,7 @@
       draw();
       ctrl.hidden = false;
       setState('paused');
-      ctrlLabel.textContent = 'Lancer le parcours';
+      ctrlLabel.textContent = IP.launch || 'Lancer le parcours';
 
       // Le chemin avance ou recule jusqu'à l'étape choisie, en allumant ou éteignant les étapes au passage
       var seekId = null;
@@ -582,7 +586,7 @@
   if (torch) {
     var hint = torch.querySelector('[data-torch-hint]');
     var touchDevice = window.matchMedia('(pointer: coarse)').matches;
-    if (touchDevice && hint) hint.textContent = 'Glissez le doigt sur la façade';
+    if (touchDevice && hint) hint.textContent = I.torchTouch || 'Glissez le doigt sur la façade';
     var tx = 0.62, ty = 0.5; // position de la torche, en part de la largeur et de la hauteur
     var driven = false;      // vrai quand la personne la déplace elle-même
     var lastMove = 0;

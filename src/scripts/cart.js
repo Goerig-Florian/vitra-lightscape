@@ -7,6 +7,11 @@
   var raw = document.body.getAttribute('data-booking');
   if (!raw) return;
   var DATA = JSON.parse(raw);
+  var IC = {};
+  try { IC = (JSON.parse(document.body.getAttribute('data-i18n') || '{}')).cart || {}; } catch (e) { IC = {}; }
+  var IF = {};
+  try { IF = (JSON.parse(document.body.getAttribute('data-i18n') || '{}')).form || {}; } catch (e) { IF = {}; }
+  var fill = function (s, v) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return v[k] === undefined ? '' : v[k]; }); };
   var KEY = 'vitra-lightscape-cart-v2';
   
   var tickets = {};
@@ -17,7 +22,7 @@
   /* prix d'un billet pour une soirée donnée : tarif semaine (lun-jeu) ou week-end (ven-dim) */
   var priceOf = function (t, date) { return date && dateWeekend[date] ? t.prices.we : t.prices.sem; };
 
-  var euro = function (n) { return n === 0 ? '0 €' : n.toLocaleString('fr-FR', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' €'; };
+  var euro = function (n) { return n === 0 ? '0 €' : n.toLocaleString(DATA.locale || 'fr-FR', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' €'; };
 
   /* ---------- Stockage ---------- */
   var memory = [];
@@ -90,12 +95,12 @@
 
     var html = '';
     if (!items.length) {
-      html = '<div class="cart-empty"><p>Votre panier est vide.</p><a href="' + esc(DATA.cartUrl.replace(/panier\/$/, '')) + '#billetterie">Choisir une soirée ' + ARROW + '</a></div>';
+      html = '<div class="cart-empty"><p>' + esc(IC.empty || 'Votre panier est vide.') + '</p><a href="' + esc(DATA.cartUrl.replace(/panier\/$/, '')) + '#billetterie">' + esc(IC.choose || 'Choisir une soirée') + ' ' + ARROW + '</a></div>';
     } else {
       order.forEach(function (g) {
         var parts = g.split('|');
         html += '<div class="cart-group"><p class="cart-group__title">' + esc(dateLabel[parts[0]]) + '</p>';
-        html += '<p class="cart-group__slot">Entrée à ' + esc(parts[1]) + ' · Vitra Campus, Weil am Rhein</p>';
+        html += '<p class="cart-group__slot">' + esc(fill(IC.entryAt || 'Entrée à {slot} · Vitra Campus, Weil am Rhein', { slot: parts[1] })) + '</p>';
         groups[g]
           .sort(function (a, b) { return DATA.tickets.indexOf(tickets[a.type]) - DATA.tickets.indexOf(tickets[b.type]); })
           .forEach(function (i) {
@@ -104,12 +109,12 @@
             html +=
               '<div class="cart-line">' +
               '<span class="cart-line__label">' + esc(t.label) + '<small>' + esc(t.detail) + ' · ' + euro(priceOf(t, i.date)) + '</small></span>' +
-              '<div class="stepper" role="group" aria-label="Quantité, ' + esc(t.label) + '">' +
-              '<button type="button" class="stepper__btn" data-cart-step="-1" data-key="' + k + '" aria-label="Retirer un billet ' + esc(t.label) + '">−</button>' +
+              '<div class="stepper" role="group" aria-label="' + esc(fill(IC.qty || 'Quantité, {label}', { label: t.label })) + '">' +
+              '<button type="button" class="stepper__btn" data-cart-step="-1" data-key="' + k + '" aria-label="' + esc(fill(IC.remove1 || 'Retirer un billet {label}', { label: t.label })) + '">−</button>' +
               '<output class="stepper__value" aria-live="polite">' + i.qty + '</output>' +
-              '<button type="button" class="stepper__btn" data-cart-step="1" data-key="' + k + '" aria-label="Ajouter un billet ' + esc(t.label) + '"' + (i.qty >= DATA.max ? ' disabled' : '') + '>+</button>' +
+              '<button type="button" class="stepper__btn" data-cart-step="1" data-key="' + k + '" aria-label="' + esc(fill(IC.add1 || 'Ajouter un billet {label}', { label: t.label })) + '"' + (i.qty >= DATA.max ? ' disabled' : '') + '>+</button>' +
               '</div>' +
-              '<button type="button" class="cart-line__remove" data-cart-remove data-key="' + k + '">Retirer<span class="sr-only"> ' + esc(t.label) + '</span></button>' +
+              '<button type="button" class="cart-line__remove" data-cart-remove data-key="' + k + '">' + esc(IC.remove || 'Retirer') + '<span class="sr-only"> ' + esc(t.label) + '</span></button>' +
               '<span class="cart-line__price">' + euro(priceOf(t, i.date) * i.qty) + '</span>' +
               '</div>';
           });
@@ -125,7 +130,7 @@
       el.hidden = n === 0;
     });
     document.querySelectorAll('[data-cart-label]').forEach(function (el) {
-      el.textContent = n ? 'Panier, ' + n + (n > 1 ? ' billets' : ' billet') : 'Panier, vide';
+      el.textContent = n ? fill(n > 1 ? (IC.labelNs || 'Panier, {n} billets') : (IC.labelN || 'Panier, {n} billet'), { n: n }) : (IC.labelEmpty || 'Panier, vide');
     });
     document.querySelectorAll('[data-cart-checkout], [data-pay], [data-cart-clear]').forEach(function (el) {
       if (el.tagName === 'A') el.toggleAttribute('aria-disabled', !items.length);
@@ -144,7 +149,7 @@
     var rm = e.target.closest('[data-cart-remove]');
     if (rm) {
       setQty(rm.getAttribute('data-key'), 0);
-      toast('Billet retiré du panier.');
+      toast(IC.removed || 'Billet retiré du panier.');
     }
   });
 
@@ -209,7 +214,7 @@
   var toastTimer;
   var toast = function (msg, withAction) {
     if (!toastEl) return;
-    toastEl.innerHTML = '<span>' + esc(msg) + '</span>' + (withAction ? '<button type="button" data-cart-open>Voir le panier</button>' : '');
+    toastEl.innerHTML = '<span>' + esc(msg) + '</span>' + (withAction ? '<button type="button" data-cart-open>' + esc(IC.see || 'Voir le panier') + '</button>' : '');
     toastEl.hidden = false;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.hidden = true; }, 5000);
@@ -235,8 +240,8 @@
     var update = function () {
       var date = (form.querySelector('input[name="date"]:checked') || {}).value;
       var slot = (form.querySelector('input[name="slot"]:checked') || {}).value;
-      sumDate.textContent = date ? dateLabel[date] + (dateWeekend[date] ? ' · tarif week-end' : ' · tarif semaine') : 'À choisir';
-      sumSlot.textContent = slot || 'À choisir';
+      sumDate.textContent = date ? dateLabel[date] + (dateWeekend[date] ? (IF.wkTag || ' · tarif week-end') : (IF.semTag || ' · tarif semaine')) : (IF.toChoose || 'À choisir');
+      sumSlot.textContent = slot || (IF.toChoose || 'À choisir');
 
       var lines = '';
       var sum = 0;
@@ -256,8 +261,8 @@
       sumTotal.textContent = euro(sum);
 
       var msg = '';
-      if (!date || !slot || people() === 0) msg = 'Choisissez une soirée, un horaire et au moins un billet.';
-      else if (adults() === 0) msg = 'Les enfants doivent être accompagnés d’un adulte : ajoutez un billet plein tarif ou réduit.';
+      if (!date || !slot || people() === 0) msg = IF.hint || 'Choisissez une soirée, un horaire et au moins un billet.';
+      else if (adults() === 0) msg = IF.hintAdult || 'Les enfants doivent être accompagnés d’un adulte : ajoutez un billet plein tarif ou réduit.';
       addBtn.disabled = msg !== '';
       hint.textContent = msg;
     };
@@ -281,7 +286,7 @@
       addItems(items);
       Object.keys(qty).forEach(function (k) { qty[k] = 0; });
       update();
-      toast('Ajouté au panier.', true);
+      toast(IC.added || 'Ajouté au panier.', true);
     });
 
     update();
@@ -301,7 +306,7 @@
     clear.addEventListener('click', function () {
       save([]);
       if (payNote) payNote.hidden = true;
-      toast('Panier vidé.');
+      toast(IC.cleared || 'Panier vidé.');
     });
   }
 

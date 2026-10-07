@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { getT, homeUrl, getLang } from '../lib/i18n';
+const t = getT(Astro.url);
+const c = t.checkout;
+---
+
+<Base title={c.title} description={c.description} home={false}>
+  <section class="section checkout" data-theme="day" aria-labelledby="checkout-title">
+    <div class="container">
+      <a class="link-arrow link-arrow--back" href={homeUrl(getLang(Astro.url)) + '#billetterie'}><svg class="arrow arrow--back" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none" /></svg> {c.back}</a>
+      <h1 class="checkout__title" id="checkout-title">{c.h1}</h1>
+      <p class="notice"><span class="notice__dot" aria-hidden="true"></span>{t.billetterie.notice}</p>
+
+      <div class="checkout__grid">
+        <div class="checkout__list" data-cart-list data-cart-page></div>
+        <aside class="summary checkout__summary" aria-labelledby="checkout-sum">
+          <h2 class="summary__title" id="checkout-sum">{c.sum}</h2>
+          <p class="summary__total"><span>{c.total}</span><strong data-cart-total>0 €</strong></p>
+          <button class="btn btn--solid btn--block" type="button" data-pay>{c.pay}</button>
+          <button class="btn btn--line btn--block" type="button" data-cart-clear>{c.clear}</button>
+          <div class="pay-note" data-pay-note hidden tabindex="-1">
+            <strong>{c.demo}</strong>
+            <p>
+              {c.demoText}
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Base>

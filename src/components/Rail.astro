@@ -4,18 +4,12 @@
  * La ligne descend au fil du défilement et allume les points l'un après l'autre, comme le chemin
  * du parcours. Les points sont des liens (clavier : Tab, Entrée). Masqué sur petit écran.
  */
-const blocs = [
-  { href: '#top', label: 'Accueil' },
-  { href: '#soir', label: 'Le soir' },
-  { href: '#lumiere', label: 'La lumière' },
-  { href: '#parcours', label: 'Le parcours' },
-  { href: '#soiree', label: 'Votre soirée' },
-  { href: '#billetterie', label: 'Billetterie' },
-  { href: '#infos', label: 'Infos' },
-];
+import { getT } from '../lib/i18n';
+const t = getT(Astro.url);
+const blocs = t.rail.map(([href, label]) => ({ href, label }));
 ---
 
-<nav class="rail" data-rail aria-label="Blocs de la page">
+<nav class="rail" data-rail aria-label={t.railAria}>
   <span class="rail__track" aria-hidden="true"><span class="rail__fill"></span></span>
   <ol class="rail__list">
     {

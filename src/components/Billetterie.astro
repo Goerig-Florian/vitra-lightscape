@@ -1,19 +1,24 @@
 ---
-import { dates, slots, tickets, notice, isWeekend } from '../data/billetterie';
+import { dates, slots, tickets, isWeekend } from '../data/billetterie';
+import { getT, fill } from '../lib/i18n';
+
+const t = getT(Astro.url);
+const b = t.billetterie;
+const L = t.locale;
 
 const parse = (iso: string) => new Date(`${iso}T12:00:00`);
-const dayName = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '');
-const dayNum = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { day: 'numeric' });
-const month = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
-const full = (iso: string) => parse(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-const euro = (n: number) => (n === 0 ? '0 €' : `${n.toLocaleString('fr-FR', { minimumFractionDigits: n % 1 ? 2 : 0 })} €`);
+const dayName = (iso: string) => parse(iso).toLocaleDateString(L, { weekday: 'short' }).replace('.', '');
+const dayNum = (iso: string) => parse(iso).toLocaleDateString(L, { day: 'numeric' });
+const month = (iso: string) => parse(iso).toLocaleDateString(L, { month: 'short' }).replace('.', '');
+const full = (iso: string) => parse(iso).toLocaleDateString(L, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const euro = (n: number) => (n === 0 ? '0 €' : `${n.toLocaleString(L, { minimumFractionDigits: n % 1 ? 2 : 0 })} €`);
 
 // un bloc par mois, semaines du lundi au dimanche
 const mois = [8, 9].map((m) => {
   const jours = dates.filter((d) => Number(d.slice(5, 7)) === m + 1);
   const premier = new Date(`${jours[0]}T12:00:00Z`).getUTCDay();
   return {
-    titre: new Date(`${jours[0]}T12:00:00Z`).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' }),
+    titre: new Date(`${jours[0]}T12:00:00Z`).toLocaleDateString(L, { month: 'long', year: 'numeric', timeZone: 'UTC' }),
     jours,
     decalage: (premier + 6) % 7,
   };
@@ -23,28 +28,28 @@ const mois = [8, 9].map((m) => {
 <section class="section billetterie" id="billetterie" data-theme="night" aria-labelledby="billetterie-title">
   <div class="container">
     <div class="billetterie__head">
-      <p class="eyebrow">Billetterie</p>
-      <h2 class="billetterie__title" id="billetterie-title">Réserver votre soirée</h2>
-      <p class="notice"><span class="notice__dot" aria-hidden="true"></span>{notice}</p>
+      <p class="eyebrow">{b.label}</p>
+      <h2 class="billetterie__title" id="billetterie-title">{b.title}</h2>
+      <p class="notice"><span class="notice__dot" aria-hidden="true"></span>{b.notice}</p>
     </div>
 
     <form class="booking" data-booking-form novalidate>
       <div class="booking__steps">
         <fieldset class="booking__step">
-          <legend><span class="booking__n">1</span> Choisir une soirée</legend>
-          <div class="cal" role="group" aria-label="Soirées du 3 septembre au 3 octobre 2027">
+          <legend><span class="booking__n">1</span> {b.step1}</legend>
+          <div class="cal" role="group" aria-label={b.calAria}>
             {
               mois.map((m) => (
                 <div class="cal__month">
                   <p class="cal__title">{m.titre}</p>
                   <div class="cal__grid">
-                    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((j, k) => <span class={`cal__dow${k >= 4 ? ' is-we' : ''}`} aria-hidden="true">{j}</span>)}
+                    {b.dow.map((j, k) => <span class={`cal__dow${k >= 4 ? ' is-we' : ''}`} aria-hidden="true">{j}</span>)}
                     {Array.from({ length: m.decalage }).map(() => <span class="cal__blank" aria-hidden="true" />)}
                     {m.jours.map((d) => (
                       <label class={`chip chip--day${isWeekend(d) ? ' is-we' : ''}`}>
                         <input type="radio" name="date" value={d} />
                         <span class="chip__inner">{dayNum(d)}</span>
-                        <span class="sr-only">{full(d)}{isWeekend(d) ? ', tarif week-end' : ', tarif semaine'}</span>
+                        <span class="sr-only">{full(d)}{isWeekend(d) ? b.we : b.wk}</span>
                       </label>
                     ))}
                   </div>
@@ -52,11 +57,11 @@ const mois = [8, 9].map((m) => {
               ))
             }
           </div>
-          <p class="cal__legend"><span class="cal__dot" aria-hidden="true"></span>Vendredi au dimanche : tarif week-end</p>
+          <p class="cal__legend"><span class="cal__dot" aria-hidden="true"></span>{b.legend}</p>
         </fieldset>
 
         <fieldset class="booking__step">
-          <legend><span class="booking__n">2</span> Choisir un horaire d’entrée</legend>
+          <legend><span class="booking__n">2</span> {b.step2}</legend>
           <div class="chips chips--slots">
             {
               slots.map((s) => (
@@ -70,41 +75,41 @@ const mois = [8, 9].map((m) => {
         </fieldset>
 
         <fieldset class="booking__step">
-          <legend><span class="booking__n">3</span> Billets</legend>
+          <legend><span class="booking__n">3</span> {b.step3}</legend>
           <ul class="tickets">
             {
-              tickets.map((t) => (
+              tickets.map((tk0) => { const tk = { ...tk0, ...t.tickets[tk0.id] }; return (
                 <li class="ticket">
                   <div class="ticket__info">
-                    <span class="ticket__label" id={`t-${t.id}`}>{t.label}</span>
-                    <span class="ticket__detail">{t.detail}</span>
+                    <span class="ticket__label" id={`t-${tk.id}`}>{tk.label}</span>
+                    <span class="ticket__detail">{tk.detail}</span>
                   </div>
                   <span class="ticket__price">
-                    <span>{euro(t.prices.sem)}<small>Lun–jeu</small></span>
-                    <span>{euro(t.prices.we)}<small>Ven–dim</small></span>
+                    <span>{euro(tk.prices.sem)}<small>{b.weekdays}</small></span>
+                    <span>{euro(tk.prices.we)}<small>{b.weekend}</small></span>
                   </span>
-                  <div class="stepper" role="group" aria-labelledby={`t-${t.id}`}>
-                    <button type="button" class="stepper__btn" data-step="-1" data-ticket={t.id} aria-label={`Retirer un billet ${t.label}`}>−</button>
-                    <output class="stepper__value" data-qty={t.id} aria-live="polite">0</output>
-                    <button type="button" class="stepper__btn" data-step="1" data-ticket={t.id} aria-label={`Ajouter un billet ${t.label}`}>+</button>
+                  <div class="stepper" role="group" aria-labelledby={`t-${tk.id}`}>
+                    <button type="button" class="stepper__btn" data-step="-1" data-ticket={tk.id} aria-label={fill(b.remove, { label: tk.label })}>−</button>
+                    <output class="stepper__value" data-qty={tk.id} aria-live="polite">0</output>
+                    <button type="button" class="stepper__btn" data-step="1" data-ticket={tk.id} aria-label={fill(b.add, { label: tk.label })}>+</button>
                   </div>
                 </li>
-              ))
+              ); })
             }
           </ul>
         </fieldset>
       </div>
 
       <aside class="summary" aria-labelledby="summary-title">
-        <h3 class="summary__title" id="summary-title">Votre sélection</h3>
+        <h3 class="summary__title" id="summary-title">{b.sel}</h3>
         <dl class="summary__when">
-          <div><dt>Soirée</dt><dd data-sum-date>À choisir</dd></div>
-          <div><dt>Entrée</dt><dd data-sum-slot>À choisir</dd></div>
+          <div><dt>{b.evening}</dt><dd data-sum-date>{b.toChoose}</dd></div>
+          <div><dt>{b.entry}</dt><dd data-sum-slot>{b.toChoose}</dd></div>
         </dl>
         <ul class="summary__lines" data-sum-lines></ul>
-        <p class="summary__total"><span>Total</span><strong data-sum-total>0 €</strong></p>
-        <button class="btn btn--solid btn--block" type="submit" data-add disabled>Ajouter au panier</button>
-        <p class="summary__hint" data-sum-hint aria-live="polite">Choisissez une soirée, un horaire et au moins un billet.</p>
+        <p class="summary__total"><span>{b.total}</span><strong data-sum-total>0 €</strong></p>
+        <button class="btn btn--solid btn--block" type="submit" data-add disabled>{b.addCart}</button>
+        <p class="summary__hint" data-sum-hint aria-live="polite">{b.hint}</p>
       </aside>
     </form>
   </div>

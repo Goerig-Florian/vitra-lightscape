@@ -1,5 +1,7 @@
 ---
-import { infos } from '../data/content';
+import { getT } from '../lib/i18n';
+const t = getT(Astro.url);
+const infos = t.infos;
 ---
 
 <section class="section infos" id="infos" data-theme="night" aria-labelledby="infos-title">
@@ -16,7 +18,7 @@ import { infos } from '../data/content';
       }
     </dl>
     <a class="link-arrow" href={infos.visit.href} rel="noopener">
-      {infos.visit.label} <svg class="arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none" /></svg><span class="sr-only"> (site externe)</span>
+      {infos.visit.label} <svg class="arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none" /></svg><span class="sr-only">{t.ui.external}</span>
     </a>
   </div>
 </section>

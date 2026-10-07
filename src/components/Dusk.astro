@@ -4,12 +4,14 @@
  * corail du coucher de soleil au bleu nuit, l'horloge avance et le logo s'allume.
  */
 import Logo from './Logo.astro';
-import { dusk } from '../data/content';
+import { getT } from '../lib/i18n';
+const t = getT(Astro.url);
+const dusk = t.dusk;
 
 const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 ---
 
-<section class="dusk" id="soir" data-dusk data-from={String(dusk.from)} data-to={String(dusk.to)} aria-label="La nuit tombe">
+<section class="dusk" id="soir" data-dusk data-from={String(dusk.from)} data-to={String(dusk.to)} aria-label={dusk.aria}>
   <div class="dusk__sticky" data-dusk-sticky>
     <div class="dusk__sun" aria-hidden="true"></div>
     <div class="dusk__sky" aria-hidden="true">
