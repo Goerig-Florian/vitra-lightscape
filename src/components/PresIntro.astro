@@ -19,7 +19,7 @@ const vitra = logoSvg
 <header class="pi" aria-label="Deux Rives pour Vitra Lightscape" data-intro>
   <p class="pi__caption"><span class="sr-only">Deux Rives pour </span>Une proposition de communication pour le Vitra Campus</p>
   <div class="pi__panel" data-intro-panel>
-    <svg class="pi__frame" aria-hidden="true" focusable="false"><rect class="pi__frame-rect" pathLength="1" x="1.5" y="1.5" rx="16" /></svg>
+    <svg class="pi__frame" aria-hidden="true" focusable="false"><rect class="pi__frame-rect" pathLength="1" x="1.5" y="1.5" rx="16" /><rect class="pi__frame-run" pathLength="1" x="1.5" y="1.5" rx="16" /></svg>
     <div class="pi__logo pi__logo--rives"><span class="pi__tile" set:html={rives} /></div>
     <div class="pi__logo pi__logo--vitra" set:html={vitra} />
     <div class="pi__logo pi__logo--ls" set:html={full} />
@@ -48,8 +48,11 @@ const vitra = logoSvg
   .pi {
     display: grid;
     justify-items: center;
+    align-content: center;
+    min-height: calc(100svh - 4rem);
+    box-sizing: border-box;
     gap: 1.25rem;
-    padding: clamp(5.5rem, 12vw, 8rem) var(--gutter, 1rem) 3.5rem;
+    padding: 3rem var(--gutter, 1rem);
     background: var(--night);
   }
 
@@ -130,6 +133,38 @@ const vitra = logoSvg
     stroke-width: 3;
     stroke-linejoin: round;
     filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #5aa9ff) drop-shadow(0 0 28px rgba(90, 169, 255, 0.75));
+  }
+
+  /* tronçon lumineux plus vif qui tourne en continu autour du cadre */
+  .pi__frame-run {
+    width: calc(100% - 3px);
+    height: calc(100% - 3px);
+    fill: none;
+    stroke: #fff;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 0.12 0.88;
+    opacity: 0;
+    filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 14px #5aa9ff) drop-shadow(0 0 30px #5aa9ff);
+  }
+
+  .js .pi.is-in .pi__frame-run {
+    animation: pi-run-in 0.6s ease 2s forwards, pi-run 6s linear 2s infinite;
+  }
+
+  @keyframes pi-run-in {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes pi-run {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -1;
+    }
   }
 
   .pi__caption {
@@ -228,6 +263,10 @@ const vitra = logoSvg
     .js .pi__frame-rect {
       stroke-dashoffset: 0;
       animation: none !important;
+    }
+
+    .js .pi__frame-run {
+      display: none;
     }
   }
 </style>
